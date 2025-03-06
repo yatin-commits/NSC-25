@@ -228,7 +228,7 @@ const Events = () => {
 
   const fetchRegistrations = async (uid) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/registrations?userId=${uid}`);
+      const response = await fetch(`https://nsc-25-backend.vercel.app/api/registrations?userId=${uid}`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       console.log("Fetched registrations:", data);
@@ -255,7 +255,7 @@ const Events = () => {
     }
     console.log("Registering for event:", { eventId, userId: user.uid, fields: formData });
     try {
-      const response = await fetch("http://localhost:5000/api/register", {
+      const response = await fetch("https://nsc-25-backend.vercel.app/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

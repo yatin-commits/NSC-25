@@ -228,7 +228,7 @@ const Events = () => {
 
   const fetchRegistrations = async (uid) => {
     try {
-      const response = await fetch(`/api/registrations?userId=${uid}`);
+      const response = await fetch(`https://nsc-25-backend.vercel.app/api/registrations?userId=${uid}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch registrations: ${response.status} ${response.statusText}`);
       }
@@ -258,7 +258,7 @@ const Events = () => {
     const payload = { eventId, userId: user.uid, fields: formData };
     console.log("Sending registration payload:", payload);
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch("https://nsc-25-backend.vercel.app/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
