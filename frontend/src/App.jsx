@@ -9,7 +9,7 @@ const App = () => {
     <Navbar/>
     {/* // dummy commit */}
     <Home/>
-    <Footer/>
+    {/* <Footer/> */}
     </>
   )
 }

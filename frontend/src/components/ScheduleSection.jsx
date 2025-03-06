@@ -52,7 +52,7 @@ export function ScheduleSection() {
   };
 
   return (
-    <div className="py-16 px-4 bg-gray-900 text-white relative overflow-hidden">
+    <div className="py-8 px-4  relative overflow-hidden">
       <motion.h1 className="text-center text-3xl md:text-5xl font-bold mb-8">
         Event Schedule
       </motion.h1>
@@ -73,7 +73,7 @@ export function ScheduleSection() {
             {isScrollable && (
               <motion.button
                 onClick={scrollLeft}
-                className="absolute left-0 top-1/2 -translate-y-1/2 bg-gray-800 p-2 rounded-full z-10 hidden md:block"
+                className="absolute left-0 top-1/2 -translate-y-1/2  p-2 rounded-full z-10 hidden md:block"
               >
                 <ChevronLeft className="w-6 h-6 text-white" />
               </motion.button>
@@ -86,7 +86,7 @@ export function ScheduleSection() {
               {filteredEvents.map((event, index) => (
                 <motion.div
                   key={index}
-                  className="flex-shrink-0 w-64 md:w-80 p-5 bg-gray-800 rounded-lg shadow-lg snap-start"
+                  className="flex-shrink-0 w-64 md:w-80 p-5 rounded-lg shadow-lg snap-start"
                 >
                   <h2 className="text-xl font-semibold mb-2">{event.name}</h2>
                   <span className="text-sm bg-indigo-600 px-2 py-1 rounded-full">{event.time}</span>
@@ -104,7 +104,7 @@ export function ScheduleSection() {
             {isScrollable && (
               <motion.button
                 onClick={scrollRight}
-                className="absolute right-0 top-1/2 -translate-y-1/2 bg-gray-800 p-2 rounded-full z-10 hidden md:block"
+                className="absolute right-0 top-1/2 -translate-y-1/2  p-2 rounded-full z-10 hidden md:block"
               >
                 <ChevronRight className="w-6 h-6 text-white" />
               </motion.button>

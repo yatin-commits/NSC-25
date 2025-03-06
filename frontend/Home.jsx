@@ -1,6 +1,7 @@
 import { HeroSection } from "@/components/HeroSection";
 import CountdownTimer from "./src/components/CountdownTimer";
 import {ScheduleSection} from "./src/components/ScheduleSection";
+import Events from "@/components/Events";
 
 const HomePage = () => {
   return (
@@ -11,6 +12,7 @@ const HomePage = () => {
     <>
     <HeroSection/>
     <ScheduleSection/>
+    <Events/>
     
     </>
   );

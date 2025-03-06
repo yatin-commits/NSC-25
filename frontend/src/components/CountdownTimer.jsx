@@ -33,7 +33,7 @@ const CountdownTimer = ({ initialTime }) => {
   }, [timeLeft]);
 
   return (
-    <div className="flex flex-col mt-4 items-center justify-center p-4 text-white border border-gray-300 rounded-lg bg-black shadow-md space-y-4 w-full max-w-md mx-auto">
+    <div className="flex flex-col mt-4 items-center justify-center p-4 text-gray-900 border border-gray-300 rounded-lg bg-white shadow-md space-y-4 w-full max-w-md mx-auto">
       <div className="text-3xl md:text-4xl lg:text-5xl font-semibold flex space-x-2">
         <motion.div
           key={days}
@@ -41,7 +41,7 @@ const CountdownTimer = ({ initialTime }) => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -20, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="w-12 md:w-16 text-center"
+          className="w-12 md:w-16 text-center bg-gray-200 p-2 rounded"
         >
           {days}
         </motion.div>
@@ -52,7 +52,7 @@ const CountdownTimer = ({ initialTime }) => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -20, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="w-12 md:w-16 text-center"
+          className="w-12 md:w-16 text-center bg-gray-200 p-2 rounded"
         >
           {hours}
         </motion.div>
@@ -63,7 +63,7 @@ const CountdownTimer = ({ initialTime }) => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -20, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="w-12 md:w-16 text-center"
+          className="w-12 md:w-16 text-center bg-gray-200 p-2 rounded"
         >
           {minutes}
         </motion.div>
@@ -74,7 +74,7 @@ const CountdownTimer = ({ initialTime }) => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -20, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="w-12 md:w-16 text-center"
+          className="w-12 md:w-16 text-center bg-gray-200 p-2 rounded"
         >
           {seconds}
         </motion.div>
