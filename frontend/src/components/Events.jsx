@@ -5,7 +5,6 @@ import bvicamlogo from "../assets/bvicamLogo.png";
 import shark from "../assets/shark.png";
 import code from "../assets/code.png";
 import binary from "../assets/binary.png";
-
 import { MapPin, X, Award } from "lucide-react";
 
 const eventsData = [
@@ -263,11 +262,11 @@ const Events = () => {
                   className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer"
                   onClick={() => setExpandedEvent(event.id)}
                 >
-                  <div className="relative h-56 flex justify-center items-center overflow-hidden">
+                  <div className="relative h-40 flex justify-center items-center overflow-hidden">
                     <img
                       src={typeof event.image === "string" ? event.image : event.image.src}
                       alt={event.name}
-                      className="h-[90%] flex  justify-center object-cover"
+                      className="h-[90%] flex justify-center object-cover"
                     />
                   </div>
                   <div className="p-6">
@@ -276,7 +275,7 @@ const Events = () => {
                       {event.shortDescription}
                     </p>
                     <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
-                      <MapPin className="w-4 h-4" /> {event.venue}
+                      <MapPin className="wpow-4 h-4" /> {event.venue}
                     </div>
                   </div>
                 </motion.div>
@@ -285,30 +284,30 @@ const Events = () => {
           ) : (
             <motion.div
               key="expanded"
-              className="fixed inset-0 bg-black/60 flex items-center justify-center p-6 z-50"
+              className="fixed inset-0 bg-black/60 flex items-center justify-center p-6 z-50 overflow-y-auto"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <div className="relative max-w-4xl w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+              <div className="relative max-w-4xl w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-y-auto max-h-[90vh]">
                 <button
                   onClick={() => setExpandedEvent(null)}
-                  className="absolute top-4 right-4 p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600"
+                  className="absolute top-4 right-4 p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 z-10"
                 >
                   <X className="w-6 h-6" />
                 </button>
                 {eventsData
                   .filter((e) => e.id === expandedEvent)
                   .map((event) => (
-                    <div key={event.id}>
-                      <div className="w-full h-64 overflow-hidden flex justify-center items-center">
+                    <div key={event.id} className="flex flex-col min-h-[50vh]">
+                      {/* <div className="w-full h-48 overflow-hidden flex justify-center items-center">
                         <img
                           src={typeof event.image === "string" ? event.image : event.image.src}
                           alt={event.name}
                           className="w-full h-full object-cover"
                         />
-                      </div>
-                      <div className="p-8">
+                      </div> */}
+                      <div className="p-6">
                         <h2 className="text-3xl font-bold mb-4 text-indigo-600">{event.name}</h2>
                         <p className="text-lg text-gray-700 dark:text-gray-200 mb-6">
                           {event.longDescription}
