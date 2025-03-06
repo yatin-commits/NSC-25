@@ -109,7 +109,7 @@ export function HeroSection() {
             as="button"
             className="relative bg-gradient-to-r cursor-pointer rounded-md from-[#00E6E6] via-[#00B3FF] to-[#0099FF] text-white text-xl px-8 py-3 md:px-10 md:py-4 font-semibold flex items-center space-x-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/50"
           >
-            <span className="relative z-10">🚀 Explore Events</span>
+            <span className="relative z-10"> Explore Events 🚀</span>
 
             {/* Subtle Animated Glow */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#00E6E6] via-[#00B3FF] to-[#0099FF] opacity-40 blur-lg rounded-full transition-opacity duration-300 group-hover:opacity-70"></div>
