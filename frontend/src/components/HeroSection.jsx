@@ -131,7 +131,7 @@ export function HeroSection() {
           ))}
         </div> */}
         <div>
-          <img src="./src/assets/incubations.png" alt="" />
+          <img src="./src/assets/bvicamLogo.png" alt="" />
 
         </div>
       </motion.div>
