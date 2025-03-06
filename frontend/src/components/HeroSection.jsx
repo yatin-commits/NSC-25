@@ -4,7 +4,7 @@ import { BackgroundBoxesDemo } from "./BackgroundBoxesDemo"; // Background effec
 import CountdownTimer from "./CountdownTimer";
 import { HoverBorderGradient } from "./ui/HoverBorderGradient";
 import { motion } from "framer-motion";
-import bvicamlogo from "../assets/bvicamLogo.png";
+
 import incubations from "../assets/incubations.png";
 
 // Sponsor logos

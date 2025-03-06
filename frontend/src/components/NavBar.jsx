@@ -1,5 +1,5 @@
 "use client"; // Remove if not using Next.js
-
+import bvicamlogo from "../assets/bvicamLogo.png";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
@@ -54,9 +54,9 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo */}
-        <div className="flex-shrink-0">
-          <span className="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
-            BVICAM-NSC
+        <div className="flex items-center justify-center ">
+          <img src={bvicamlogo} alt="BVICAM Logo" className="h-20 p-2 left-0" />
+          <span className="ml-3 text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
           </span>
         </div>
 
@@ -81,27 +81,26 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu */}
-      {isMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
-          className="md:hidden bg-gradient-to-r from-gray-900 to-black/80 border-t border-gray-700/50 px-4 pt-2 pb-4"
-        >
-          {navItems.map((item) => (
-            <div key={item.name} className="py-2">
-              <p
-                className="text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.name}
-              </p>
-              <p className="text-xs text-gray-400 mt-1">{item.content}</p>
-            </div>
-          ))}
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={isMenuOpen ? { opacity: 1, height: "auto" } : { opacity: 0, height: 0 }}
+        transition={{ duration: 0.3 }}
+        className={`md:hidden bg-gradient-to-r from-gray-900 to-black/80 border-t border-gray-700/50 px-4 pt-2 pb-4 ${
+          isMenuOpen ? "block" : "hidden"
+        }`}
+      >
+        {navItems.map((item) => (
+          <div key={item.name} className="py-2">
+            <p
+              className="cursor-pointer text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {item.name}
+            </p>
+            <p className="text-xs text-gray-400 mt-1">{item.content}</p>
+          </div>
+        ))}
+      </motion.div>
     </motion.nav>
   );
 };
