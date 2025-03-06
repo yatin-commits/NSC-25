@@ -55,7 +55,7 @@ export function HeroSection() {
 
         {/* Countdown Timer */}
         <div className="mt-6 flex justify-center">
-          <CountdownTimer initialTime={86400 + 3600 + 300 + 15} />
+          <CountdownTimer initialTime={186400 + 36000 + 300 + 15} />
         </div>
 
         {/* Register Button */}

@@ -1,8 +1,9 @@
-"use client"; // Remove if not using Next.js
-import bvicamlogo from "../assets/bvicamLogo.png";
-import React, { useState } from "react";
+"use client"; // Keep if using Next.js
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import bvicamlogo from "../assets/bvicamLogo.png";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 // Menu Item Component
 const MenuItem = ({ setActive, active, item, children }) => {
@@ -10,7 +11,9 @@ const MenuItem = ({ setActive, active, item, children }) => {
     <div onMouseEnter={() => setActive(item)} className="relative group">
       <p
         className={`cursor-pointer text-gray-200 text-sm md:text-base font-medium transition-all duration-300 group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-500 group-hover:to-pink-500 ${
-          active === item ? "font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500" : "text-opacity-90"
+          active === item
+            ? "font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500"
+            : "text-opacity-90"
         }`}
       >
         {item}
@@ -36,6 +39,13 @@ const MenuItem = ({ setActive, active, item, children }) => {
 const Navbar = () => {
   const [active, setActive] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, login, logout } = useAuth();
+
+  // Handle login with popup for all devices
+  const handleLogin = () => {
+    login(false); // Always use popup login
+    setIsMenuOpen(false); // Close mobile menu
+  };
 
   const navItems = [
     { name: "Schedule", content: "View the event timeline" },
@@ -54,10 +64,8 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo */}
-        <div className="flex items-center justify-center ">
-          <img src={bvicamlogo} alt="BVICAM Logo" className="h-20 p-2 left-0" />
-          <span className="ml-3 text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
-          </span>
+        <div className="flex items-center">
+          <img src={bvicamlogo} alt="BVICAM Logo" className="h-16 p-2" />
         </div>
 
         {/* Desktop Menu */}
@@ -67,6 +75,24 @@ const Navbar = () => {
               <p>{item.content}</p>
             </MenuItem>
           ))}
+          {/* Login/Logout Button for Desktop */}
+          <div>
+            {user ? (
+              <button
+                onClick={logout}
+                className="text-gray-200 text-sm md:text-base font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+              >
+                Logout
+              </button>
+            ) : (
+              <button
+                onClick={handleLogin}
+                className="text-gray-200 text-sm md:text-base font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+              >
+                Login with Google
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
@@ -100,6 +126,27 @@ const Navbar = () => {
             <p className="text-xs text-gray-400 mt-1">{item.content}</p>
           </div>
         ))}
+        {/* Login/Logout Button for Mobile */}
+        <div className="py-2">
+          {user ? (
+            <button
+              onClick={() => {
+                logout();
+                setIsMenuOpen(false);
+              }}
+              className="text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+            >
+              Login with Google
+            </button>
+          )}
+        </div>
       </motion.div>
     </motion.nav>
   );

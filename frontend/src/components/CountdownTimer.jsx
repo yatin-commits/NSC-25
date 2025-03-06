@@ -35,7 +35,7 @@ const CountdownTimer = ({ initialTime }) => {
   return (
     <div className="flex flex-col mt-4 items-center justify-center p-4 text-gray-900 border border-gray-300 rounded-lg bg-white shadow-md space-y-4 w-full max-w-md mx-auto">
       <div className="text-3xl md:text-4xl lg:text-5xl font-semibold flex space-x-2">
-        <motion.div
+        {/* <motion.div
           key={days}
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -44,7 +44,7 @@ const CountdownTimer = ({ initialTime }) => {
           className="w-12 md:w-16 text-center bg-gray-200 p-2 rounded"
         >
           {days}
-        </motion.div>
+        </motion.div> */}
         <span>:</span>
         <motion.div
           key={hours}

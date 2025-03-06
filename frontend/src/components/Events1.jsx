@@ -6,8 +6,8 @@ import shark from "../assets/shark.png";
 import code from "../assets/code.png";
 import binary from "../assets/binary.png";
 import { MapPin, X, Award } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
-import  eventFields  from "./eventFields";
+import { useAuth } from "../context/AuthContext.jsx";
+
 const eventsData = [
   // Your eventsData array, unchanged (omitted for brevity)
   {
@@ -221,21 +221,23 @@ const Events = () => {
 
   useEffect(() => {
     if (user) {
-      console.log("User logged in, fetching registrations for UID:", user.uid);
+      console.log("Fetching registrations for user:", user.uid);
       fetchRegistrations(user.uid);
     }
   }, [user]);
 
   const fetchRegistrations = async (uid) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/registrations?userId=${uid}`);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const response = await fetch(`/api/registrations?userId=${uid}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch registrations: ${response.status} ${response.statusText}`);
+      }
       const data = await response.json();
-      console.log("Fetched registrations:", data);
-      setRegistrations(data || []);
+      console.log("Registrations fetched:", data);
+      setRegistrations(Array.isArray(data) ? data : []); // Ensure it's an array
     } catch (error) {
-      console.error("Error fetching registrations:", error);
-      setRegistrations([]);
+      console.error("Error fetching registrations:", error.message);
+      setRegistrations([]); // Reset on error
     }
   };
 
@@ -248,88 +250,50 @@ const Events = () => {
       alert("Please log in to register.");
       return;
     }
-    const requiredFields = eventFields[eventId].map(f => f.name); // Extract field names
-    if (!requiredFields.every((field) => formData[field])) {
-      alert("Please select all required fields.");
+    const requiredFields = eventFields[eventId];
+    if (!requiredFields.every((field) => formData[field] && formData[field].trim())) {
+      alert("Please fill all required fields with valid data.");
       return;
     }
-    console.log("Registering for event:", { eventId, userId: user.uid, fields: formData });
+    const payload = { eventId, userId: user.uid, fields: formData };
+    console.log("Sending registration payload:", payload);
     try {
-      const response = await fetch("http://localhost:5000/api/register", {
+      const response = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ eventId, userId: user.uid, fields: formData }),
+        body: JSON.stringify(payload),
       });
       const data = await response.json();
+      console.log("Registration response:", data);
       if (response.ok) {
         alert("Registration successful!");
-        fetchRegistrations(user.uid);
-        setFormData({});
+        await fetchRegistrations(user.uid); // Refresh registrations
+        setFormData({}); // Clear form
       } else {
-        console.error("Registration error:", data);
+        console.error("Registration failed:", data);
         alert(data.error || "Registration failed.");
       }
     } catch (error) {
-      console.error("Error during registration:", error);
-      alert("An error occurred while registering.");
+      console.error("Network or server error during registration:", error.message);
+      alert("An error occurred while registering. Please try again.");
     }
   };
 
- 
-
-  const renderField = (field) => {
-    switch (field.type) {
-      case "select":
-        return (
-          <select
-            name={field.name}
-            value={formData[field.name] || ""}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            required
-          >
-            <option value="">Select an option</option>
-            {field.options.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        );
-      case "radio":
-        return (
-          <div className="flex gap-4">
-            {field.options.map((option) => (
-              <label key={option} className="flex items-center">
-                <input
-                  type="radio"
-                  name={field.name}
-                  value={option}
-                  checked={formData[field.name] === option}
-                  onChange={handleInputChange}
-                  className="mr-2"
-                  required
-                />
-                {option}
-              </label>
-            ))}
-          </div>
-        );
-      case "text":
-      default:
-        return (
-          <input
-            type="text"
-            name={field.name}
-            value={formData[field.name] || ""}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            required
-          />
-        );
-    }
+  const eventFields = {
+    1: ["teamName", "teamSize", "preferredLanguage"],
+    2: ["performanceType", "groupSize", "songChoice"],
+    3: ["teamName", "teamSize"],
+    4: ["codingLanguage", "experienceLevel"],
+    5: ["pitchTitle", "teamSize", "industry"],
+    6: ["cameraType", "photoTheme"],
+    7: ["filmTitle", "teamSize", "genre"],
+    8: ["playTitle", "castSize"],
+    9: ["danceStyle", "groupSize"],
+    10: ["debateTopicPreference", "teamName"],
+    11: ["songChoice", "groupSize", "choreographer"],
+    12: ["artMedium", "artTheme"],
   };
 
   return (
@@ -352,9 +316,9 @@ const Events = () => {
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="text-4xl md:text-6xl h-[69px] items-center align-middle flex justify-center font-extrabold text-center bg-gradient-to-r from-[#00E6E6] via-[#00B3FF] to-[#0099FF] bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-6xl h-[69px] items-center align-middle flex justify-center font-extrabold text-center bg-gradient-to-r from-[#00E6E6] via-[#00B3FF] to-[#0099FF] bg-clip-text text-transparent">
           Upcoming Thrills
-        </h2>
+        </h1>
         <div className="text-center mt-2">
           {user ? (
             <>
@@ -460,11 +424,18 @@ const Events = () => {
                           <div className="mt-6">
                             <h3 className="font-semibold text-xl mb-4">Register</h3>
                             {eventFields[event.id].map((field) => (
-                              <div key={field.name} className="mb-4">
+                              <div key={field} className="mb-4">
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                  {field.name.replace(/([A-Z])/g, " $1").trim()}
+                                  {field.replace(/([A-Z])/g, " $1").trim()}
                                 </label>
-                                {renderField(field)}
+                                <input
+                                  type="text"
+                                  name={field}
+                                  value={formData[field] || ""}
+                                  onChange={handleInputChange}
+                                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                  required
+                                />
                               </div>
                             ))}
                             <button
@@ -477,6 +448,13 @@ const Events = () => {
                         )}
                         {user && registrations.some((r) => r.eventId === event.id) && (
                           <p className="mt-4 text-green-600">You are already registered for this event!</p>
+                        )}
+                        {/* Debugging: Show registrations */}
+                        {user && (
+                          <div className="mt-4">
+                            <p>Current Registrations:</p>
+                            <pre>{JSON.stringify(registrations, null, 2)}</pre>
+                          </div>
                         )}
                       </div>
                     </div>
