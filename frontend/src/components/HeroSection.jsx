@@ -4,6 +4,7 @@ import { BackgroundBoxesDemo } from "./BackgroundBoxesDemo"; // Background effec
 import CountdownTimer from "./CountdownTimer";
 import { HoverBorderGradient } from "./ui/HoverBorderGradient";
 import { motion } from "framer-motion";
+import bvicamlogo from "../assets/bvicamLogo.png";
 
 // Sponsor logos
 const sponsorLogos = [
@@ -131,7 +132,7 @@ export function HeroSection() {
           ))}
         </div> */}
         <div>
-          <img src="/src/assets/bvicamLogo.png" alt="logo" />
+          <img src={bvicamlogo} alt="logo" />
 
         </div>
       </motion.div>
