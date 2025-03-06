@@ -5,6 +5,7 @@ import CountdownTimer from "./CountdownTimer";
 import { HoverBorderGradient } from "./ui/HoverBorderGradient";
 import { motion } from "framer-motion";
 import bvicamlogo from "../assets/bvicamLogo.png";
+import incubations from "../assets/incubations.png";
 
 // Sponsor logos
 const sponsorLogos = [
@@ -132,7 +133,7 @@ export function HeroSection() {
           ))}
         </div> */}
         <div>
-          <img src={bvicamlogo} alt="logo" />
+          <img src={incubations} alt="logo" />
 
         </div>
       </motion.div>
