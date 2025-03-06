@@ -8,6 +8,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get('/', (req, res) => {
+  res.send('Hello from Express!');
+});
+
 // Connect to MongoDB
 mongoose.connect("mongodb+srv://yatin2104:yatin2104@bvicam-nsc.z71wy.mongodb.net/users", {
 }).then(() => console.log('MongoDB connected'))
