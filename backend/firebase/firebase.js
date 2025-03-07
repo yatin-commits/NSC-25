@@ -1,6 +1,7 @@
 // firebase.js
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js'
+// import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth,GoogleAuthProvider } from 'https://cdn.jsdelivr.net/npm/firebase@^11.4.0/firebase-auth.js/+esm' 
 
 const firebaseConfig = {
     apiKey: "AIzaSyDKeAPiGZWI9jOny4bdiJ9Jn2wOq3ZIQ3A",

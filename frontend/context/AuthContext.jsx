@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { auth, googleProvider } from "../../backend/firebase/firebase";
-import { signInWithPopup, signInWithRedirect, signOut } from "firebase/auth";
+import { signInWithPopup, signInWithRedirect, signOut }  from 'https://cdn.jsdelivr.net/npm/firebase@^11.4.0/firebase-auth.js/+esm' 
 
 const AuthContext = createContext();
 
