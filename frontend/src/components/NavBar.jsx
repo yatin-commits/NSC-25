@@ -1,9 +1,12 @@
 "use client"; // Keep if using Next.js
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import bvicamlogo from "../assets/bvicamLogo.png";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+
+// List of admin emails
+const adminEmails = ["sharmayatin0882@gmail.com", "shreyasinghal706@gmail.com", "admin3@example.com"];
 
 // Menu Item Component
 const MenuItem = ({ setActive, active, item, children }) => {
@@ -41,6 +44,9 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, login, logout } = useAuth();
 
+  // Check if the logged-in user is an admin
+  const isAdmin = user && adminEmails.includes(user.email);
+
   // Handle login with popup for all devices
   const handleLogin = () => {
     login(false); // Always use popup login
@@ -75,6 +81,17 @@ const Navbar = () => {
               <p>{item.content}</p>
             </MenuItem>
           ))}
+
+          {/* Show Admin Panel Button if user is an admin */}
+          {isAdmin && (
+            <a
+              href="/admin"
+              className="text-gray-200 text-sm md:text-base font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+            >
+              Admin Panel
+            </a>
+          )}
+
           {/* Login/Logout Button for Desktop */}
           <div>
             {user ? (
@@ -126,6 +143,19 @@ const Navbar = () => {
             <p className="text-xs text-gray-400 mt-1">{item.content}</p>
           </div>
         ))}
+
+        {/* Show Admin Panel Button for Mobile if user is an admin */}
+        {isAdmin && (
+          <div className="py-2">
+            <a
+              href="/admin"
+              className="text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+            >
+              Admin Panel
+            </a>
+          </div>
+        )}
+
         {/* Login/Logout Button for Mobile */}
         <div className="py-2">
           {user ? (
