@@ -338,12 +338,16 @@ const Events = () => {
   <div className="text-center mt-4 flex flex-col items-center gap-4">
     {user ? (
       <>
-        <span className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 px-4  rounded-full shadow-sm">
-          Welcome, <span className="text-indigo-600 dark:text-indigo-400">{user.name || user.email}</span><br />
+        <span className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 px-4 rounded-full shadow-sm">
+          Welcome,{" "}
+          <span className="text-indigo-600 dark:text-indigo-400">
+            {user.name || user.email}
+          </span>
         </span>
-        <span className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50  px-4 rounded-full shadow-sm"> <span className="text-indigo-600 dark:text-indigo-400">{ user.email}</span><br />
+        <span className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 px-4 rounded-full shadow-sm">
+          <span className="text-indigo-600 dark:text-indigo-400">{user.email}</span>
         </span>
-        
+        {/* Uncomment if you want the logout button on mobile */}
         {/* <div className="md:hidden flex justify-center">
           <button
             onClick={handleLogout}
@@ -354,20 +358,18 @@ const Events = () => {
         </div> */}
       </>
     ) : (
-      <div className="md:hidden">
-        <button
-          onClick={handleLogin}
-          className="text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-5 py-2 rounded-full transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a4.898 4.898 0 01-4.897-4.904 4.898 4.898 0 014.897-4.904c1.466 0 2.785.631 3.692 1.638l2.695-2.695A8.097 8.097 0 0011.956 3c-4.473 0-8.104 3.631-8.104 8.104 0 4.473 3.631 8.104 8.104 8.104 4.473 0 8.104-3.631 8.104-8.104 0-.382-.046-.757-.121-1.132z"
-              fill="currentColor"
-            />
-          </svg>
-          Login with Google
-        </button>
-      </div>
+      <button
+        onClick={handleLogin}
+        className="text-sm sm:text-base font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-5 py-2 rounded-full transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a4.898 4.898 0 01-4.897-4.904 4.898 4.898 0 014.897-4.904c1.466 0 2.785.631 3.692 1.638l2.695-2.695A8.097 8.097 0 0011.956 3c-4.473 0-8.104 3.631-8.104 8.104 0 4.473 3.631 8.104 8.104 8.104 4.473 0 8.104-3.631 8.104-8.104 0-.382-.046-.757-.121-1.132z"
+            fill="currentColor"
+          />
+        </svg>
+        Login with Google
+      </button>
     )}
   </div>
 </motion.div>

@@ -6,10 +6,12 @@ import AdminPanel from "./components/AdminPanel";
 import Navbarr from "./components/NavBarr";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   return (
     <>
+    <Toaster position="top-center" reverseOrder={false} />
       <Navbarr />
       <Routes>
         <Route path="/" element={<Home/>} />

@@ -8,10 +8,10 @@ const adminEmails = ["sharmayatin0882@gmail.com", "superadmin@example.com"];
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
-  if (loading) return <FiLoader className="text-lg  animate-spin size-8" />; // Prevent redirect until auth state is known
+  if (loading) return <p>Loading...</p>; // Prevent redirection until auth state is known
 
-  const isAdmin = user && adminEmails.includes(user.email);
   console.log("User:", user);
+  const isAdmin = user && adminEmails.includes(user.email);
   console.log("Is Admin:", isAdmin);
 
   return isAdmin ? children : <Navigate to="/" replace />;

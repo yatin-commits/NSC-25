@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { auth, googleProvider } from "../../backend/firebase/firebase";
-import { signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged } from "firebase/auth";
+import { signInWithPopup, signInWithRedirect, signOut }  from 'https://cdn.jsdelivr.net/npm/firebase@^11.4.0/firebase-auth.js/+esm' 
 import toast from "react-hot-toast";
 import { FiLoader } from "react-icons/fi";
 
@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUser({
           name: user.displayName,
@@ -42,12 +42,12 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Login failed:", error);
-      toast.error("Login failed. Please try again.");
     }
   };
 
   const logout = async () => {
-    const loadingToast = toast.loading("Logging out...");
+    const loadingToast = toast.loading("Logging out..."); // Show loading toast
+  
     try {
       await signOut(auth);
       setUser(null);
@@ -59,15 +59,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {loading ? (
-  <div className="flex justify-center items-center min-h-screen">
-    <FiLoader className="text-lg  animate-spin size-8" />
-  </div>
-) : (
-  children
-)}
- {/* Prevent rendering before auth state is known */}
+        // Show a loading spinner while authentication state is being checked
+        <div className="flex justify-center items-center min-h-screen">
+          <FiLoader className="text-4xl animate-spin text-blue-500" />
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };
