@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 // Define allowed admin emails
-const adminEmails = ["sharmayatin0882@gmail.com", "superadmin@example.com"];
+const adminEmails = ["sharmayatin0882@gmail.com", "shreyasinghal706@gmail.com"];
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
