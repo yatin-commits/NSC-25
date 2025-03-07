@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { eventFields, eventsData } from "./eventFields";
-import Navbar from "./Navbar";
+import Navbarr from "./NavBarr";
 import * as XLSX from "xlsx";
 
 const AdminPanel = () => {
@@ -43,7 +43,7 @@ const AdminPanel = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbarr />
 
       <div className="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-20">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Admin Panel</h2>
