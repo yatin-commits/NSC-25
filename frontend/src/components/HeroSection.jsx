@@ -23,7 +23,7 @@ const bgVariants = {
 
 export function HeroSection() {
   return (
-    <div className="relative flex flex-col items-center md:justify-center pt-16 md:min-h-screen overflow-hidden px-4 text-center bg-white text-gray-900">
+    <div className="relative flex flex-col items-center md:justify-center pt-16 md:min-h-screen overflow-hidden px-4 text-center bg-gradient-to-br from-indigo-50 to-purple-100 text-gray-900">
       {/* Animated Background */}
       <motion.div
         variants={bgVariants}

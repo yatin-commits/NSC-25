@@ -2,11 +2,14 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { auth, googleProvider } from "../../backend/firebase/firebase";
 import { signInWithPopup, signInWithRedirect, signOut }  from 'https://cdn.jsdelivr.net/npm/firebase@^11.4.0/firebase-auth.js/+esm' 
+import toast from "react-hot-toast";
+import { FiLoader } from "react-icons/fi";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -19,17 +22,17 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(null);
       }
+      setLoading(false); // Stop loading once auth state is determined
     });
+
     return () => unsubscribe();
   }, []);
 
   const login = async (useRedirect = false) => {
     try {
       if (useRedirect) {
-        // Use redirect for mobile
         await signInWithRedirect(auth, googleProvider);
       } else {
-        // Use popup for desktop
         const result = await signInWithPopup(auth, googleProvider);
         setUser({
           name: result.user.displayName,
@@ -43,17 +46,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    const loadingToast = toast.loading("Logging out..."); // Show loading toast
+  
     try {
       await signOut(auth);
       setUser(null);
+      toast.success("Logged out successfully!", { id: loadingToast });
     } catch (error) {
       console.error("Logout failed:", error);
+      toast.error("Logout failed. Please try again.", { id: loadingToast });
     }
   };
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
+      {loading ? (
+        // Show a loading spinner while authentication state is being checked
+        <div className="flex justify-center items-center min-h-screen">
+          <FiLoader className="text-4xl animate-spin text-blue-500" />
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };

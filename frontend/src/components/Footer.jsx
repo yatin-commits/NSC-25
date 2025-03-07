@@ -1,63 +1,134 @@
-import { FaInstagram, FaFacebook, FaLinkedin, FaPaperPlane } from "react-icons/fa";
-import logo from '../assets/bvicamLogo.png';
-import { Link } from 'react-router-dom';
+import React from "react";
+import bvicamLogo from "/src/assets/bvicamLogo.png"; // Adjust path as needed
+import { FaFacebook, FaInstagram, FaLinkedin, FaPaperPlane } from "react-icons/fa";
 
 const Footer = () => {
-    return (
-        <footer className="bg-gradient-to-b from-gray-950 via-black to-gray-900 text-gray-300 py-16 px-6 relative">
-            <div className="max-w-7xl mx-auto -mt-4 grid grid-cols-1 md:grid-cols-4 gap-12 text-center md:text-left">
-                
-                
-                <div>
-                    <img src={logo} alt="BVICAM Logo" className="w-48 mx-auto md:mx-0 drop-shadow-lg" />
-                    <p className="mt-4 text-sm text-gray-400">© BVICAM 2024. All rights reserved.</p>
-                </div>
-                
-                
-                <div>
-                    <h2 className="font-semibold text-xl text-white mb-4 border-l-4 border-yellow-400 pl-3">Quick Links</h2>
-                    <ul className="space-y-3">
-                        <li><Link to="/schedule" className="hover:text-yellow-400 transition duration-300">Schedule</Link></li>
-                        <li><Link to="/events" className="hover:text-yellow-400 transition duration-300">Events</Link></li>
-                        <li><Link to="/coordinators" className="hover:text-yellow-400 transition duration-300">Coordinators</Link></li>
-                        <li><Link to="/faqs" className="hover:text-yellow-400 transition duration-300">FAQ's</Link></li>
-                    </ul>
-                </div>
-                
-                
-                <div>
-                    <h2 className="font-semibold text-xl text-white mb-4 border-l-4 border-yellow-400 pl-3">Follow Us</h2>
-                    <div className="flex justify-center md:justify-start space-x-6 mt-3">
-                        <FaFacebook size={32} className="hover:text-blue-500 transition-transform transform hover:scale-125 hover:shadow-lg cursor-pointer" />
-                        <FaInstagram size={32} className="hover:text-pink-500 transition-transform transform hover:scale-125 hover:shadow-lg cursor-pointer" />
-                        <FaLinkedin size={32} className="hover:text-blue-400 transition-transform transform hover:scale-125 hover:shadow-lg cursor-pointer" />
-                    </div>
-                </div>
-                
-                
-                <div>
-                    <h2 className="font-semibold text-xl text-white mb-4 border-l-4 border-yellow-400 pl-3">Stay Updated</h2>
-                    <p className="text-sm text-gray-400">Subscribe to our newsletter for the latest updates.</p>
-                    <div className="mt-5 flex items-center bg-gray-900/60 backdrop-blur-md rounded-full px-4 py-2 shadow-lg w-80">
-                        <input 
-                            type="email" 
-                            placeholder="Enter your email" 
-                            className="bg-transparent text-white placeholder-gray-400 focus:outline-none flex-grow px-3 py-2 focus:ring-2 focus:ring-yellow-400 rounded-full"
-                        />
-                        <button className="bg-gradient-to-r from-yellow-400 to-yellow-600 p-3 rounded-full transition-transform transform hover:scale-110 hover:shadow-lg">
-                            <FaPaperPlane className="text-black" />
-                        </button>
-                    </div>
-                </div>
-            </div>
+  return (
+    <footer className="bg-gradient-to-br from-gray-900 via-indigo-900 to-purple-900 text-white py-8 sm:py-12">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
+          {/* Logo and Tagline */}
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+            <img
+              src={bvicamLogo}
+              alt="BVICAM Logo"
+              className="w-36 sm:w-40 lg:w-44 h-auto mb-4 transform hover:scale-105 transition duration-300"
+            />
+            <p className="text-sm sm:text-base text-gray-300">
+              Empowering innovation, shaping the future.
+            </p>
+            <p className="mt-2 text-xs sm:text-sm text-gray-400">
+              © 2024 BVICAM. All rights reserved.
+            </p>
+          </div>
 
-            
-            <div className="mt-12 relative text-center">
-                <div className="text-[4rem] md:text-[11rem] -mt-21 font-bold text-gray-500 opacity-17 uppercase tracking-widest">BVICAM</div>
-                <p className="mt-[-2rem] text-sm text-gray-500 -mb-3">Made with ❤️ and a lot of ☕ by Shreya & Yatin</p>
+          {/* Quick Links */}
+          
+          <div className="flex flex-col items-center sm:items-start">
+            <h3 className="text-lg sm:text-xl font-bold text-yellow-300 mb-4 relative">
+              Quick Links
+              <span className="absolute -bottom-1 left-0 w-12 h-1 bg-yellow-400 rounded-full"></span>
+            </h3>
+            <ul className="space-y-3 text-sm sm:text-base">
+              {["Schedule", "Events", "Coordinators", "FAQ's"].map((link) => (
+                <li key={link}>
+                  <a
+                    href={`#${link.toLowerCase()}`}
+                    className="text-gray-300 hover:text-yellow-400 hover:translate-x-2 transition-all duration-200"
+                  >
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Social Media */}
+          <div className="flex flex-col items-center sm:items-start">
+            <h3 className="text-lg sm:text-xl font-bold text-yellow-300 mb-4 relative">
+              Connect With Us
+              <span className="absolute -bottom-1 left-0 w-12 h-1 bg-yellow-400 rounded-full"></span>
+            </h3>
+            <div className="flex space-x-4 sm:space-x-6">
+              {[
+                { Icon: FaFacebook, url: "https://www.facebook.com/share/bC9x66sK5qH7Tqoe/" },
+                { Icon: FaInstagram, url: "https://www.instagram.com/ibvicam?igsh=MXZsY2MzcnllaXdtdg==" },
+                { Icon: FaLinkedin, url: "https://www.linkedin.com/school/bharati-vidyapeeth-institute-of-computer-applications-&-management/" },
+              ].map(({ Icon, url }, index) => (
+                <a
+                  key={index}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-yellow-400 transform hover:scale-125 transition-all duration-300"
+                >
+                  <Icon size={8} className="size-8" />
+                </a>
+              ))}
             </div>
-        </footer>
-    );
-}
+          </div>
+
+          {/* Newsletter Signup */}
+          <div className="flex flex-col items-center sm:items-start">
+            <h3 className="text-lg sm:text-xl font-bold text-yellow-300 mb-4 relative">
+              Stay Updated
+              <span className="absolute -bottom-1 left-0 w-12 h-1 bg-yellow-400 rounded-full"></span>
+            </h3>
+            <p className="text-sm sm:text-base text-gray-300 mb-4 text-center sm:text-left">
+              Subscribe for the latest news and events.
+            </p>
+            <div className="flex w-full max-w-xs sm:max-w-sm">
+              <input
+                type="email"
+                placeholder="Your email"
+                className="flex-1 px-3 py-2 sm:px-4 sm:py-3 bg-gray-800 border border-gray-700 rounded-l-md text-gray-300 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none text-xs sm:text-sm"
+              />
+              <button className="px-3 sm:px-4 py-2 sm:py-3 bg-yellow-400 text-gray-900 font-semibold rounded-r-md hover:bg-yellow-500 transition-all duration-200">
+                <FaPaperPlane size={14} className="sm:size-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="mt-8 sm:mt-12 border-t border-gray-700"></div>
+
+        {/* Footer Credits */}
+        {/* <div className="text-center text-gray-400 mt-6 sm:mt-8">
+          <p className="text-xs sm:text-sm">
+            Crafted with <span className="text-red-400 animate-pulse">❤️</span> by
+            <a
+              href="https://www.linkedin.com/in/kumar-amrendram/"
+              className="text-yellow-300 hover:underline mx-1"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Amrendram
+            </a>
+            |
+            <a
+              href="https://www.linkedin.com/in/yatinsharma01/"
+              className="text-yellow-300 hover:underline mx-1"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Yatin
+            </a>
+            |
+            <a
+              href="#"
+              className="text-yellow-300 hover:underline mx-1"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Vijay
+            </a>
+          </p>
+        </div> */}
+      </div>
+    </footer>
+  );
+};
 
 export default Footer;

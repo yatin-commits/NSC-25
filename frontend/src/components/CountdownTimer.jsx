@@ -1,84 +1,48 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+"use client";
+import React, { useState, useEffect } from "react";
 
-// Function to format time into DD:HH:MM:SS
-const formatTime = (time) => {
-  const days = Math.floor(time / (60 * 60 * 24));
-  const hours = Math.floor((time % (60 * 60 * 24)) / (60 * 60));
-  const minutes = Math.floor((time % (60 * 60)) / 60);
-  const seconds = time % 60;
-
-  return {
-    days: days.toString().padStart(2, "0"),
-    hours: hours.toString().padStart(2, "0"),
-    minutes: minutes.toString().padStart(2, "0"),
-    seconds: seconds.toString().padStart(2, "0"),
-  };
-};
-
-const CountdownTimer = ({ initialTime }) => {
-  const [timeLeft, setTimeLeft] = useState(initialTime);
-  const { days, hours, minutes, seconds } = formatTime(timeLeft);
+const CountdownTimer = () => {
+  const targetDate = new Date("2025-04-04T00:00:00Z").getTime();
+  const [timeLeft, setTimeLeft] = useState(Math.max(0, Math.floor((targetDate - Date.now()) / 1000)));
 
   useEffect(() => {
-    let interval = null;
+    if (timeLeft <= 0) return;
 
-    if (timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
-      }, 1000);
-    }
+    const timer = setInterval(() => {
+      setTimeLeft(Math.max(0, Math.floor((targetDate - Date.now()) / 1000)));
+    }, 1000);
 
-    return () => clearInterval(interval);
-  }, [timeLeft]);
+    return () => clearInterval(timer);
+  }, [timeLeft, targetDate]);
+
+  const formatTime = (seconds) => {
+    const days = Math.floor(seconds / (3600 * 24));
+    const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    return [
+      { label: "Days", value: days },
+      { label: "Hours", value: hours },
+      { label: "Minutes", value: minutes },
+      { label: "Seconds", value: secs },
+    ];
+  };
+
+  const timeSegments = formatTime(timeLeft);
 
   return (
-    <div className="flex flex-col mt-4 items-center justify-center p-4 text-gray-900 border border-gray-300 rounded-lg bg-white shadow-md space-y-4 w-full max-w-md mx-auto">
-      <div className="text-3xl md:text-4xl lg:text-5xl font-semibold flex space-x-2">
-        {/* <motion.div
-          key={days}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -20, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="w-12 md:w-16 text-center bg-gray-200 p-2 rounded"
-        >
-          {days}
-        </motion.div> */}
-        <span>:</span>
-        <motion.div
-          key={hours}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -20, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="w-12 md:w-16 text-center bg-gray-200 p-2 rounded"
-        >
-          {hours}
-        </motion.div>
-        <span>:</span>
-        <motion.div
-          key={minutes}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -20, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="w-12 md:w-16 text-center bg-gray-200 p-2 rounded"
-        >
-          {minutes}
-        </motion.div>
-        <span>:</span>
-        <motion.div
-          key={seconds}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -20, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="w-12 md:w-16 text-center bg-gray-200 p-2 rounded"
-        >
-          {seconds}
-        </motion.div>
-      </div>
+    <div className="flex gap-4 md:gap-6 text-center">
+      {timeSegments.map((segment) => (
+        <div key={segment.label} className="flex flex-col items-center">
+          <span className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white">
+            {segment.value.toString().padStart(2, "0")}
+          </span>
+          <span className="text-sm md:text-base text-gray-600 dark:text-gray-400">
+            {segment.label}
+          </span>
+        </div>
+      ))}
     </div>
   );
 };
