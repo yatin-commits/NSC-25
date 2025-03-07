@@ -13,7 +13,7 @@ const AdminPanel = () => {
     if (selectedEvent) {
       setLoading(true);
       axios
-        .get(`http://localhost:5000/api/registrations/all?eventId=${selectedEvent}`)
+        .get(`https://nsc-25-backend.vercel.app/api/registrations/all?eventId=${selectedEvent}`)
         .then((response) => setRegistrations(response.data))
         .catch((error) => console.error("Error fetching data:", error))
         .finally(() => setLoading(false));
