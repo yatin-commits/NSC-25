@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { eventFields, eventsData } from "./eventFields";
-import Navbar from "./NavBar";
+import Navbar from "./Navbar";
 import * as XLSX from "xlsx";
 
 const AdminPanel = () => {
