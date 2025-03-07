@@ -1,7 +1,15 @@
 import shark from "../assets/shark.png";
 import code from "../assets/code.png";
 import binary from "../assets/binary.png";
-
+import bollywood from "../assets/bollywood.png";
+import candid from "../assets/candidpng.png";
+import cinema from "../assets/cinema.png";
+import volleyball from "../assets/volleyball.png";
+import script from "../assets/script.png";
+import dancing from "../assets/dancing.png";
+import debate from "../assets/debate.png";
+import guitar from "../assets/guitar.png";
+import painting from "../assets/painting.png";
 export const eventFields = {
     1: [
       { name: "teamName", type: "text" },
@@ -79,7 +87,7 @@ export const eventFields = {
     {
       id: 2,
       name: "Bollywood Bazigar",
-      image: "/images/bollywood.jpg",
+      image: bollywood,
       shortDescription: "Dance and drama Bollywood-style!",
       longDescription:
         "Perform iconic Bollywood scenes or dance numbers in a high-energy competition.",
@@ -95,7 +103,7 @@ export const eventFields = {
     {
       id: 3,
       name: "Volleyball",
-      image: "/images/volleyball.jpg",
+      image: volleyball,
       shortDescription: "Spike your way to victory!",
       longDescription:
         "Compete in a fast-paced volleyball tournament with teams battling it out on the court.",
@@ -143,7 +151,7 @@ export const eventFields = {
     {
       id: 6,
       name: "Candid Moments",
-      image: "/images/photography.jpg",
+      image: candid,
       shortDescription: "Capture the perfect shot!",
       longDescription:
         "A photography contest where participants submit their best candid shots of the fest.",
@@ -159,7 +167,7 @@ export const eventFields = {
     {
       id: 7,
       name: "Cine Blitz",
-      image: "/images/cinema.jpg",
+      image: cinema,
       shortDescription: "Lights, camera, action!",
       longDescription:
         "Create and showcase a short film in this rapid filmmaking challenge.",
@@ -175,7 +183,7 @@ export const eventFields = {
     {
       id: 8,
       name: "Rangmanch",
-      image: "/images/theatre.jpg",
+      image: script,
       shortDescription: "Stage your story!",
       longDescription:
         "Perform a captivating drama or skit in this theatrical competition.",
@@ -191,7 +199,7 @@ export const eventFields = {
     {
       id: 9,
       name: "Fandango",
-      image: "/images/dance.jpg",
+      image: dancing,
       shortDescription: "Dance like nobody’s watching!",
       longDescription:
         "A solo or group dance competition featuring various styles and flair.",
@@ -207,7 +215,7 @@ export const eventFields = {
     {
       id: 10,
       name: "War of Words",
-      image: "/images/debate.jpg",
+      image: debate,
       shortDescription: "Argue your way to the top!",
       longDescription:
         "A debate competition where sharp minds clash over hot topics.",
@@ -223,7 +231,7 @@ export const eventFields = {
     {
       id: 11,
       name: "Bollywood Beats",
-      image: "/images/bollywooddance.jpg",
+      image: guitar,
       shortDescription: "Groove to Bollywood rhythms!",
       longDescription:
         "A dance-off featuring the best of Bollywood music and moves.",
@@ -239,7 +247,7 @@ export const eventFields = {
     {
       id: 12,
       name: "Creative Canvas",
-      image: "/images/art.jpg",
+      image: painting,
       shortDescription: "Paint your masterpiece!",
       longDescription:
         "An art competition where participants create themed artworks on the spot.",

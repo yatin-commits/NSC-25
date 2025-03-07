@@ -52,7 +52,7 @@ export function ScheduleSection() {
   };
 
   return (
-    <div className="py-8 px-4  bg-gradient-to-br from-indigo-50 to-purple-100 relative overflow-hidden">
+    <div className="py-8 px-4   bg-gradient-to-br from-indigo-50 to-purple-100 relative overflow-hidden">
       <motion.h1 className="text-center text-3xl md:text-5xl font-bold mb-8">
         Event Schedule
       </motion.h1>
@@ -67,7 +67,7 @@ export function ScheduleSection() {
         />
       </div> */}
 
-      <div className="relative max-w-6xl mx-auto">
+      <div className="relative  w-screen mx-auto">
         {filteredEvents.length > 0 ? (
           <>
             {isScrollable && (

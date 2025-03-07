@@ -23,13 +23,13 @@ const bgVariants = {
 
 export function HeroSection() {
   return (
-    <div className="relative flex flex-col items-center md:justify-center pt-16 md:min-h-screen overflow-hidden px-4 text-center bg-gradient-to-br from-indigo-50 to-purple-100 text-gray-900">
+    <div className="w-full flex  flex-col items-center md: pt-16 md:full overflow-hidden px-4 text-center bg-gradient-to-br from-indigo-50 to-purple-100 text-gray-900">
       {/* Animated Background */}
       <motion.div
         variants={bgVariants}
         initial="initial"
         animate="animate"
-        className="absolute inset-0 -z-10 bg-gradient-to-br from-[#f0f4f8] via-[#e6ecf3] to-[#dfe6ee] bg-[length:200%_200%]"
+        className="absolute  inset-0 -z-10  bg-gradient-to-br from-[#f0f4f8] via-[#e6ecf3] to-[#dfe6ee] bg-[length:200%_200%]"
       />
 
       {/* Main Content */}
@@ -37,10 +37,10 @@ export function HeroSection() {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative z-20 text-center w-full max-w-5xl space-y-6"
+        className="  text-center w-screen  space-y-6"
       >
         {/* Heading */}
-        <h2 className="font-extrabold tracking-tight leading-tight text-5xl text-gray-900">
+        <h2 className="font-extrabold  tracking-tight leading-tight text-5xl lg:text-5xl text-gray-900">
           Join us in celebrating
           <br />
           <motion.span
@@ -71,7 +71,7 @@ export function HeroSection() {
 
         {/* Sponsor Logos */}
         <div className="w-full">
-          <img src={incubations} alt="logo" className="w-full mx-auto" />
+          <img src={incubations} alt="logo" className="w-[75%] object-contain mx-auto" />
         </div>
       </motion.div>
     </div>

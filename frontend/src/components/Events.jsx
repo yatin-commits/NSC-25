@@ -315,7 +315,7 @@ const Events = () => {
   return (
     <section className="min-h-screen py-6 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
       {/* Prize Highlight Section */}
-      <div className="max-w-7xl mx-auto mb-6 py-4 px-4 text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-xl shadow-xl overflow-hidden">
+      <div className="w-full mx-auto mb-6 py-4 px-4 text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-xl shadow-xl overflow-hidden">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
           <Award className="w-8 h-8 text-white" />
           <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg">
@@ -327,7 +327,7 @@ const Events = () => {
 
       {/* Header with Login/Logout */}
       <motion.div
-  className="max-w-7xl mx-auto py-6 px-4 rounded-b-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg"
+  className="w-full mx-auto py-6 px-4 rounded-b-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg"
   initial={{ y: -50 }}
   animate={{ y: 0 }}
   transition={{ duration: 0.5 }}
@@ -335,7 +335,7 @@ const Events = () => {
   <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-center bg-gradient-to-r from-[#00E6E6] via-[#00B3FF] to-[#0099FF] bg-clip-text text-transparent tracking-tight drop-shadow-md">
     Upcoming Thrills
   </h2>
-  <div className="text-center mt-4 flex flex-col items-center gap-4">
+  <div className="text-center mt-4 w-full flex flex-row justify-center flex-wrap items-center gap-4">
     {user ? (
       <>
         <span className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 px-4 rounded-full shadow-sm">
@@ -375,130 +375,152 @@ const Events = () => {
 </motion.div>
 
       {/* Events Grid or Expanded View */}
-      <div className="mt-8 max-w-7xl mx-auto">
-        <AnimatePresence mode="wait">
-          {!expandedEvent ? (
-            <motion.div
-              key="grid"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              {eventsData.map((event) => (
-                <motion.div
-                  key={event.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer"
-                  onClick={() => setExpandedEvent(event.id)}
-                >
-                  <div className="relative h-32 sm:h-40 flex justify-center items-center overflow-hidden">
-                    <img
-                      src={typeof event.image === "string" ? event.image : event.image.src}
-                      alt={event.name}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h2 className="text-xl sm:text-2xl font-bold mb-2">{event.name}</h2>
-                    <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm mb-3">
-                      {event.shortDescription}
-                    </p>
-                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
-                      <MapPin className="w-4 h-4" /> {event.venue}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="expanded"
-              className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 overflow-y-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <div className="relative w-full max-w-lg sm:max-w-2xl md:max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-y-auto max-h-[90vh] p-4 sm:p-6">
-                <button
-                  onClick={() => setExpandedEvent(null)}
-                  className="absolute top-2 right-2 p-1 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 z-10"
-                >
-                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
-                </button>
-                {eventsData
-                  .filter((e) => e.id === expandedEvent)
-                  .map((event) => (
-                    <div key={event.id} className="flex flex-col">
-                      <div className="p-2 sm:p-4">
-                        <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-indigo-600">
-                          {event.name}
-                        </h2>
-                        <p className="text-sm sm:text-lg text-gray-700 dark:text-gray-200 mb-4">
-                          {event.longDescription}
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                          <div>
-                            <h3 className="font-semibold text-lg sm:text-xl mb-2 sm:mb-4">
-                              Rules
-                            </h3>
-                            <ul className="space-y-2 text-sm sm:text-base">
-                              {event.rules.map((rule, i) => (
-                                <li key={i} className="flex gap-2 items-center">
-                                  <span className="w-2 h-2 bg-indigo-400 rounded-full" /> {rule}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-lg sm:text-xl mb-2 sm:mb-4">
-                              Prize
-                            </h3>
-                            <p className="text-base sm:text-lg font-medium bg-indigo-50 dark:bg-indigo-900/20 p-2 sm:p-3 rounded-lg">
-                              {event.prize}
-                            </p>
-                          </div>
-                        </div>
-                        {/* Registration Form */}
-                        {user && !registrations.some((r) => r.eventId === event.id) && (
-                          <div className="mt-4 sm:mt-6">
-                            <h3 className="font-semibold text-lg sm:text-xl mb-2 sm:mb-4">
-                              Register
-                            </h3>
-                            {eventFields[event.id].map((field) => (
-                              <div key={field.name} className="mb-3 sm:mb-4">
-                                <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
-                                  {field.name.replace(/([A-Z])/g, " $1").trim()}
-                                </label>
-                                {renderField(field)}
-                              </div>
-                            ))}
-                            <button
-                              onClick={() => handleRegister(event.id)}
-                              className="mt-3 sm:mt-4 w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm sm:text-base"
-                            >
-                              Register
-                            </button>
-                          </div>
-                        )}
-                        {user && registrations.some((r) => r.eventId === event.id) && (
-                          <p className="mt-4 text-green-600 text-sm sm:text-base">
-                            You are already registered for this event!
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+      <div className="mt-8 w-full mx-auto">
+  <AnimatePresence mode="wait">
+    {!expandedEvent ? (
+      <motion.div
+        key="grid"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        {eventsData.map((event) => (
+          <motion.div
+            key={event.id}
+            layout
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer"
+            onClick={() => setExpandedEvent(event.id)}
+          >
+            <div className="relative h-40 sm:h-52 flex justify-center items-center overflow-hidden">
+  <img
+    src={typeof event.image === "string" ? event.image : event.image.src}
+    alt={event.name}
+    className="max-h-full max-w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+/>
+</div>
+
+            <div className="p-5">
+              <h2 className="text-xl font-bold mb-2 text-indigo-600">{event.name}</h2>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
+                {event.shortDescription}
+              </p>
+              <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs">
+                <MapPin className="w-4 h-4" /> {event.venue}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    ) : (
+      <motion.div
+  key="expanded"
+  className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50"
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+>
+  <div className="relative w-full max-w-3xl bg-white dark:bg-gray-800 rounded-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+    {/* Close Button */}
+    <button
+      onClick={() => setExpandedEvent(null)}
+      className="absolute top-4 right-4 p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 z-10"
+    >
+      <X className="w-6 h-6" />
+    </button>
+
+    {/* Scrollable Content */}
+    <div className="overflow-y-auto p-6 flex-1">
+      {eventsData
+        .filter((e) => e.id === expandedEvent)
+        .map((event) => (
+          <div key={event.id} className="flex flex-col">
+            {/* Event Image */}
+            <div className="relative h-56 rounded-lg overflow-hidden mb-4 flex justify-center items-center bg-gray-100">
+              <img
+                src={typeof event.image === "string" ? event.image : event.image.src}
+                alt={event.name}
+                className="h-full w-auto max-w-full object-contain"
+              />
+            </div>
+
+            {/* Event Name & Description */}
+            <h2 className="text-3xl font-bold text-indigo-600 mb-4 text-center">
+              {event.name}
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300 text-lg mb-6">
+              {event.longDescription}
+            </p>
+
+            {/* Rules & Prize Section */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-semibold text-xl mb-3">Rules</h3>
+                <ul className="space-y-2 text-base">
+                  {event.rules.map((rule, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <span className="w-3 h-3 bg-indigo-400 rounded-full" /> {rule}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl mb-3">Prize</h3>
+                <p className="text-lg font-medium bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-lg">
+                  {event.prize}
+                </p>
+              </div>
+            </div>
+
+            {/* Registration Section */}
+            {user && !registrations.some((r) => r.eventId === event.id) && (
+              <div className="mt-6">
+                <h3 className="font-semibold text-xl mb-3">Register</h3>
+                {eventFields[event.id].map((field) => (
+                  <div key={field.name} className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
+                      {field.name.replace(/([A-Z])/g, " $1").trim()}
+                    </label>
+                    {renderField(field)}
+                  </div>
+                ))}
+                <button
+                  onClick={() => handleRegister(event.id)}
+                  className="mt-4 w-full bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 text-lg"
+                >
+                  Register Now
+                </button>
+              </div>
+            )}
+            {user && registrations.some((r) => r.eventId === event.id) && (
+              <p className="mt-4 text-green-600 text-lg">
+                You are already registered for this event!
+              </p>
+            )}
+          </div>
+        ))}
+    </div>
+
+    {/* Collapse Button */}
+    <div className="p-4 border-t border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 flex justify-center">
+      <button
+        onClick={() => setExpandedEvent(null)}
+        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+      >
+        Collapse
+      </button>
+    </div>
+  </div>
+</motion.div>
+
+    )}
+  </AnimatePresence>
+</div>
     </section>
   );
 };
