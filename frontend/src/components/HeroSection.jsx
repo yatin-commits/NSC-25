@@ -40,18 +40,20 @@ export function HeroSection() {
         className="  text-center w-screen  space-y-6"
       >
         {/* Heading */}
-        <h2 className="font-extrabold  tracking-tight leading-tight text-5xl lg:text-5xl text-gray-900">
-          Join us in celebrating
-          <br />
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 text-6xl font-bold drop-shadow-lg"
-          >
-            National Students' Convention 2025
-          </motion.span>
-        </h2>
+        <h2 className="font-extrabold tracking-tight leading-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 text-center">
+  Join us in celebrating
+  <br />
+  <motion.span
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+    className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 
+               text-2xl sm:text-4xl md:text-6xl lg:text-6xl font-extrabold drop-shadow-xl"
+  >
+    National Students' Convention 2025
+  </motion.span>
+</h2>
+
 
         {/* Countdown Timer */}
         <div className="mt-6 flex justify-center">
@@ -60,14 +62,18 @@ export function HeroSection() {
 
         {/* Register Button */}
         <div className="mt-6 flex justify-center">
-          <HoverBorderGradient
-            containerClassName="rounded-full"
-            as="button"
-            className="relative bg-gradient-to-r cursor-pointer rounded-md from-blue-500 via-indigo-500 to-purple-500 text-white text-xl px-8 py-3 md:px-10 md:py-4 font-semibold flex items-center space-x-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/50"
-          >
-            <span className="relative z-10"> Explore Events 🚀</span>
-          </HoverBorderGradient>
-        </div>
+  <HoverBorderGradient
+    containerClassName="rounded-full"
+    as="button"
+    className="relative bg-gradient-to-r cursor-pointer rounded-xl from-blue-500 via-indigo-500 to-purple-500 
+               text-white text-lg sm:text-xl px-6 p-2 sm:px-8 sm:py-4 md:px-10 md:py-5 font-semibold 
+               flex items-center space-x-3 shadow-lg transition-all duration-300 
+               hover:scale-105 hover:shadow-indigo-500/50 focus:ring-4 focus:ring-indigo-300 focus:outline-none"
+  >
+    <span className="relative z-10">Explore Events 🚀</span>
+  </HoverBorderGradient>
+</div>
+
 
         {/* Sponsor Logos */}
         <div className="w-full">

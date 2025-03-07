@@ -43,7 +43,7 @@ const Cards = () => {
     ];
 
     return (
-        <div className="relative w-full px-6 py-12 overflow-hidden bg-gradient-to-r from-purple-100 to-indigo-200">
+        <div className="relative w-full   overflow-hidden bg-gradient-to-b from-purple-50 to-indigo-100">
             <div className="flex space-x-8 py-4 px-4 animate-scroll-reverse overflow-x-auto scrollbar-hide">
                 {[...cards, ...cards].map((card, index) => (
                     <div key={index} className="bg-white shadow-lg rounded-xl p-6 flex flex-col items-center w-64 lg:w-80 min-w-[16rem] transition-transform duration-300 hover:scale-105">

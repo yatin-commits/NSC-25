@@ -316,7 +316,7 @@ const Events = () => {
     <section className="min-h-screen py-6 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
       {/* Prize Highlight Section */}
       <div className="w-full mx-auto mb-6 py-4 px-4 text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-xl shadow-xl overflow-hidden">
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+        <div className="flex  sm:flex-row items-center justify-center gap-2 sm:gap-4">
           <Award className="w-8 h-8 text-white" />
           <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg">
             Prizes Worth <span className="text-yellow-200">₹1,00,000+</span>
@@ -333,7 +333,7 @@ const Events = () => {
   transition={{ duration: 0.5 }}
 >
   <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-center bg-gradient-to-r from-[#00E6E6] via-[#00B3FF] to-[#0099FF] bg-clip-text text-transparent tracking-tight drop-shadow-md">
-    Upcoming Thrills
+    Upcoming Events
   </h2>
   <div className="text-center mt-4 w-full flex flex-row justify-center flex-wrap items-center gap-4">
     {user ? (
