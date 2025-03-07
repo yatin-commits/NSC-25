@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { auth, googleProvider } from "../../backend/firebase/firebase";
 import { signInWithPopup, signInWithRedirect, signOut }  from 'https://cdn.jsdelivr.net/npm/firebase@^11.4.0/firebase-auth.js/+esm' 
+import toast from "react-hot-toast";
 
 const AuthContext = createContext();
 
@@ -43,11 +44,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    const loadingToast = toast.loading("Logging out..."); // Show loading toast
+  
     try {
       await signOut(auth);
       setUser(null);
+      toast.success("Logged out successfully!", { id: loadingToast }); // Show success toast
     } catch (error) {
       console.error("Logout failed:", error);
+      toast.error("Logout failed. Please try again.", { id: loadingToast }); // Show error toast
     }
   };
 

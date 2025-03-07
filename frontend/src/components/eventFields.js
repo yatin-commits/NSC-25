@@ -1,4 +1,8 @@
-const eventFields = {
+import shark from "../assets/shark.png";
+import code from "../assets/code.png";
+import binary from "../assets/binary.png";
+
+export const eventFields = {
     1: [
       { name: "teamName", type: "text" },
       { name: "teamSize", type: "select", options: ["3", "4", "5"] },
@@ -54,4 +58,198 @@ const eventFields = {
     ],
   };
 
-  export default eventFields;
+  export const eventsData = [
+    // Your eventsData array, unchanged (omitted for brevity)
+    {
+      id: 1,
+      name: "Code Avengers",
+      image: code,
+      shortDescription: "Unleash your coding superpowers!",
+      longDescription:
+        "Assemble your team and tackle complex coding challenges in a thrilling hackathon-style event.",
+      time: "9:00 AM - 3:00 PM",
+      venue: "Tech Lab",
+      rules: [
+        "Teams of 3-5 members.",
+        "Bring your own laptop.",
+        "No pre-written code allowed.",
+      ],
+      prize: "Winner: ₹12,000, Runner-up: ₹6,000",
+    },
+    {
+      id: 2,
+      name: "Bollywood Bazigar",
+      image: "/images/bollywood.jpg",
+      shortDescription: "Dance and drama Bollywood-style!",
+      longDescription:
+        "Perform iconic Bollywood scenes or dance numbers in a high-energy competition.",
+      time: "4:00 PM - 7:00 PM",
+      venue: "Main Stage",
+      rules: [
+        "Teams of 2-8 members.",
+        "5-minute performance limit.",
+        "Costumes encouraged.",
+      ],
+      prize: "Winner: ₹8,000, Runner-up: ₹4,000",
+    },
+    {
+      id: 3,
+      name: "Volleyball",
+      image: "/images/volleyball.jpg",
+      shortDescription: "Spike your way to victory!",
+      longDescription:
+        "Compete in a fast-paced volleyball tournament with teams battling it out on the court.",
+      time: "10:00 AM - 2:00 PM",
+      venue: "Sports Ground",
+      rules: [
+        "Teams of 6 players.",
+        "Standard volleyball rules apply.",
+        "Best of 3 sets.",
+      ],
+      prize: "Winner: ₹10,000, Runner-up: ₹5,000",
+    },
+    {
+      id: 4,
+      name: "Battle Byte",
+      image: binary,
+      shortDescription: "Code fast, win big!",
+      longDescription:
+        "A speed-coding competition where participants solve problems under time pressure.",
+      time: "1:00 PM - 4:00 PM",
+      venue: "Computer Lab 2",
+      rules: [
+        "Individual participation.",
+        "90-minute time limit.",
+        "Top 3 solutions win.",
+      ],
+      prize: "Winner: ₹7,000, Runner-up: ₹3,500",
+    },
+    {
+      id: 5,
+      name: "Shark Tank",
+      image: shark,
+      shortDescription: "Pitch your million-dollar idea!",
+      longDescription:
+        "Present your startup idea to a panel of judges in a Shark Tank-inspired pitch event.",
+      time: "3:00 PM - 6:00 PM",
+      venue: "Conference Room",
+      rules: [
+        "Teams of 1-4 members.",
+        "5-minute pitch + 5-minute Q&A.",
+        "Props allowed.",
+      ],
+      prize: "Winner: ₹15,000, Runner-up: ₹7,500",
+    },
+    {
+      id: 6,
+      name: "Candid Moments",
+      image: "/images/photography.jpg",
+      shortDescription: "Capture the perfect shot!",
+      longDescription:
+        "A photography contest where participants submit their best candid shots of the fest.",
+      time: "All Day",
+      venue: "Campus Wide",
+      rules: [
+        "Individual entries.",
+        "Submit up to 3 photos.",
+        "No heavy editing allowed.",
+      ],
+      prize: "Winner: ₹6,000, Runner-up: ₹3,000",
+    },
+    {
+      id: 7,
+      name: "Cine Blitz",
+      image: "/images/cinema.jpg",
+      shortDescription: "Lights, camera, action!",
+      longDescription:
+        "Create and showcase a short film in this rapid filmmaking challenge.",
+      time: "11:00 AM - 5:00 PM",
+      venue: "Auditorium",
+      rules: [
+        "Teams of 3-6 members.",
+        "Max 5-minute runtime.",
+        "Theme provided on-spot.",
+      ],
+      prize: "Winner: ₹10,000, Runner-up: ₹5,000",
+    },
+    {
+      id: 8,
+      name: "Rangmanch",
+      image: "/images/theatre.jpg",
+      shortDescription: "Stage your story!",
+      longDescription:
+        "Perform a captivating drama or skit in this theatrical competition.",
+      time: "2:00 PM - 5:00 PM",
+      venue: "Open Theatre",
+      rules: [
+        "Teams of 4-10 members.",
+        "10-minute performance limit.",
+        "Minimal props allowed.",
+      ],
+      prize: "Winner: ₹8,000, Runner-up: ₹4,000",
+    },
+    {
+      id: 9,
+      name: "Fandango",
+      image: "/images/dance.jpg",
+      shortDescription: "Dance like nobody’s watching!",
+      longDescription:
+        "A solo or group dance competition featuring various styles and flair.",
+      time: "5:00 PM - 8:00 PM",
+      venue: "Main Stage",
+      rules: [
+        "1-6 participants.",
+        "4-minute performance limit.",
+        "Any dance style allowed.",
+      ],
+      prize: "Winner: ₹9,000, Runner-up: ₹4,500",
+    },
+    {
+      id: 10,
+      name: "War of Words",
+      image: "/images/debate.jpg",
+      shortDescription: "Argue your way to the top!",
+      longDescription:
+        "A debate competition where sharp minds clash over hot topics.",
+      time: "10:00 AM - 1:00 PM",
+      venue: "Seminar Hall",
+      rules: [
+        "Teams of 2 members.",
+        "3-minute speaking slots.",
+        "Rebuttals allowed.",
+      ],
+      prize: "Winner: ₹6,000, Runner-up: ₹3,000",
+    },
+    {
+      id: 11,
+      name: "Bollywood Beats",
+      image: "/images/bollywooddance.jpg",
+      shortDescription: "Groove to Bollywood rhythms!",
+      longDescription:
+        "A dance-off featuring the best of Bollywood music and moves.",
+      time: "6:00 PM - 9:00 PM",
+      venue: "Outdoor Arena",
+      rules: [
+        "Teams of 2-8 members.",
+        "5-minute performance limit.",
+        "Bollywood tracks only.",
+      ],
+      prize: "Winner: ₹10,000, Runner-up: ₹5,000",
+    },
+    {
+      id: 12,
+      name: "Creative Canvas",
+      image: "/images/art.jpg",
+      shortDescription: "Paint your masterpiece!",
+      longDescription:
+        "An art competition where participants create themed artworks on the spot.",
+      time: "11:00 AM - 2:00 PM",
+      venue: "Art Room",
+      rules: [
+        "Individual participation.",
+        "2-hour time limit.",
+        "Materials provided.",
+      ],
+      prize: "Winner: ₹7,000, Runner-up: ₹3,500",
+    },
+  ];
