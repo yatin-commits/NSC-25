@@ -11,7 +11,7 @@ const Faqs = () => {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-100 text-gray-900 py-12 px-6">
             {/* Animated Gradient Heading */}
-            <h1 className="text-4xl sm:text-5xl font-extrabold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 animate-pulse">
+            <h1 className="text-3xl sm:text-2xl lg:text-5xl lg:font-extrabold font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 animate-pulse">
                 ✨ Frequently Asked Questions ✨
             </h1>
 
