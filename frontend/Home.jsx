@@ -3,6 +3,8 @@ import CountdownTimer from "./src/components/CountdownTimer";
 import {ScheduleSection} from "./src/components/ScheduleSection";
 import Events from "@/components/Events";
 import Footer from "@/components/Footer";
+import Faqs from "./src/components/Faqs";
+import Coordinators from "./src/components/Coordinators";
 
 const HomePage = () => {
   return (
@@ -14,6 +16,8 @@ const HomePage = () => {
     <HeroSection/>
     <ScheduleSection/>
     <Events/>
+    <Coordinators/>
+    <Faqs/>    
     <Footer />
     
     </>
