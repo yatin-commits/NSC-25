@@ -7,6 +7,11 @@ const registrationRoutes = require('../routes/registrationRoutes');
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(cors({
+  origin: 'https://bvicam-nsc-25.vercel.app', // Allow your frontend origin
+  methods: ['GET', 'POST', 'PUT'], // Allow specific methods
+  allowedHeaders: ['Content-Type'], // Allow specific headers
+}));
 
 app.get('/', (req, res) => {
   res.send('Hello from Express!');

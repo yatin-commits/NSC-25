@@ -4,7 +4,11 @@ const app = express();
 const Registration = require('../modules/registrationModule');
 const Event = require('../modules/evetModules')
 const { log } = require('console');
-
+app.use(cors({
+  origin: 'https://bvicam-nsc-25.vercel.app', // Allow your frontend origin
+  methods: ['GET', 'POST', 'PUT'], // Allow specific methods
+  allowedHeaders: ['Content-Type'], // Allow specific headers
+}));
 // Event-specific required fields
 const eventFields = {
   1: ['teamName', 'teamSize', 'preferredLanguage'],
