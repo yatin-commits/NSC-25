@@ -11,13 +11,31 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(false);
   const [isActive, setIsActive] = useState(false);
 
+  const adminUserId = "29BruJMxHXMB6mbdAZyvKVUixW13"; // Hardcoded admin UID
+
   useEffect(() => {
     if (selectedEvent) {
       setLoading(true);
+      // Fetch visibility status
       axios
-        .get(`https://nsc-25-backend.vercel.app/api/registrations/all?eventId=${selectedEvent}`)
-        .then((response) => setRegistrations(response.data))
-        .catch((error) => console.error("Error fetching data:", error))
+        .get(`https://nsc-25-backend.vercel.app/api/visibility?eventId=${selectedEvent}`)
+        .then((response) => setIsActive(response.data.isActive))
+        .catch((error) => console.error("Error fetching visibility:", error));
+
+      // Fetch all registrations for admin
+      axios
+        .get(`https://nsc-25-backend.vercel.app/api/registrations?userId=${adminUserId}`)
+        .then((response) => {
+          console.log("Backend response:", response.data); // Debug log
+          // Ensure response.data is an array before filtering
+          const data = Array.isArray(response.data) ? response.data : [];
+          const eventRegistrations = data.filter((reg) => reg.eventId === Number(selectedEvent));
+          setRegistrations(eventRegistrations);
+        })
+        .catch((error) => {
+          console.error("Error fetching registrations:", error);
+          setRegistrations([]); // Reset on error
+        })
         .finally(() => setLoading(false));
     }
   }, [selectedEvent]);
@@ -25,8 +43,9 @@ const AdminPanel = () => {
   const handleActive = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/visibility?eventId=${selectedEvent}`,
-        { isActive: !isActive }
+        `https://nsc-25-backend.vercel.app/api/visibility?eventId=${selectedEvent}`,
+        { isActive: !isActive },
+        { headers: { "Content-Type": "application/json" } }
       );
       if (response.status === 200) {
         setIsActive((prevState) => !prevState);
@@ -53,7 +72,7 @@ const AdminPanel = () => {
     const worksheet = XLSX.utils.json_to_sheet(formattedData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Registrations");
-    XLSX.writeFile(workbook, `${selectedEvent}_registrations.xlsx`);
+    XLSX.writeFile(workbook, `${eventsData.find((e) => e.id === Number(selectedEvent))?.name || selectedEvent}_registrations.xlsx`);
   };
 
   return (
@@ -68,6 +87,7 @@ const AdminPanel = () => {
           <select
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => setSelectedEvent(e.target.value)}
+            value={selectedEvent}
           >
             <option value="">--Select--</option>
             {eventsData.map((event) => (
@@ -88,17 +108,17 @@ const AdminPanel = () => {
                 Total Registrations: {registrations.length}
               </h3>
               <button
-                onClick={() => handleActive(!isActive)}
-                className="bg-green-400 cursor-pointer m-2 p-2 rounded-md shadow-md hover:bg-green-500"
+                onClick={handleActive}
+                className={`cursor-pointer m-2 p-2 rounded-md shadow-md ${isActive ? "bg-green-400 hover:bg-green-500" : "bg-red-400 hover:bg-red-500"}`}
               >
-                Active
+                {isActive ? "Active" : "Inactive"}
               </button>
               {registrations.length > 0 && (
                 <button
                   onClick={exportToExcel}
-                  className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-600"
+                  className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-600 flex items-center gap-2"
                 >
-                  <SiGooglesheets />
+                  <SiGooglesheets /> Export to Excel
                 </button>
               )}
             </div>
