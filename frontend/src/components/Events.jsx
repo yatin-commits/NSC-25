@@ -1,22 +1,27 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import bvicamlogo from "../assets/bvicamLogo.png";
+import shark from "../assets/shark.png";
+import code from "../assets/code.png";
+import binary from "../assets/binary.png";
 import { MapPin, X, Award } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { eventFields, eventsData } from "./eventFields";
 import toast from "react-hot-toast";
-import axios from "axios";
 
 const Events = () => {
   const [expandedEvent, setExpandedEvent] = useState(null);
   const [formData, setFormData] = useState({});
   const [registrations, setRegistrations] = useState([]);
-  const [eventStatus, setEventStatus] = useState({});
-  const { user, login } = useAuth();
+  const { user, login, logout } = useAuth();
+  const name = user?.name;
+  const email = user?.email;
 
   useEffect(() => {
     if (expandedEvent !== null) {
       document.body.classList.add("overflow-hidden");
-      // Load existing registration data when expanding an event
+      // Load existing registration data for the expanded event
       const registration = registrations.find((r) => r.eventId === expandedEvent);
       if (registration) {
         setFormData(registration.fields);
@@ -31,19 +36,9 @@ const Events = () => {
 
   useEffect(() => {
     if (user) {
+      console.log(user);
       fetchRegistrations(user.uid, true);
     }
-    Promise.all(
-      eventsData.map(event =>
-        axios.get(`https://nsc-25-backend.vercel.app/api/visibility?eventId=${event.id}`)
-          .then(response => ({ eventId: event.id, isActive: response.data.isActive }))
-      )
-    )
-      .then(results => {
-        const statusMap = Object.fromEntries(results.map(r => [r.eventId, r.isActive]));
-        setEventStatus(statusMap);
-      })
-      .catch(error => console.error("Error fetching event status:", error));
   }, [user]);
 
   const fetchRegistrations = async (uid, showWelcome = true) => {
@@ -54,7 +49,7 @@ const Events = () => {
       const data = await response.json();
       setRegistrations(data || []);
       if (showWelcome) {
-        toast.success(`Welcome, ${user.name || user.email || "User"}!`, { id: loadingToast, duration: 3000 });
+        toast.success(`Welcome, ${user.name || user.email}!`, { id: loadingToast, duration: 3000 });
       } else {
         toast.dismiss(loadingToast);
       }
@@ -84,21 +79,19 @@ const Events = () => {
     const payload = {
       eventId,
       userId: user.uid,
-      email: user.email || null,
-      name: user.name || null,
       fields: formData,
+      name: name || null,
+      email: email || null,
     };
+    console.log("Payload:", payload);
 
     const loadingToast = toast.loading(isEdit ? "Updating..." : "Registering...");
     try {
-      const url = "https://nsc-25-backend.vercel.app/api/register";
-      const method = isEdit ? "PUT" : "POST";
-      const response = await fetch(url, {
-        method,
+      const response = await fetch("https://nsc-25-backend.vercel.app/api/register", {
+        method: isEdit ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       const data = await response.json();
       if (response.ok) {
         toast.success(isEdit ? "Details updated successfully!" : "Registration successful!", { id: loadingToast });
@@ -109,7 +102,7 @@ const Events = () => {
       }
     } catch (error) {
       console.error(`Error during ${isEdit ? "update" : "registration"}:`, error.message);
-      toast.error(`${isEdit ? "Update" : "Registration"} error.ConcurrentModificationException occurred.`, { id: loadingToast });
+      toast.error(`${isEdit ? "Update" : "Registration"} error occurred.`, { id: loadingToast });
     }
   };
 
@@ -176,6 +169,55 @@ const Events = () => {
 
   return (
     <section className="min-h-screen py-6 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
+      {/* Prize Highlight Section */}
+      <div className="w-full max-w-4xl mx-auto mb-6 py-4 px-4 text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-xl shadow-xl">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+          <Award className="w-6 h-6 sm:w-8 sm:h-8 text-white flex-shrink-0" />
+          <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white drop-shadow-lg">
+            Prizes Worth <span className="text-yellow-200">₹1,00,000+</span>
+          </h2>
+          <Award className="w-6 h-6 sm:w-8 sm:h-8 text-white flex-shrink-0" />
+        </div>
+      </div>
+
+      {/* Header with Login/Logout */}
+      <motion.div
+        className="w-full max-w-4xl mx-auto py-4 sm:py-6 px-4 rounded-b-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg"
+        initial={{ y: -50 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center bg-gradient-to-r from-[#00E6E6] via-[#00B3FF] to-[#0099FF] bg-clip-text text-transparent tracking-tight drop-shadow-md">
+          Upcoming Events
+        </h2>
+        <div className="text-center mt-4 flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 flex-wrap">
+          {user ? (
+            <>
+              <span className="text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 px-3 sm:px-4 py-1.5 rounded-full shadow-sm">
+                Welcome, <span className="text-indigo-600 dark:text-indigo-400">{user.name || user.email}</span>
+              </span>
+              <span className="text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 px-3 sm:px-4 py-1.5 rounded-full shadow-sm">
+                <span className="text-indigo-600 dark:text-indigo-400">{user.email}</span>
+              </span>
+            </>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="text-xs sm:text-sm md:text-base font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-4 sm:px-5 py-2 rounded-full transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a4.898 4.898 0 01-4.897-4.904 4.898 4.898 0 014.897-4.904c1.466 0 2.785.631 3.692 1.638l2.695-2.695A8.097 8.097 0 0011.956 3c-4.473 0-8.104 3.631-8.104 8.104 0 4.473 3.631 8.104 8.104 8.104 4.473 0 8.104-3.631 8.104-8.104 0-.382-.046-.757-.121-1.132z"
+                  fill="currentColor"
+                />
+              </svg>
+              Login with Google
+            </button>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Events Grid or Expanded View */}
       <div className="mt-8 w-full max-w-6xl mx-auto">
         <AnimatePresence mode="wait">
           {!expandedEvent ? (
@@ -269,7 +311,7 @@ const Events = () => {
                             </p>
                           </div>
                         </div>
-                        {user && !registrations.some((r) => r.eventId === event.id) && eventStatus[event.id] ? (
+                        {user && !registrations.some((r) => r.eventId === event.id) ? (
                           <div className="mt-6">
                             <h3 className="font-semibold text-lg sm:text-xl mb-2 sm:mb-3">Register</h3>
                             {eventFields[event.id].map((field) => (
@@ -287,11 +329,7 @@ const Events = () => {
                               Register Now
                             </button>
                           </div>
-                        ) : user && !registrations.some((r) => r.eventId === event.id) && !eventStatus[event.id] ? (
-                          <p className="mt-4 text-red-600 text-sm sm:text-base md:text-lg text-center">
-                            Registrations Over
-                          </p>
-                        ) : (
+                        ) : user && registrations.some((r) => r.eventId === event.id) ? (
                           <div className="mt-6">
                             <h3 className="font-semibold text-lg sm:text-xl mb-2 sm:mb-3">Edit Your Registration</h3>
                             {eventFields[event.id].map((field) => (
@@ -312,7 +350,7 @@ const Events = () => {
                               You are already registered for this event!
                             </p>
                           </div>
-                        )}
+                        ) : null}
                       </div>
                     ))}
                 </div>
