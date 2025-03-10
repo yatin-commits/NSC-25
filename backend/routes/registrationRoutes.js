@@ -180,6 +180,49 @@ router.put("/visibility/:eventId", async (req, res) => {
   }
 });
 
+router.get('/registrations/all', async (req, res) => {
+  const { userId, eventId } = req.query;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'User ID required' });
+  }
+
+  if (userId !== "29BruJMxHXMB6mbdAZyvKVUixW13") { // Admin UID check
+    return res.status(403).json({ error: 'Unauthorized: Admin access required' });
+  }
+
+  try {
+    let query = {};
+    if (eventId) {
+      query.eventId = Number(eventId);
+    }
+
+    const registrations = await Registration.find(query);
+    res.status(200).json(registrations);
+  } catch (error) {
+    console.error("Error fetching admin registrations:", error);
+    res.status(500).json({ error: 'Failed to fetch registrations' });
+  }
+});
+
+// Get event visibility (GET)
+router.get("/visibility", async (req, res) => {
+  try {
+    const { eventId } = req.query;
+    if (!eventId) {
+      return res.status(400).json({ error: "eventId is required" });
+    }
+    const event = await Event.findOne({ eventId: Number(eventId) });
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+    res.status(200).json({ isActive: event.isActive });
+  } catch (error) {
+    console.error("Error fetching visibility:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 
 

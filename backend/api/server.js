@@ -8,9 +8,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(cors({
-  origin: 'https://bvicam-nsc-25.vercel.app', // Allow your frontend origin
-  methods: ['GET', 'POST', 'PUT'], // Allow specific methods
-  allowedHeaders: ['Content-Type'], // Allow specific headers
+  origin: 'https://bvicam-nsc-25.vercel.app', 
+  methods: ['GET', 'POST', 'PUT'], 
+  allowedHeaders: ['Content-Type'], 
 }));
 
 app.get('/', (req, res) => {
