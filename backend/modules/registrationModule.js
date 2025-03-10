@@ -9,11 +9,21 @@ const registrationSchema= new mongoose.Schema({
         type:String,
         required:true
     },
+    name:
+    {
+        type:String,
+        required:true
+    },
+    email:
+    {
+        type:String,
+        required:true
+    },
     fields: { 
         type: Map, 
         of: String,
         required: true 
-    }, // Dynamic fields
+    }, 
   registeredAt: { 
     type: Date, 
     default: Date.now },
