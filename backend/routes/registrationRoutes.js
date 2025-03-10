@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const app = express();
+const cors = require('cors');
+app.use(cors());
 const Registration = require('../modules/registrationModule');
 const Event = require('../modules/evetModules')
 const { log } = require('console');
