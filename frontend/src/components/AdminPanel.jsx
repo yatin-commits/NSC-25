@@ -5,11 +5,11 @@ import Navbarr from "./NavBarr";
 import * as XLSX from "xlsx";
 import { SiGooglesheets } from "react-icons/si";
 
-
 const AdminPanel = () => {
   const [selectedEvent, setSelectedEvent] = useState("");
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     if (selectedEvent) {
@@ -22,7 +22,20 @@ const AdminPanel = () => {
     }
   }, [selectedEvent]);
 
-  // Function to export registrations to Excel
+  const handleActive = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/visibility?eventId=${selectedEvent}`,
+        { isActive: !isActive }
+      );
+      if (response.status === 200) {
+        setIsActive((prevState) => !prevState);
+      }
+    } catch (error) {
+      console.error("Error updating visibility:", error);
+    }
+  };
+
   const exportToExcel = () => {
     if (registrations.length === 0) {
       alert("No data available to export.");
@@ -30,7 +43,7 @@ const AdminPanel = () => {
     }
 
     const formattedData = registrations.map((registration, index) => {
-      let row = { "S.No": index + 1 };
+      let row = { "S.No": index + 1, Name: registration.name, Email: registration.email };
       Object.entries(registration.fields).forEach(([key, value]) => {
         row[key] = value;
       });
@@ -46,7 +59,6 @@ const AdminPanel = () => {
   return (
     <>
       <Navbarr />
-
       <div className="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-20">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Admin Panel</h2>
 
@@ -75,13 +87,18 @@ const AdminPanel = () => {
               <h3 className="text-lg font-semibold text-gray-700">
                 Total Registrations: {registrations.length}
               </h3>
+              <button
+                onClick={() => handleActive(!isActive)}
+                className="bg-green-400 cursor-pointer m-2 p-2 rounded-md shadow-md hover:bg-green-500"
+              >
+                Active
+              </button>
               {registrations.length > 0 && (
                 <button
                   onClick={exportToExcel}
                   className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-600"
                 >
                   <SiGooglesheets />
-
                 </button>
               )}
             </div>
@@ -95,6 +112,8 @@ const AdminPanel = () => {
                   <thead>
                     <tr className="bg-gray-100 border-b">
                       <th className="p-4 text-left text-gray-600 font-medium">S.No</th>
+                      <th className="p-4 text-left text-gray-600 font-medium">Name</th>
+                      <th className="p-4 text-left text-gray-600 font-medium">Email</th>
                       {eventFields[selectedEvent]?.map((field) => (
                         <th key={field.name} className="p-4 text-left text-gray-600 font-medium">
                           {field.name}
@@ -106,6 +125,8 @@ const AdminPanel = () => {
                     {registrations.map((registration, index) => (
                       <tr key={index} className="border-b hover:bg-gray-50 transition duration-200">
                         <td className="p-4">{index + 1}</td>
+                        <td className="p-4">{registration.name}</td>
+                        <td className="p-4">{registration.email}</td>
                         {Object.entries(registration.fields).map(([key, value]) => (
                           <td key={key} className="p-4">{value}</td>
                         ))}
