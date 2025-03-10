@@ -107,12 +107,12 @@ const AdminPanel = () => {
               <h3 className="text-lg font-semibold text-gray-700">
                 Total Registrations: {registrations.length}
               </h3>
-              <button
+              {/* <button
                 onClick={handleActive}
                 className={`cursor-pointer m-2 p-2 rounded-md shadow-md ${isActive ? "bg-green-400 hover:bg-green-500" : "bg-red-400 hover:bg-red-500"}`}
               >
                 {isActive ? "Active" : "Inactive"}
-              </button>
+              </button> */}
               {registrations.length > 0 && (
                 <button
                   onClick={exportToExcel}
