@@ -21,9 +21,9 @@ const bgVariants = {
   },
 };
 
-export function HeroSection() {
+export function HeroSection({scrollToEvents}) {
   return (
-    <div className="w-full flex  flex-col items-center md: pt-16 md:full overflow-hidden px-4 text-center bg-gradient-to-br from-indigo-50 to-purple-100 text-gray-900">
+    <div className="w-full lg:h-[720px] flex flex-col items-center pt-20 lg: pt-23 md:full overflow-hidden px-4 text-center bg-gradient-to-br from-indigo-50 to-purple-100 text-gray-900">
       {/* Animated Background */}
       <motion.div
         variants={bgVariants}
@@ -40,7 +40,7 @@ export function HeroSection() {
         className="  text-center w-screen  space-y-6"
       >
         {/* Heading */}
-        <h2 className="font-extrabold tracking-tight leading-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 text-center">
+        <h2 className="pt-4 font-extrabold tracking-tight leading-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 text-center">
   Join us in celebrating
   <br />
   <motion.span
@@ -48,7 +48,7 @@ export function HeroSection() {
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
     className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 
-               text-2xl sm:text-4xl md:text-6xl lg:text-6xl font-extrabold drop-shadow-xl"
+               text-2xl lg:text-2xl sm:text-4xl md:text-6xl lg:text-6xl font-extrabold drop-shadow-xl"
   >
     National Students' Convention 2025
   </motion.span>
@@ -56,7 +56,7 @@ export function HeroSection() {
 
 
         {/* Countdown Timer */}
-        <div className="mt-6 flex justify-center">
+        <div className="mt-10 flex justify-center">
           <CountdownTimer initialTime={186400 + 36000 + 300 + 15} />
         </div>
 
@@ -66,18 +66,19 @@ export function HeroSection() {
     containerClassName="rounded-full"
     as="button"
     className="relative bg-gradient-to-r cursor-pointer rounded-xl from-blue-500 via-indigo-500 to-purple-500 
-               text-white text-lg sm:text-xl px-6 p-2 sm:px-8 sm:py-4 md:px-10 md:py-5 font-semibold 
+               text-white text-lg lg:text-2xl sm:text-xl px-6 p-2 sm:px-8 sm:py-4 md:px-10 md:py-5 font-semibold 
                flex items-center space-x-3 shadow-lg transition-all duration-300 
-               hover:scale-105 hover:shadow-indigo-500/50 focus:ring-4 focus:ring-indigo-300 focus:outline-none"
+               hover:scale-105 hover:shadow-indigo-500/50 focus:ring-4 focus:ring-indigo-300 focus:outline-none mt-5"
+               onClick={() => document.getElementById("events")?.scrollIntoView({ behavior: "smooth" })}
   >
-    <span className="relative z-10">Explore Events 🚀</span>
+    <span className="relative z-10 lg:text-2xl" onClick={scrollToEvents}>Explore Events 🚀</span>
   </HoverBorderGradient>
 </div>
 
 
         {/* Sponsor Logos */}
         <div className="w-full">
-          <img src={incubations} alt="logo" className="w-[75%] object-contain mx-auto" />
+          <img src={incubations} alt="logo" className="w-[75%] object-contain mx-auto mt-9" />
         </div>
       </motion.div>
     </div>
