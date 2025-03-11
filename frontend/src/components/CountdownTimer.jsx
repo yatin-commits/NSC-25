@@ -32,16 +32,24 @@ const CountdownTimer = () => {
   const timeSegments = formatTime(timeLeft);
 
   return (
-    <div className="flex gap-4 md:gap-6 text-center">
-      {timeSegments.map((segment) => (
-        <div key={segment.label} className="flex flex-col items-center">
-          <span className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white">
-            {segment.value.toString().padStart(2, "0")}
-          </span>
-          <span className="text-sm md:text-base text-gray-600 dark:text-gray-400">
-            {segment.label}
-          </span>
-        </div>
+    <div className="flex items-center justify-center gap-2 md:gap-3 text-center flex-wrap md:flex-nowrap">
+      {timeSegments.map((segment, index) => (
+        <React.Fragment key={segment.label}>
+          <div className="lg:pt-4 lg:mt-3 flex flex-col items-center bg-white dark:bg-gray-800 rounded-md px-2 py-1.5 shadow-md 
+            w-[60px] h-[60px] md:w-[80px] md:h-[80px] lg:w-[100px] lg:h-[100px]">
+            <span className="text-2xl md:text-4xl lg:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
+              {segment.value.toString().padStart(2, "0")}
+            </span>
+            <span className="text-[8px] md:text-xs lg:text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+              {segment.label}
+            </span>
+          </div>
+          {index < timeSegments.length - 1 && (
+            <span className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-500 dark:text-gray-300 animate-pulse">
+              :
+            </span>
+          )}
+        </React.Fragment>
       ))}
     </div>
   );

@@ -1,5 +1,3 @@
-
-
 export const eventFields = {
   1: ["teamName", "teamSize", "preferredLanguage"],
   2: ["performanceType", "groupSize", "songChoice"],
