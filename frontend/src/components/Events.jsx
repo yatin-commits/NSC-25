@@ -10,7 +10,7 @@ import { useAuth } from "../../context/AuthContext";
 import { eventFields, eventsData } from "./eventFields";
 import toast from "react-hot-toast";
 
-const Events = () => {
+const Events = ({eventsRef}) => {
   const [expandedEvent, setExpandedEvent] = useState(null);
 
 const [showEditFields, setShowEditFields] = useState(false);
@@ -229,7 +229,8 @@ const [showEditFields, setShowEditFields] = useState(false);
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer"
+                className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer
+                w-[350px] mx-auto mb-3"
                 onClick={() => setExpandedEvent(event.id)}
               >
                 <div className="relative h-36 sm:h-48 md:h-52 flex justify-center items-center overflow-hidden">
