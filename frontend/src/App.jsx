@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "../Home";
 import AdminPanel from "./components/AdminPanel";
@@ -9,9 +9,14 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 
 const App = () => {
+  const eventsRef = useRef(null);
+  
+  const scrollToEvents = () => {
+    eventsRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
   return (
     <>
-      <Navbarr />
+      <Navbarr scrollToEvents={() => eventsRef.current?.scrollIntoView({ behavior: "smooth" })} />
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<Home />} />

@@ -39,7 +39,7 @@
  };
  
  // Main Navbar Component
- const Navbarr = () => {
+ const Navbarr = ({ scrollToEvents }) => {
    const [active, setActive] = useState(null);
    const [isMenuOpen, setIsMenuOpen] = useState(false);
    const { user, login, logout } = useAuth();
@@ -54,10 +54,10 @@
    };
  
    const navItems = [
-     { name: "Schedule", content: "View the event timeline" },
-     { name: "Events", content: "Explore our exciting events" },
-     { name: "Coordinators", content: "Meet the team" },
-     { name: "FAQ's", content: "Get your questions answered" },
+     { name: "Schedule"},
+     { name: "Events",action: scrollToEvents  },
+     { name: "Coordinators" },
+     { name: "FAQ's" },
    ];
  
    return (
@@ -75,10 +75,10 @@
          </div>
  
          {/* Desktop Menu */}
-         <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
+         <div className="hidden  md:flex items-center space-x-6 lg:space-x-8">
            {navItems.map((item) => (
-             <MenuItem key={item.name} setActive={setActive} active={active} item={item.name}>
-               <p>{item.content}</p>
+             <MenuItem key={item.name} onClick={item.action} setActive={setActive} active={active} item={item.name}>
+               
              </MenuItem>
            ))}
  

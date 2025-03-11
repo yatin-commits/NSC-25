@@ -21,7 +21,7 @@ const bgVariants = {
   },
 };
 
-export function HeroSection({scrollToEvents}) {
+export function HeroSection({ scrollToEvents }) {
   return (
     <div className="w-full lg:h-[720px] flex flex-col items-center pt-20 lg: pt-23 md:full overflow-hidden px-4 text-center bg-gradient-to-br from-indigo-50 to-purple-100 text-gray-900">
       {/* Animated Background */}

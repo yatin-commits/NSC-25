@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import bvicamlogo from "../assets/bvicamLogo.png";
 import shark from "../assets/shark.png";
@@ -10,7 +10,7 @@ import { useAuth } from "../../context/AuthContext";
 import { eventFields, eventsData } from "./eventFields";
 import toast from "react-hot-toast";
 
-const Events = ({eventsRef}) => {
+const Events = forwardRef((props, ref) => {
   const [expandedEvent, setExpandedEvent] = useState(null);
 
 const [showEditFields, setShowEditFields] = useState(false);
@@ -169,41 +169,39 @@ const [showEditFields, setShowEditFields] = useState(false);
     }
   };
 
+  
   return (
-    <div className="mt-8 w-full md:p-8 p-4 mx-auto">
+
+    <div ref={ref} className="mt-4  md:mt-8 w-full mx-auto px-2 sm:px-4 md:px-8">
       {/* Prize Banner */}
-      <div className="w-full mx-auto mb-6 py-4 px-4 text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-xl shadow-xl overflow-hidden">
+      <div className="w-full mx-auto mb-4 sm:mb-6 py-3 sm:py-4 px-3 sm:px-4 text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-xl shadow-xl overflow-hidden">
         <div className="flex  sm:flex-row items-center justify-center gap-2 sm:gap-4">
-          <Award className="w-8 h-8 text-white" />
-          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg">
+          <Award className="w-6 h-6 sm:w-8 sm:h-8 text-white flex-shrink-0" />
+          <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white drop-shadow-lg">
             Prizes Worth <span className="text-yellow-200">₹1,00,000+</span>
           </h2>
-          <Award className="w-8 h-8 text-white" />
+          <Award className="w-6 h-6 sm:w-8 sm:h-8 text-white flex-shrink-0" />
         </div>
       </div>
 
       {/* Header with Login/Logout */}
       <motion.div
-        className="w-full m-4 mx-auto py-6 px-4 rounded-b-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg"
+        className="w-full mx-auto py-4 sm:py-6 px-3 sm:px-4 rounded-b-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg"
         initial={{ y: -50 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-center bg-gradient-to-r from-[#00E6E6] via-[#00B3FF] to-[#0099FF] bg-clip-text text-transparent tracking-tight drop-shadow-md">
+        <h2  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-center bg-gradient-to-r from-[#00E6E6] via-[#00B3FF] to-[#0099FF] bg-clip-text text-transparent tracking-tight drop-shadow-md">
           Upcoming Thrills
         </h2>
-        <div className="text-center mt-4 flex flex-col items-center gap-4">
+        <div className="text-center mt-2 sm:mt-4 flex flex-col items-center gap-2 sm:gap-4">
           {user ? (
-            <>
-              <span className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 px-4 rounded-full shadow-sm">
-                Welcome,{" "}
-                <span className="text-indigo-600 dark:text-indigo-400">{user.name || user.email}</span>
-                <br />
-
-              </span>
-            </>
+            <span className="text-xs sm:text-sm md:text-base lg:text-lg font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 px-3 sm:px-4 py-1 sm:py-2 rounded-full shadow-sm">
+              Welcome,{" "}
+              <span className="text-indigo-600 dark:text-indigo-400">{user.name || user.email}</span>
+            </span>
           ) : (
-            <span className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-200">
+            <span className="text-xs sm:text-sm md:text-base lg:text-lg font-medium text-gray-700 dark:text-gray-200">
               Please log in to register for events.
             </span>
           )}
@@ -215,7 +213,8 @@ const [showEditFields, setShowEditFields] = useState(false);
         {!expandedEvent ? (
           <motion.div
             key="grid"
-            className="grid grid-cols-1 m-4 mx-6 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+            
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mt-4 sm:mt-6 px-2 sm:px-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -229,124 +228,32 @@ const [showEditFields, setShowEditFields] = useState(false);
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer
-                w-[350px] mx-auto mb-3"
+                className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer w-full max-w-[350px] mx-auto mb-4"
                 onClick={() => setExpandedEvent(event.id)}
               >
-                <div className="relative h-36 sm:h-48 md:h-52 flex justify-center items-center overflow-hidden">
+                <div className="relative h-32 sm:h-40 md:h-48 lg:h-52 flex justify-center items-center overflow-hidden">
                   <img
                     src={typeof event.image === "string" ? event.image : event.image.src}
                     alt={event.name}
                     className="max-h-full max-w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <div className="p-4 sm:p-5">
-                  <h2 className="text-lg sm:text-xl font-bold mb-2 text-indigo-600">{event.name}</h2>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mb-3 line-clamp-2">
+                <div className="p-3 sm:p-4 md:p-5">
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold mb-2 text-indigo-600">{event.name}</h2>
+                  <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm md:text-base mb-2 sm:mb-3 line-clamp-2">
                     {event.shortDescription}
                   </p>
                   <div className="flex items-center justify-between gap-2 text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 flex-shrink-0" />
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="truncate">{event.venue}</span>
                     </div>
                     {user && registrations.some((r) => r.eventId === event.id) && (
-                      <span className="text-green-600 font-medium">Registered</span>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="expanded"
-            className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="relative w-full max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl bg-white dark:bg-gray-800 rounded-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-              <button
-                onClick={() => {
-                  setExpandedEvent(null);
-                  setShowEditFields(false); // Reset edit fields when closing
-                }}
-                className="absolute top-3 right-3 p-1.5 sm:p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 z-10"
-              >
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
-              <div className="overflow-y-auto p-4 sm:p-6 flex-1">
-                {eventsData
-                  .filter((e) => e.id === expandedEvent)
-                  .map((event) => {
-                    const isRegistered = user && registrations.some((r) => r.eventId === event.id);
-
-                    return (
-                      <div key={event.id} className="flex flex-col">
-                        <div className="relative h-48 sm:h-56 md:h-64 rounded-lg overflow-hidden mb-4 flex justify-center items-center bg-gray-100">
-                          <img
-                            src={typeof event.image === "string" ? event.image : event.image.src}
-                            alt={event.name}
-                            className="h-full w-auto max-w-full object-contain"
-                          />
-                        </div>
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-indigo-600 mb-4 text-center">
-                          {event.name}
-                        </h2>
-                        <p className="text-sm sm:text-base md:text-lg text-gray-700 dark:text-gray-300 mb-6">
-                          {event.longDescription}
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                          <div>
-                            <h3 className="font-semibold text-lg sm:text-xl mb-2 sm:mb-3">Rules</h3>
-                            <ul className="space-y-2 text-sm sm:text-base">
-                              {event.rules.map((rule, i) => (
-                                <li key={i} className="flex items-start gap-2">
-                                  <span className="w-2 h-2 sm:w-3 sm:h-3 bg-indigo-400 rounded-full mt-1.5 flex-shrink-0" />
-                                  <span>{rule}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-lg sm:text-xl mb-2 sm:mb-3">Prize</h3>
-                            <p className="text-sm sm:text-base md:text-lg font-medium bg-indigo-50 dark:bg-indigo-900/20 p-2 sm:p-3 rounded-lg">
-                              {event.prize}
-                            </p>
-                          </div>
-                        </div>
-                        {user && !isRegistered ? (
-                          <div className="mt-6">
-                            <h3 className="font-semibold text-lg sm:text-xl mb-2 sm:mb-3">Register</h3>
-                            {eventFields[event.id].map((field) => (
-                              <div key={field.name} className="mb-4">
-                                <label className="block text-sm sm:text-base font-medium text-gray-700 dark:text-gray-300 capitalize">
-                                  {field.name.replace(/([A-Z])/g, " $1").trim()}
-                                </label>
-                                {renderField(field)}
-                              </div>
-                            ))}
-                            <button
-                              onClick={() => handleRegister(event.id, false)}
-                              className="mt-4 w-full bg-indigo-600 text-white px-4 sm:px-5 py-2 sm:py-3 rounded-lg hover:bg-indigo-700 text-base sm:text-lg"
-                            >
-                              Register Now
-                            </button>
-                          </div>
-                        ) : user && isRegistered ? (
-                          <div className="mt-6">
-                            <div className="flex items-center justify-between">
-                              <p className="text-green-600 text-sm sm:text-base md:text-lg">
-                                You are already registered for this event!
-                              </p>
-                              <button
-                                onClick={() => setShowEditFields(!showEditFields)}
-                                className="text-blue-600 cursor-pointer hover:text-blue-800 flex items-center gap-2"
-                              >
-                                <svg
+                      <>
+                      <div className="flex space-x-3">
+                       <svg
                                   xmlns="http://www.w3.org/2000/svg"
-                                  className="w-5 h-5"
+                                  className="w-4 text-blue-500 h-4 sm:w-5 sm:h-5"
                                   fill="none"
                                   viewBox="0 0 24 24"
                                   stroke="currentColor"
@@ -358,14 +265,124 @@ const [showEditFields, setShowEditFields] = useState(false);
                                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.732 5.732z"
                                   />
                                 </svg>
-                                Edit Response 
+                      <span className="text-green-600 flex  font-medium">
+                        Registered</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="expanded"
+            className="fixed inset-0 bg-black/70 flex items-center justify-center p-2 sm:p-4 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="relative w-full max-w-[95vw] sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl bg-white dark:bg-gray-800 rounded-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+              <button
+                onClick={() => {
+                  setExpandedEvent(null);
+                  setShowEditFields(false);
+                }}
+                className="absolute top-2 sm:top-3 right-2 sm:right-3 p-1 sm:p-1.5 md:p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 z-10"
+              >
+                <X className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+              </button>
+              <div className="overflow-y-auto p-3 sm:p-4 md:p-6 flex-1">
+                {eventsData
+                  .filter((e) => e.id === expandedEvent)
+                  .map((event) => {
+                    const isRegistered = user && registrations.some((r) => r.eventId === event.id);
+
+                    return (
+                      <div key={event.id} className="flex flex-col">
+                        <div className="relative h-40 sm:h-48 md:h-56 lg:h-64 rounded-lg overflow-hidden mb-3 sm:mb-4 flex justify-center items-center bg-gray-100">
+                          <img
+                            src={typeof event.image === "string" ? event.image : event.image.src}
+                            alt={event.name}
+                            className="h-full w-auto max-w-full object-contain"
+                          />
+                        </div>
+                        <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-indigo-600 mb-3 sm:mb-4 text-center">
+                          {event.name}
+                        </h2>
+                        <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 dark:text-gray-300 mb-4 sm:mb-6">
+                          {event.longDescription}
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                          <div>
+                            <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">Rules</h3>
+                            <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm md:text-base">
+                              {event.rules.map((rule, i) => (
+                                <li key={i} className="flex items-start gap-1 sm:gap-2">
+                                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 bg-indigo-400 rounded-full mt-1 sm:mt-1.5 flex-shrink-0" />
+                                  <span>{rule}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">Prize</h3>
+                            <p className="text-xs sm:text-sm md:text-base lg:text-lg font-medium bg-indigo-50 dark:bg-indigo-900/20 p-1.5 sm:p-2 md:p-3 rounded-lg">
+                              {event.prize}
+                            </p>
+                          </div>
+                        </div>
+                        {user && !isRegistered ? (
+                          <div className="mt-4 sm:mt-6">
+                            <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">Register</h3>
+                            {eventFields[event.id].map((field) => (
+                              <div key={field.name} className="mb-3 sm:mb-4">
+                                <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300 capitalize">
+                                  {field.name.replace(/([A-Z])/g, " $1").trim()}
+                                </label>
+                                {renderField(field)}
+                              </div>
+                            ))}
+                            <button
+                              onClick={() => handleRegister(event.id, false)}
+                              className="mt-3 sm:mt-4 w-full bg-indigo-600 text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-indigo-700 text-sm sm:text-base md:text-lg"
+                            >
+                              Register Now
+                            </button>
+                          </div>
+                        ) : user && isRegistered ? (
+                          <div className="mt-4 sm:mt-6">
+                            <div className="flex items-center justify-between flex-col sm:flex-row gap-2">
+                              <p className="text-green-600 text-xs sm:text-sm md:text-base lg:text-lg">
+                                You are already registered for this event!
+                              </p>
+                              <button
+                                onClick={() => setShowEditFields(!showEditFields)}
+                                className="text-blue-600 cursor-pointer hover:text-blue-800 flex items-center gap-1 sm:gap-2"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="w-4 h-4 sm:w-5 sm:h-5"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.732 5.732z"
+                                  />
+                                </svg>
+                                Edit Response
                               </button>
                             </div>
                             {showEditFields && (
-                              <div className="mt-4">
+                              <div className="mt-3 sm:mt-4">
                                 {eventFields[event.id].map((field) => (
-                                  <div key={field.name} className="mb-4">
-                                    <label className="block text-sm sm:text-base font-medium text-gray-700 dark:text-gray-300 capitalize">
+                                  <div key={field.name} className="mb-3 sm:mb-4">
+                                    <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300 capitalize">
                                       {field.name.replace(/([A-Z])/g, " $1").trim()}
                                     </label>
                                     {renderField(field)}
@@ -373,7 +390,7 @@ const [showEditFields, setShowEditFields] = useState(false);
                                 ))}
                                 <button
                                   onClick={() => handleRegister(event.id, true)}
-                                  className="mt-4 cursor-pointer  w-full bg-blue-600 text-white px-4 sm:px-5 py-2 sm:py-3 rounded-lg hover:bg-blue-700 text-base sm:text-lg"
+                                  className="mt-3 sm:mt-4 w-full bg-blue-600 text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-blue-700 text-sm sm:text-base md:text-lg cursor-pointer"
                                 >
                                   Update Details
                                 </button>
@@ -385,13 +402,13 @@ const [showEditFields, setShowEditFields] = useState(false);
                     );
                   })}
               </div>
-              <div className="p-4 border-t border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 flex justify-center">
+              <div className="p-3 sm:p-4 border-t border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 flex justify-center">
                 <button
                   onClick={() => {
                     setExpandedEvent(null);
-                    setShowEditFields(false); // Reset edit fields when closing
+                    setShowEditFields(false);
                   }}
-                  className="bg-red-500 cursor-pointer text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-red-600 text-sm sm:text-base"
+                  className="bg-red-500 cursor-pointer text-white px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-lg hover:bg-red-600 text-xs sm:text-sm md:text-base"
                 >
                   Collapse
                 </button>
@@ -402,6 +419,6 @@ const [showEditFields, setShowEditFields] = useState(false);
       </AnimatePresence>
     </div>
   );
-};
+});
 
 export default Events;

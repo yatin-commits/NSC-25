@@ -7,9 +7,11 @@ import Faqs from "./src/components/Faqs";
 import Coordinators from "./src/components/Coordinators";
 import { useRef } from "react";
 
+
 const HomePage = () => {
 
   const eventsRef = useRef(null);
+
 
   const scrollToEvents = () => {
     if (eventsRef.current) {
@@ -23,9 +25,9 @@ const HomePage = () => {
     //   <CountdownTimer targetDate="2025-12-31T23:59:59" />
     // </div>
     <>
-    <HeroSection scrollToEvents={scrollToEvents}/>
+    <HeroSection scrollToEvents={() => eventsRef.current?.scrollIntoView({ behavior: "smooth" })}/>
     <ScheduleSection/>
-    <Events eventsRef={eventsRef}/>
+    <Events ref={eventsRef} />
     <Coordinators/>
     <Faqs/>    
     <Footer />
