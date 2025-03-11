@@ -118,7 +118,7 @@ const AdminPanel = () => {
                   onClick={exportToExcel}
                   className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-600 flex items-center gap-2"
                 >
-                  <SiGooglesheets /> Export to Excel
+                  <SiGooglesheets />
                 </button>
               )}
             </div>

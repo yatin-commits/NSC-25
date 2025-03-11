@@ -170,12 +170,52 @@ const [showEditFields, setShowEditFields] = useState(false);
   };
 
   return (
-    <div className="mt-8 w-full max-w-6xl mx-auto">
+    <div className="mt-8 w-full md:p-8 p-4 mx-auto">
+      {/* Prize Banner */}
+      <div className="w-full mx-auto mb-6 py-4 px-4 text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-xl shadow-xl overflow-hidden">
+        <div className="flex  sm:flex-row items-center justify-center gap-2 sm:gap-4">
+          <Award className="w-8 h-8 text-white" />
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg">
+            Prizes Worth <span className="text-yellow-200">₹1,00,000+</span>
+          </h2>
+          <Award className="w-8 h-8 text-white" />
+        </div>
+      </div>
+
+      {/* Header with Login/Logout */}
+      <motion.div
+        className="w-full m-4 mx-auto py-6 px-4 rounded-b-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg"
+        initial={{ y: -50 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-center bg-gradient-to-r from-[#00E6E6] via-[#00B3FF] to-[#0099FF] bg-clip-text text-transparent tracking-tight drop-shadow-md">
+          Upcoming Thrills
+        </h2>
+        <div className="text-center mt-4 flex flex-col items-center gap-4">
+          {user ? (
+            <>
+              <span className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 px-4 rounded-full shadow-sm">
+                Welcome,{" "}
+                <span className="text-indigo-600 dark:text-indigo-400">{user.name || user.email}</span>
+                <br />
+
+              </span>
+            </>
+          ) : (
+            <span className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-200">
+              Please log in to register for events.
+            </span>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Main Events Content */}
       <AnimatePresence mode="wait">
         {!expandedEvent ? (
           <motion.div
             key="grid"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+            className="grid grid-cols-1 m-4 mx-6 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -240,7 +280,7 @@ const [showEditFields, setShowEditFields] = useState(false);
                   .filter((e) => e.id === expandedEvent)
                   .map((event) => {
                     const isRegistered = user && registrations.some((r) => r.eventId === event.id);
-  
+
                     return (
                       <div key={event.id} className="flex flex-col">
                         <div className="relative h-48 sm:h-56 md:h-64 rounded-lg overflow-hidden mb-4 flex justify-center items-center bg-gray-100">
@@ -301,7 +341,7 @@ const [showEditFields, setShowEditFields] = useState(false);
                               </p>
                               <button
                                 onClick={() => setShowEditFields(!showEditFields)}
-                                className="text-blue-600 hover:text-blue-800 flex items-center gap-2"
+                                className="text-blue-600 cursor-pointer hover:text-blue-800 flex items-center gap-2"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -317,7 +357,7 @@ const [showEditFields, setShowEditFields] = useState(false);
                                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.732 5.732z"
                                   />
                                 </svg>
-                                Edit
+                                Edit Response 
                               </button>
                             </div>
                             {showEditFields && (
@@ -332,7 +372,7 @@ const [showEditFields, setShowEditFields] = useState(false);
                                 ))}
                                 <button
                                   onClick={() => handleRegister(event.id, true)}
-                                  className="mt-4 w-full bg-blue-600 text-white px-4 sm:px-5 py-2 sm:py-3 rounded-lg hover:bg-blue-700 text-base sm:text-lg"
+                                  className="mt-4 cursor-pointer  w-full bg-blue-600 text-white px-4 sm:px-5 py-2 sm:py-3 rounded-lg hover:bg-blue-700 text-base sm:text-lg"
                                 >
                                   Update Details
                                 </button>
@@ -350,7 +390,7 @@ const [showEditFields, setShowEditFields] = useState(false);
                     setExpandedEvent(null);
                     setShowEditFields(false); // Reset edit fields when closing
                   }}
-                  className="bg-red-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-red-600 text-sm sm:text-base"
+                  className="bg-red-500 cursor-pointer text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-red-600 text-sm sm:text-base"
                 >
                   Collapse
                 </button>
