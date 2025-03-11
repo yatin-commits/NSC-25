@@ -6,7 +6,7 @@
  import { useAuth } from "../../context/AuthContext";
  
  // List of admin emails
- const adminEmails = ["sharmayatin0882@gmail.com", "shreyasinghal706@gmail.com", "admin3@example.com"];
+ const adminEmails = ["sharmayatin0882@gmail.com", "shreyasinghal706@gmail.com", "amrendraex@gmail.com"];
  
  // Menu Item Component
  const MenuItem = ({ setActive, active, item, children }) => {
