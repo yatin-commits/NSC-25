@@ -26,7 +26,7 @@ const AdminPanel = () => {
       axios
         .get(`https://nsc-25-backend.vercel.app/api/registrations?userId=${adminUserId}`)
         .then((response) => {
-          console.log("Backend response:", response.data); // Debug log
+          // console.log("Backend response:", response.data); // Debug log
           // Ensure response.data is an array before filtering
           const data = Array.isArray(response.data) ? response.data : [];
           const eventRegistrations = data.filter((reg) => reg.eventId === Number(selectedEvent));

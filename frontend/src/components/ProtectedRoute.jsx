@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children }) => {
 
   if (loading) return <p>Loading...</p>; // Prevent redirection until auth state is known
 
-  console.log("User:", user);
+  // console.log("User:", user);
   const isAdmin = user && adminEmails.includes(user.email);
   console.log("Is Admin:", isAdmin);
 
