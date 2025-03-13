@@ -35,11 +35,16 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
     setIsMenuOpen(false);
   };
 
+  const handleNavClick = (scrollAction) => {
+    setIsMenuOpen(false);
+    setTimeout(scrollAction, 300); // Wait for menu to close before scrolling
+  };
+
   const navItems = [
-    { name: "Schedule", action: scrollToSchedule },
-    { name: "Events", action: scrollToEvents },
-    { name: "Coordinators", action: scrollToCoordinators },
-    { name: "FAQ's", action: scrollToFAQ },
+    { name: "Schedule", action: () => handleNavClick(scrollToSchedule) },
+    { name: "Events", action: () => handleNavClick(scrollToEvents) },
+    { name: "Coordinators", action: () => handleNavClick(scrollToCoordinators) },
+    { name: "FAQ's", action: () => handleNavClick(scrollToFAQ) },
   ];
 
   return (
@@ -57,13 +62,7 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
 
         <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
           {navItems.map((item) => (
-            <MenuItem
-              key={item.name}
-              setActive={setActive}
-              active={active}
-              item={item.name}
-              onClick={() => item.action()}
-            />
+            <MenuItem key={item.name} setActive={setActive} active={active} item={item.name} onClick={item.action} />
           ))}
           {isAdmin && (
             <a href="/admin" className="text-gray-200 cursor-pointer text-sm md:text-base font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300">
@@ -83,6 +82,7 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
           </div>
         </div>
 
+        {/* Mobile Menu Button */}
         <div className="md:hidden">
           <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-200 hover:text-purple-500 focus:outline-none transition-colors duration-300">
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -90,6 +90,7 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
         </div>
       </div>
 
+      {/* Mobile Menu */}
       <motion.div
         initial={{ opacity: 0, height: 0 }}
         animate={isMenuOpen ? { opacity: 1, height: "auto" } : { opacity: 0, height: 0 }}
@@ -100,14 +101,7 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
           <div key={item.name} className="py-2">
             <p
               className="cursor-pointer text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
-              onClick={() => {
-                item.action();
-                setIsMenuOpen(false);
-              }}
-              onTouchStart={() => {
-                item.action();
-                setIsMenuOpen(false);
-              }}
+              onClick={item.action}
             >
               {item.name}
             </p>
@@ -126,7 +120,7 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
               Logout
             </button>
           ) : (
-            <button onClick={handleLogin} className="text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-激烈300">
+            <button onClick={handleLogin} className="text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300">
               Login with Google
             </button>
           )}
