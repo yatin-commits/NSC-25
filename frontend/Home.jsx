@@ -2,9 +2,9 @@ import { HeroSection } from "@/components/HeroSection";
 import { ScheduleSection } from "./src/components/ScheduleSection";
 import Events from "@/components/Events";
 import Footer from "@/components/Footer";
-import Faqs from "./src/components/Faqs";
-import Coordinators from "./src/components/Coordinators";
-import Navbarr from "./src/components/Navbarr";
+import Faqs from "@/components/Faqs";
+import Coordinators from "@/components/Coordinators";
+import Navbarr from "@/components/NavBarr";
 import { useRef, useCallback } from "react";
 
 const HomePage = () => {
