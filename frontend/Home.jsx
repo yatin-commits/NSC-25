@@ -1,37 +1,52 @@
 import { HeroSection } from "@/components/HeroSection";
-import CountdownTimer from "./src/components/CountdownTimer";
-import {ScheduleSection} from "./src/components/ScheduleSection";
+import { ScheduleSection } from "./src/components/ScheduleSection";
 import Events from "@/components/Events";
 import Footer from "@/components/Footer";
 import Faqs from "./src/components/Faqs";
 import Coordinators from "./src/components/Coordinators";
-import { useRef } from "react";
-
+import Navbarr from "./src/components/Navbarr";
+import { useRef, useCallback } from "react";
 
 const HomePage = () => {
-
+  const scheduleRef = useRef(null);
   const eventsRef = useRef(null);
+  const coordinatorsRef = useRef(null);
+  const faqRef = useRef(null);
 
-
-  const scrollToEvents = () => {
-    if (eventsRef.current) {
-      eventsRef.current.scrollIntoView({ behavior: "smooth" });
+  const scrollToSection = useCallback((ref) => {
+    if (ref.current) {
+      const top = ref.current.getBoundingClientRect().top + window.pageYOffset - 80; // Offset for navbar
+      try {
+        ref.current.scrollIntoView({ behavior: "smooth" });
+      } catch (error) {
+        // Fallback for browsers that don't support smooth scrolling
+        window.scrollTo({ top, behavior: "smooth" });
+      }
     }
-  };
+  }, []);
 
   return (
-    // <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-    //   <h1 className="text-5xl font-bold mb-6">Countdown to 2026</h1>
-    //   <CountdownTimer targetDate="2025-12-31T23:59:59" />
-    // </div>
     <>
-    <HeroSection scrollToEvents={() => eventsRef.current?.scrollIntoView({ behavior: "smooth" })}/>
-    <ScheduleSection/>
-    <Events ref={eventsRef} />
-    <Coordinators/>
-    <Faqs/>    
-    <Footer />
-    
+      <Navbarr
+        scrollToSchedule={() => scrollToSection(scheduleRef)}
+        scrollToEvents={() => scrollToSection(eventsRef)}
+        scrollToCoordinators={() => scrollToSection(coordinatorsRef)}
+        scrollToFAQ={() => scrollToSection(faqRef)}
+      />
+      <HeroSection scrollToEvents={() => scrollToSection(eventsRef)} />
+      <div ref={scheduleRef}>
+        <ScheduleSection />
+      </div>
+      <div ref={eventsRef}>
+        <Events />
+      </div>
+      <div ref={coordinatorsRef}>
+        <Coordinators />
+      </div>
+      <div ref={faqRef}>
+        <Faqs />
+      </div>
+      <Footer />
     </>
   );
 };

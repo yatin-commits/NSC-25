@@ -316,13 +316,15 @@ const [showEditFields, setShowEditFields] = useState(false);
 
                     return (
                       <div key={event.id} className="flex flex-col">
-                        <div className="relative h-40 sm:h-48 md:h-56 lg:h-64 rounded-lg overflow-hidden mb-3 sm:mb-4 flex justify-center items-center bg-gray-100">
+                        
+                        {/* <div className="relative h-40 sm:h-48 md:h-56 lg:h-64 rounded-lg overflow-hidden mb-3 sm:mb-4 flex justify-center items-center bg-gray-100">
                           <img
                             src={typeof event.image === "string" ? event.image : event.image.src}
                             alt={event.name}
                             className="h-full w-auto max-w-full object-contain"
                           />
-                        </div>
+                        </div> */}
+
                         <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-indigo-600 mb-3 sm:mb-4 text-center">
                           {event.name}
                         </h2>
@@ -374,7 +376,7 @@ const [showEditFields, setShowEditFields] = useState(false);
                               </p>
                               <button
                                 onClick={() => setShowEditFields(!showEditFields)}
-                                className="text-blue-600 cursor-pointer hover:text-blue-800 flex items-center gap-1 sm:gap-2"
+                                className="text-blue-600  cursor-pointer hover:text-blue-800 flex items-center gap-1 sm:gap-2"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
