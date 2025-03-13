@@ -4,7 +4,10 @@ import bvicamlogo from "../assets/bvicamLogo.png";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
-const adminEmails = ["sharmayatin0882@gmail.com", "shreyasinghal706@gmail.com", "amrendraex@gmail.com"];
+// const adminEmails = ["sharmayatin0882@gmail.com", "shreyasinghal706@gmail.com", "amrendraex@gmail.com"];
+const adminEmails= import.meta.env.VITE_ADMIN_EMAILS;
+// console.log(adminEmails);
+
 
 const MenuItem = ({ setActive, active, item, onClick }) => {
   return (
@@ -53,11 +56,11 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       onMouseLeave={() => setActive(null)}
-      className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 to-black/80 backdrop-blur-md border-b border-gray-700/50"
+      className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900  border-gray-700/50"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <div className="flex items-center">
-          <img src={bvicamlogo} alt="BVICAM Logo" className="h-16 p-2" />
+          <img src={bvicamlogo} alt="BVICAM Logo" className="h-18 p-2" />
         </div>
 
         <div className="hidden md:flex items-center space-x-6 lg:space-x-8">

@@ -261,3 +261,26 @@ export const eventFields = {
       prize: "Winner: ₹7,000, Runner-up: ₹3,500",
     },
   ];
+
+
+
+  export const events = [
+      { name: "Nukkad-Natak", time: "11:00 AM", heads: [
+          { name: "Shreya Srivastava", mobile: "+91 63872 99487" },
+          { name: "Harshit", mobile: "+91 97172 25929" },
+        ] },
+      { name: "Nukkad-Natak", time: "11:00 AM", heads: [
+          { name: "Shreya Srivastava", mobile: "+91 63872 99487" },
+          { name: "Harshit", mobile: "+91 97172 25929" },
+        ] },
+      { name: "Nukkad-Natak", time: "11:00 AM", heads: [
+          { name: "Shreya Srivastava", mobile: "+91 63872 99487" },
+          { name: "Harshit", mobile: "+91 97172 25929" },
+        ] },
+      { name: "Tech Talk", time: "10:00 AM", heads: [
+          { name: "Alice Johnson", mobile: "+91 99999 88888" },
+        ] },
+      { name: "Code Sprint", time: "1:00 PM", heads: [
+          { name: "Ravi Kumar", mobile: "+91 98765 43210" },
+        ] },
+    ];

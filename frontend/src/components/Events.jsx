@@ -1,21 +1,21 @@
 "use client";
-import React, { useState, useEffect,forwardRef } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import bvicamlogo from "../assets/bvicamLogo.png";
 import shark from "../assets/shark.png";
 import code from "../assets/code.png";
 import binary from "../assets/binary.png";
-import { MapPin, X, Award } from "lucide-react";
+import { MapPin, X, Award, Search } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { eventFields, eventsData } from "./eventFields";
+import { eventFields, eventsData } from "./data";
 import toast from "react-hot-toast";
 
 const Events = forwardRef((props, ref) => {
   const [expandedEvent, setExpandedEvent] = useState(null);
-
-const [showEditFields, setShowEditFields] = useState(false);
+  const [showEditFields, setShowEditFields] = useState(false);
   const [formData, setFormData] = useState({});
   const [registrations, setRegistrations] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(''); // Added search state
   const { user, login, logout } = useAuth();
   const name = user?.name;
   const email = user?.email;
@@ -23,7 +23,6 @@ const [showEditFields, setShowEditFields] = useState(false);
   useEffect(() => {
     if (expandedEvent !== null) {
       document.body.classList.add("overflow-hidden");
-      // Load existing registration data for the expanded event
       const registration = registrations.find((r) => r.eventId === expandedEvent);
       if (registration) {
         setFormData(registration.fields);
@@ -38,7 +37,6 @@ const [showEditFields, setShowEditFields] = useState(false);
 
   useEffect(() => {
     if (user) {
-      // console.log(user);
       fetchRegistrations(user.uid, true);
     }
   }, [user]);
@@ -85,7 +83,6 @@ const [showEditFields, setShowEditFields] = useState(false);
       name: name || null,
       email: email || null,
     };
-    // console.log("Payload:", payload);
 
     const loadingToast = toast.loading(isEdit ? "Updating..." : "Registering...");
     try {
@@ -98,7 +95,7 @@ const [showEditFields, setShowEditFields] = useState(false);
       if (response.ok) {
         toast.success(isEdit ? "Details updated successfully!" : "Registration successful!", { id: loadingToast });
         await fetchRegistrations(user.uid, false);
-        if (!isEdit) setFormData({}); // Clear form only on new registration
+        if (!isEdit) setFormData({});
       } else {
         toast.error(data.error || (isEdit ? "Update failed." : "Registration failed."), { id: loadingToast });
       }
@@ -169,13 +166,18 @@ const [showEditFields, setShowEditFields] = useState(false);
     }
   };
 
-  
-  return (
+  // Filter events based on search term
+  const filteredEvents = eventsData.filter((event) =>
+    event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    event.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    event.venue.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-    <div ref={ref} className="mt-4  md:mt-8 w-full mx-auto px-2 sm:px-4 md:px-8">
+  return (
+    <div ref={ref} className="mt-4 md:mt-8 w-full mx-auto px-2 sm:px-4 md:px-8">
       {/* Prize Banner */}
       <div className="w-full mx-auto mb-4 sm:mb-6 py-3 sm:py-4 px-3 sm:px-4 text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-xl shadow-xl overflow-hidden">
-        <div className="flex  sm:flex-row items-center justify-center gap-2 sm:gap-4">
+        <div className="flex sm:flex-row items-center justify-center gap-2 sm:gap-4">
           <Award className="w-6 h-6 sm:w-8 sm:h-8 text-white flex-shrink-0" />
           <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white drop-shadow-lg">
             Prizes Worth <span className="text-yellow-200">₹1,00,000+</span>
@@ -191,7 +193,7 @@ const [showEditFields, setShowEditFields] = useState(false);
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-center bg-gradient-to-r from-[#00E6E6] via-[#00B3FF] to-[#0099FF] bg-clip-text text-transparent tracking-tight drop-shadow-md">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-center bg-gradient-to-r from-[#00E6E6] via-[#00B3FF] to-[#0099FF] bg-clip-text text-transparent tracking-tight drop-shadow-md">
           Upcoming Thrills
         </h2>
         <div className="text-center mt-2 sm:mt-4 flex flex-col items-center gap-2 sm:gap-4">
@@ -202,40 +204,61 @@ const [showEditFields, setShowEditFields] = useState(false);
             </span>
           ) : (
             <span className="text-xs flex flex-col sm:text-sm md:text-base lg:text-lg font-medium text-gray-700 dark:text-gray-200 text-center">
-            Please log in to register for events.
-            <br />
-            <button
-              className="flex items-center justify-center gap-2 px-4 py-2 mt-2 text-sm font-medium text-white bg-black hover:bg-white hover:text-black hover:border-[1px] hover:border-black  rounded-md  transition"
-              onClick={handleLogin}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
-                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
-                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
-                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
-                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
-              </svg>
-              Login with Google
-            </button>
-          </span>
-          
-            
+              Please log in to register for events.
+              <br />
+              <button
+                className="flex items-center justify-center gap-2 px-4 py-2 mt-2 text-sm font-medium text-white bg-black hover:bg-white hover:text-black hover:border-[1px] hover:border-black rounded-md transition"
+                onClick={handleLogin}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+                  <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
+                  <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
+                  <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
+                  <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
+                </svg>
+                Login with Google
+              </button>
+            </span>
           )}
         </div>
       </motion.div>
+
+      {/* Search Bar */}
+      <div className="relative mb-6 px-5 sm:px-4 mt-6">
+  <div className="relative max-w-2xl mx-auto">
+    <input
+      type="text"
+      placeholder="Search events by name, description, or venue..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="w-full pl-10 pr-10 py-2 md:py-3 lg:py-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm md:text-base lg:text-lg"
+    />
+    <Search 
+      className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-indigo-600 dark:text-indigo-400" 
+    />
+    {searchTerm && (
+      <button
+        onClick={() => setSearchTerm('')}
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl md:text-2xl"
+      >
+        ×
+      </button>
+    )}
+  </div>
+</div>
 
       {/* Main Events Content */}
       <AnimatePresence mode="wait">
         {!expandedEvent ? (
           <motion.div
             key="grid"
-            
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mt-4 sm:mt-6 px-2 sm:px-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
-            {eventsData.map((event) => (
+            {filteredEvents.map((event) => (
               <motion.div
                 key={event.id}
                 layout
@@ -264,31 +287,37 @@ const [showEditFields, setShowEditFields] = useState(false);
                       <span className="truncate">{event.venue}</span>
                     </div>
                     {user && registrations.some((r) => r.eventId === event.id) && (
-                      <>
                       <div className="flex space-x-3">
-                       <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="w-4 text-blue-500 h-4 sm:w-5 sm:h-5"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.732 5.732z"
-                                  />
-                                </svg>
-                      <span className="text-green-600 flex  font-medium">
-                        Registered</span>
-                        </div>
-                      </>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-4 text-blue-500 h-4 sm:w-5 sm:h-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.732 5.732z"
+                          />
+                        </svg>
+                        <span className="text-green-600 cursor-pointer flex font-medium">Registered</span>
+                      </div>
                     )}
                   </div>
                 </div>
               </motion.div>
             ))}
+            {filteredEvents.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400 text-lg"
+              >
+                No events found matching your search.
+              </motion.div>
+            )}
           </motion.div>
         ) : (
           <motion.div
@@ -316,15 +345,6 @@ const [showEditFields, setShowEditFields] = useState(false);
 
                     return (
                       <div key={event.id} className="flex flex-col">
-                        
-                        {/* <div className="relative h-40 sm:h-48 md:h-56 lg:h-64 rounded-lg overflow-hidden mb-3 sm:mb-4 flex justify-center items-center bg-gray-100">
-                          <img
-                            src={typeof event.image === "string" ? event.image : event.image.src}
-                            alt={event.name}
-                            className="h-full w-auto max-w-full object-contain"
-                          />
-                        </div> */}
-
                         <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-indigo-600 mb-3 sm:mb-4 text-center">
                           {event.name}
                         </h2>
@@ -376,7 +396,7 @@ const [showEditFields, setShowEditFields] = useState(false);
                               </p>
                               <button
                                 onClick={() => setShowEditFields(!showEditFields)}
-                                className="text-blue-600  cursor-pointer hover:text-blue-800 flex items-center gap-1 sm:gap-2"
+                                className="text-blue-600 cursor-pointer hover:text-blue-800 flex items-center gap-1 sm:gap-2"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"

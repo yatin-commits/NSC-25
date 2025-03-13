@@ -3,12 +3,12 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 // Define allowed admin emails
-const adminEmails = ["sharmayatin0882@gmail.com", "shreyasinghal706@gmail.com","amrendraex@gmail.com"];
+const adminEmails =import.meta.env.VITE_ADMIN_EMAILS;
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
-  if (loading) return <p>Loading...</p>; // Prevent redirection until auth state is known
+  if (loading) return <p>Loading...</p>; 
 
   // console.log("User:", user);
   const isAdmin = user && adminEmails.includes(user.email);

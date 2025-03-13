@@ -2,32 +2,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
+import {events} from './data.js'
 export function ScheduleSection() {
   const [searchTerm, setSearchTerm] = useState("");
   const carouselRef = useRef(null);
   const [isScrollable, setIsScrollable] = useState(false);
-
-  const events = [
-    { name: "Nukkad-Natak", time: "11:00 AM", heads: [
-        { name: "Shreya Srivastava", mobile: "+91 63872 99487" },
-        { name: "Harshit", mobile: "+91 97172 25929" },
-      ] },
-    { name: "Nukkad-Natak", time: "11:00 AM", heads: [
-        { name: "Shreya Srivastava", mobile: "+91 63872 99487" },
-        { name: "Harshit", mobile: "+91 97172 25929" },
-      ] },
-    { name: "Nukkad-Natak", time: "11:00 AM", heads: [
-        { name: "Shreya Srivastava", mobile: "+91 63872 99487" },
-        { name: "Harshit", mobile: "+91 97172 25929" },
-      ] },
-    { name: "Tech Talk", time: "10:00 AM", heads: [
-        { name: "Alice Johnson", mobile: "+91 99999 88888" },
-      ] },
-    { name: "Code Sprint", time: "1:00 PM", heads: [
-        { name: "Ravi Kumar", mobile: "+91 98765 43210" },
-      ] },
-  ];
 
   const filteredEvents = events.filter((event) =>
     event.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -57,15 +36,7 @@ export function ScheduleSection() {
         Event Schedule
       </motion.h1>
 
-      {/* <div className="max-w-md mx-auto mb-6">
-        <input
-          type="text"
-          placeholder="Search events..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full py-3 px-4 bg-gray-800 rounded-full text-white"
-        />
-      </div> */}
+      
 
       <div className="relative  w-screen mx-auto">
         {filteredEvents.length > 0 ? (
