@@ -154,6 +154,16 @@ const AdminPanel = () => {
 
         {selectedEvent && (
           <div className="mb-6 flex flex-col sm:flex-row gap-4">
+             <div className="relative">
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="w-full cursor-pointer sm:w-48 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option className="cursor-pointer" value="desc">Date (Newest First)</option>
+                <option className="cursor-pointer" value="asc">Date (Oldest First)</option>
+              </select>
+            </div>
             <div className="relative flex-1">
               <input
                 type="text"
@@ -172,16 +182,7 @@ const AdminPanel = () => {
                 </button>
               )}
             </div>
-            <div className="relative">
-              <select
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-                className="w-full cursor-pointer sm:w-48 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option className="cursor-pointer" value="desc">Date (Newest First)</option>
-                <option className="cursor-pointer" value="asc">Date (Oldest First)</option>
-              </select>
-            </div>
+           
           </div>
         )}
 
