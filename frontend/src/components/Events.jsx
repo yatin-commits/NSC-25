@@ -335,7 +335,7 @@ const Events = forwardRef((props, ref) => {
                 }}
                 className="absolute top-2 sm:top-3 right-2 sm:right-3 p-1 sm:p-1.5 md:p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 z-10"
               >
-                <X className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+                <X className="w-4 cursor-pointer h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </button>
               <div className="overflow-y-auto p-3 sm:p-4 md:p-6 flex-1">
                 {eventsData
@@ -383,7 +383,7 @@ const Events = forwardRef((props, ref) => {
                             ))}
                             <button
                               onClick={() => handleRegister(event.id, false)}
-                              className="mt-3 sm:mt-4 w-full bg-indigo-600 text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-indigo-700 text-sm sm:text-base md:text-lg"
+                              className="mt-3 sm:mt-4 w-full bg-indigo-600 cursor-pointer text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-indigo-700 text-sm sm:text-base md:text-lg"
                             >
                               Register Now
                             </button>
