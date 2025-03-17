@@ -1,53 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const MemberForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    college: ''
+    name: "",
+    email: "",
+    phone: "",
+    college: "",
   });
-  
-  const [memberId, setMemberId] = useState('');
-  const [copied, setCopied] = useState(false); // State to track if ID is copied
+  const [memberId, setMemberId] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Clear error for this field when user starts typing
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const generateMemberId = () => {
-    const randomNum = Math.floor(1000 + Math.random() * 9000);
-    return `${formData.name.split(' ')[0].toLowerCase().replace(/\s/g, '')}-${randomNum}`;
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // 36 possible characters
+    let randomCode = "NSC";
+    for (let i = 0; i < 4; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      randomCode += characters[randomIndex];
+    }
+    return randomCode; // e.g., NSC6D3R
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = "Full name is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Phone number must be 10 digits";
+    }
+    if (!formData.college.trim()) newErrors.college = "College name is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.name && formData.email && formData.phone && formData.college) {
+    if (validateForm()) {
       const newMemberId = generateMemberId();
       setMemberId(newMemberId);
-      setCopied(false); // Reset copied state when generating new ID
-      console.log('Form Data:', formData);
-      console.log('Generated Member ID:', newMemberId);
-    } else {
-      alert('Please fill all fields');
+      setCopied(false);
+      console.log("Form Data:", formData);
+      console.log("Generated Member ID:", newMemberId);
+      // Optionally, reset form after submission
+      // setFormData({ name: "", email: "", phone: "", college: "" });
     }
   };
 
-  // Function to copy member ID to clipboard
   const handleCopy = () => {
-    navigator.clipboard.writeText(memberId)
+    navigator.clipboard
+      .writeText(memberId)
       .then(() => {
         setCopied(true);
-        // Reset "Copied" feedback after 2 seconds
         setTimeout(() => setCopied(false), 2000);
       })
       .catch((err) => {
-        console.error('Failed to copy: ', err);
-        alert('Failed to copy member ID');
+        console.error("Failed to copy: ", err);
+        alert("Failed to copy member ID");
       });
   };
 
@@ -55,10 +79,10 @@ const MemberForm = () => {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Generate your member ID
+          Generate Your Member ID
         </h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
+
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
               Full Name
@@ -69,10 +93,12 @@ const MemberForm = () => {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.name ? "border-red-500" : "border-gray-300"
+              }`}
               placeholder="Enter your full name"
             />
+            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
 
           <div>
@@ -85,10 +111,12 @@ const MemberForm = () => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              }`}
               placeholder="Enter your email"
             />
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
 
           <div>
@@ -101,10 +129,12 @@ const MemberForm = () => {
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter your phone number"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.phone ? "border-red-500" : "border-gray-300"
+              }`}
+              placeholder="Enter your 10-digit phone number"
             />
+            {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
           </div>
 
           <div>
@@ -117,15 +147,17 @@ const MemberForm = () => {
               name="college"
               value={formData.college}
               onChange={handleInputChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.college ? "border-red-500" : "border-gray-300"
+              }`}
               placeholder="Enter your college name"
             />
+            {errors.college && <p className="text-red-500 text-xs mt-1">{errors.college}</p>}
           </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300"
           >
             Generate Member ID
           </button>
@@ -133,22 +165,21 @@ const MemberForm = () => {
 
         {memberId && (
           <div className="mt-6 p-4 bg-gray-50 rounded-md text-center">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              Your Member ID:
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Your Member ID:</h3>
             <div className="flex items-center justify-center space-x-4">
-              <p className="text-xl font-mono text-blue-600">{memberId}</p>
+              <p className="text-xl font-mono text-blue-600 select-all">{memberId}</p>
               <button
                 onClick={handleCopy}
                 className={`px-3 py-1 rounded-md text-sm font-medium transition duration-300 ${
-                  copied 
-                    ? 'bg-green-500 text-white' 
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  copied ? "bg-green-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
               >
-                {copied ? 'Copied!' : 'Copy'}
+                {copied ? "Copied!" : "Copy"}
               </button>
             </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Save this ID to register for events!
+            </p>
           </div>
         )}
       </div>
