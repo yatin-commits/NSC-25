@@ -10,6 +10,7 @@ const cors = require('cors');
 //   allowedHeaders: ['Content-Type'], 
 // }));
 // Generate and store a new member ID
+//added dummy changes
 router.post("/generate-member-id", async (req, res) => {
   const { name, email, phone, college } = req.body;
 
