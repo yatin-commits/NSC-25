@@ -42,21 +42,31 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
     setIsMenuOpen(false);
   };
 
-  const handleNavClick = (scrollAction) => {
-    setIsMenuOpen(false);
-    setTimeout(scrollAction, 300); // Wait for menu to close before scrolling
-  };
+  // const handleNavClick = (scrollAction) => {
+  //   setIsMenuOpen(false);
+  //   setTimeout(scrollAction, 300); // Wait for menu to close before scrolling
+  // };
 
   function clickHandler(){
     navigate("/MemberForm");
   }
 
+  const handleHomeClick = (scrollAction) => {
+    if (location.pathname === "/") {
+      // If already on homepage, scroll immediately
+      setTimeout(scrollAction, 200); // Delay to allow menu to close
+    } else {
+      // If on another page, navigate to homepage and scroll after
+      navigate("/", { state: { scrollTo: scrollAction } });
+    }
+    setIsMenuOpen(false);
+  };
+
   const navItems = [
-    { name: "Schedule", action: () => handleNavClick(scrollToSchedule) },
-    { name: "Events", action: () => handleNavClick(scrollToEvents) },
-    { name: "Coordinators", action: () => handleNavClick(scrollToCoordinators) },
-    { name: "FAQ's", action: () => handleNavClick(scrollToFAQ) },
-    { name: "Member ID", action: () => clickHandler() },
+    { name: "Schedule", action: () => handleHomeClick(scrollToSchedule) },
+    { name: "Events", action: () => handleHomeClick(scrollToEvents) },
+    { name: "Coordinators", action: () => handleHomeClick(scrollToCoordinators) },
+    { name: "FAQ's", action: () => handleHomeClick(scrollToFAQ) }
   ];
 
   return (
@@ -81,6 +91,11 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
               <NavLink to = "/register" />
             )
           } */}
+          {
+            user && (
+              <MenuItem key="Member ID" setActive={setActive} active={active} item="Member ID" onClick={clickHandler} />
+            )
+          }
           {isAdmin && (
             <a href="/admin" className="text-gray-200 cursor-pointer text-sm md:text-base font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300">
               Admin Panel
