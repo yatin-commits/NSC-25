@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import bvicamlogo from "../assets/bvicamLogo.png";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { NavLink, useNavigate } from "react-router-dom";
+import MemberForm  from "../pages/MemberForm";
 
 // const adminEmails = ["sharmayatin0882@gmail.com", "shreyasinghal706@gmail.com", "amrendraex@gmail.com"];
 const adminEmails= import.meta.env.VITE_ADMIN_EMAILS;
@@ -33,6 +35,8 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
 
   const isAdmin = user && adminEmails.includes(user.email);
 
+  const navigate = useNavigate();
+
   const handleLogin = () => {
     login(false);
     setIsMenuOpen(false);
@@ -43,11 +47,16 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
     setTimeout(scrollAction, 300); // Wait for menu to close before scrolling
   };
 
+  function clickHandler(){
+    navigate("/MemberForm");
+  }
+
   const navItems = [
     { name: "Schedule", action: () => handleNavClick(scrollToSchedule) },
     { name: "Events", action: () => handleNavClick(scrollToEvents) },
     { name: "Coordinators", action: () => handleNavClick(scrollToCoordinators) },
     { name: "FAQ's", action: () => handleNavClick(scrollToFAQ) },
+    { name: "Member ID", action: () => clickHandler() },
   ];
 
   return (
@@ -67,6 +76,11 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
           {navItems.map((item) => (
             <MenuItem key={item.name} setActive={setActive} active={active} item={item.name} onClick={item.action} />
           ))}
+          {/* {
+            item.name === "Member ID" && (
+              <NavLink to = "/register" />
+            )
+          } */}
           {isAdmin && (
             <a href="/admin" className="text-gray-200 cursor-pointer text-sm md:text-base font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300">
               Admin Panel
