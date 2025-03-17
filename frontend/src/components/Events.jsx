@@ -40,7 +40,10 @@ const Events = forwardRef((props, ref) => {
   const fetchRegistrations = async (uid, showWelcome = true) => {
     const loadingToast = toast.loading("Fetching data...");
     try {
-      const response = await fetch(`https://nsc-25-backend.vercel.app/api/registrations?userId=${uid}`);
+      const response = await fetch(`https://nsc-25-backend.vercel.app/api/registrations?userId=${uid}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setRegistrations(data || []);

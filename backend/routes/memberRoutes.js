@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Member = require("../models/Member");
+const Member = require("../modules/Members");
 const cors = require('cors');
 app.use(cors());
 app.use(cors({
