@@ -1,13 +1,9 @@
 "use client";
 import React, { useState, useEffect, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import bvicamlogo from "../assets/bvicamLogo.png";
-import shark from "../assets/shark.png";
-import code from "../assets/code.png";
-import binary from "../assets/binary.png";
 import { MapPin, X, Award, Search } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { eventFields, eventsData } from "./data";
+import { eventFields as baseEventFields, eventsData } from "./data";
 import toast from "react-hot-toast";
 
 const Events = forwardRef((props, ref) => {
@@ -15,7 +11,7 @@ const Events = forwardRef((props, ref) => {
   const [showEditFields, setShowEditFields] = useState(false);
   const [formData, setFormData] = useState({});
   const [registrations, setRegistrations] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(''); // Added search state
+  const [searchTerm, setSearchTerm] = useState("");
   const { user, login, logout } = useAuth();
   const name = user?.name;
   const email = user?.email;
@@ -61,7 +57,18 @@ const Events = forwardRef((props, ref) => {
   };
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      const newFormData = { ...prev, [name]: value };
+      const sizeField = ["teamSize", "groupSize", "castSize"].find((field) => field === name);
+      if (sizeField) {
+        const teamSize = parseInt(value) || 0;
+        for (let i = 1; i <= Math.max(teamSize, prev[sizeField] || 0); i++) {
+          if (i > teamSize) delete newFormData[`teamMemberId${i}`];
+        }
+      }
+      return newFormData;
+    });
   };
 
   const handleRegister = async (eventId, isEdit = false) => {
@@ -70,9 +77,25 @@ const Events = forwardRef((props, ref) => {
       return;
     }
 
-    const requiredFields = eventFields[eventId].map((f) => f.name);
+    const requiredFields = ["memberId", ...(baseEventFields[eventId] || []).map((f) => f.name)];
+    const sizeField = baseEventFields[eventId]?.find((f) =>
+      ["teamSize", "groupSize", "castSize"].includes(f.name)
+    );
+    if (sizeField) {
+      const teamSize = parseInt(formData[sizeField.name]) || 0;
+      if (eventIsTeamBased(eventId) && teamSize > 1) {
+        for (let i = 1; i <= teamSize - 1; i++) {
+          requiredFields.push(`teamMemberId${i}`);
+        }
+      }
+    }
+
+    console.log("Event ID:", eventId);
+    console.log("Required fields:", requiredFields);
+    console.log("formData:", formData);
+
     if (!requiredFields.every((field) => formData[field]?.trim())) {
-      toast.error("Please fill all required fields.");
+      toast.error("Please fill all required fields, including Member ID and Team Member IDs if applicable.");
       return;
     }
 
@@ -115,13 +138,14 @@ const Events = forwardRef((props, ref) => {
     }
   };
 
-  const renderField = (field) => {
+  const renderField = (field, index = null) => {
+    const fieldName = index !== null ? `${field.name}${index}` : field.name;
     switch (field.type) {
       case "select":
         return (
           <select
-            name={field.name}
-            value={formData[field.name] || ""}
+            name={fieldName}
+            value={formData[fieldName] || ""}
             onChange={handleInputChange}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm sm:text-base p-2"
             required
@@ -139,9 +163,9 @@ const Events = forwardRef((props, ref) => {
               <label key={option} className="flex items-center text-sm sm:text-base">
                 <input
                   type="radio"
-                  name={field.name}
+                  name={fieldName}
                   value={option}
-                  checked={formData[field.name] === option}
+                  checked={formData[fieldName] === option}
                   onChange={handleInputChange}
                   className="mr-2"
                   required
@@ -156,8 +180,8 @@ const Events = forwardRef((props, ref) => {
         return (
           <input
             type="text"
-            name={field.name}
-            value={formData[field.name] || ""}
+            name={fieldName}
+            value={formData[fieldName] || ""}
             onChange={handleInputChange}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm sm:text-base p-2"
             required
@@ -166,12 +190,25 @@ const Events = forwardRef((props, ref) => {
     }
   };
 
-  // Filter events based on search term
   const filteredEvents = eventsData.filter((event) =>
     event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     event.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
     event.venue.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const eventIsTeamBased = (eventId) => {
+    const event = eventsData.find((e) => e.id === eventId);
+    return event?.isTeamBased || baseEventFields[eventId]?.some((f) =>
+      ["teamSize", "groupSize", "castSize"].includes(f.name)
+    );
+  };
+
+  const getTeamSizeFieldName = (eventId) => {
+    const field = baseEventFields[eventId]?.find((f) =>
+      ["teamSize", "groupSize", "castSize"].includes(f.name)
+    );
+    return field?.name || null;
+  };
 
   return (
     <div ref={ref} className="mt-4 md:mt-8 w-full mx-auto px-2 sm:px-4 md:px-8">
@@ -225,27 +262,27 @@ const Events = forwardRef((props, ref) => {
 
       {/* Search Bar */}
       <div className="relative mb-6 px-5 sm:px-4 mt-6">
-  <div className="relative max-w-2xl mx-auto">
-    <input
-      type="text"
-      placeholder="Search events by name, description, or venue..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="w-full pl-10 pr-10 py-2 md:py-3 lg:py-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm md:text-base lg:text-lg"
-    />
-    <Search 
-      className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-indigo-600 dark:text-indigo-400" 
-    />
-    {searchTerm && (
-      <button
-        onClick={() => setSearchTerm('')}
-        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl md:text-2xl"
-      >
-        ×
-      </button>
-    )}
-  </div>
-</div>
+        <div className="relative max-w-2xl mx-auto">
+          <input
+            type="text"
+            placeholder="Search events by name, description, or venue..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-10 py-2 md:py-3 lg:py-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm md:text-base lg:text-lg"
+          />
+          <Search 
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-indigo-600 dark:text-indigo-400" 
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl md:text-2xl"
+            >
+              ×
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Main Events Content */}
       <AnimatePresence mode="wait">
@@ -342,6 +379,9 @@ const Events = forwardRef((props, ref) => {
                   .filter((e) => e.id === expandedEvent)
                   .map((event) => {
                     const isRegistered = user && registrations.some((r) => r.eventId === event.id);
+                    const isTeamBased = eventIsTeamBased(event.id);
+                    const sizeFieldName = getTeamSizeFieldName(event.id);
+                    const teamSize = sizeFieldName ? parseInt(formData[sizeFieldName]) || 0 : 0;
 
                     return (
                       <div key={event.id} className="flex flex-col">
@@ -373,7 +413,15 @@ const Events = forwardRef((props, ref) => {
                         {user && !isRegistered ? (
                           <div className="mt-4 sm:mt-6">
                             <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">Register</h3>
-                            {eventFields[event.id].map((field) => (
+                            {/* Member ID Field */}
+                            <div className="mb-3 sm:mb-4">
+                              <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
+                                Your Member ID
+                              </label>
+                              {renderField({ name: "memberId", type: "text" })}
+                            </div>
+                            {/* Base Event Fields */}
+                            {(baseEventFields[event.id] || []).map((field) => (
                               <div key={field.name} className="mb-3 sm:mb-4">
                                 <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300 capitalize">
                                   {field.name.replace(/([A-Z])/g, " $1").trim()}
@@ -381,6 +429,22 @@ const Events = forwardRef((props, ref) => {
                                 {renderField(field)}
                               </div>
                             ))}
+                            {/* Team Member ID Fields */}
+                            {isTeamBased && sizeFieldName && teamSize > 1 && ( // Changed from > 0 to > 1
+                              <div className="mb-3 sm:mb-4">
+                                <h4 className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                  Team Member IDs (excluding you)
+                                </h4>
+                                {Array.from({ length: teamSize - 1 }, (_, i) => (
+                                  <div key={i} className="mb-2">
+                                    <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
+                                      Team Member {i + 1} ID
+                                    </label>
+                                    {renderField({ name: `teamMemberId${i + 1}`, type: "text" })}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                             <button
                               onClick={() => handleRegister(event.id, false)}
                               className="mt-3 sm:mt-4 w-full bg-indigo-600 cursor-pointer text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-indigo-700 text-sm sm:text-base md:text-lg"
@@ -417,7 +481,15 @@ const Events = forwardRef((props, ref) => {
                             </div>
                             {showEditFields && (
                               <div className="mt-3 sm:mt-4">
-                                {eventFields[event.id].map((field) => (
+                                {/* Member ID Field */}
+                                <div className="mb-3 sm:mb-4">
+                                  <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
+                                    Your Member ID
+                                  </label>
+                                  {renderField({ name: "memberId", type: "text" })}
+                                </div>
+                                {/* Base Event Fields */}
+                                {(baseEventFields[event.id] || []).map((field) => (
                                   <div key={field.name} className="mb-3 sm:mb-4">
                                     <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300 capitalize">
                                       {field.name.replace(/([A-Z])/g, " $1").trim()}
@@ -425,6 +497,22 @@ const Events = forwardRef((props, ref) => {
                                     {renderField(field)}
                                   </div>
                                 ))}
+                                {/* Team Member ID Fields */}
+                                {isTeamBased && sizeFieldName && teamSize > 1 && ( // Changed from > 0 to > 1
+                                  <div className="mb-3 sm:mb-4">
+                                    <h4 className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                      Team Member IDs (excluding you)
+                                    </h4>
+                                    {Array.from({ length: teamSize - 1 }, (_, i) => (
+                                      <div key={i} className="mb-2">
+                                        <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
+                                          Team Member {i + 1} ID
+                                        </label>
+                                        {renderField({ name: `teamMemberId${i + 1}`, type: "text" })}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
                                 <button
                                   onClick={() => handleRegister(event.id, true)}
                                   className="mt-3 sm:mt-4 w-full bg-blue-600 text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-blue-700 text-sm sm:text-base md:text-lg cursor-pointer"
@@ -439,7 +527,7 @@ const Events = forwardRef((props, ref) => {
                     );
                   })}
               </div>
-              <div className="p-3 sm:p-4 border-t border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 flex justify-center">
+              <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 flex justify-center">
                 <button
                   onClick={() => {
                     setExpandedEvent(null);
