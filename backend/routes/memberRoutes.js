@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 const Member = require("../modules/Members");
 const cors = require('cors');
-const app = express();
-app.use(cors());
-app.use(cors({
-  origin: ['https://bvicam-nsc-25.vercel.app','http://localhost:5173'], 
-  methods: ['GET', 'POST', 'PUT'], 
-  allowedHeaders: ['Content-Type'], 
-}));
+// const app = express();
+// app.use(cors());
+// app.use(cors({
+//   origin: ['https://bvicam-nsc-25.vercel.app','http://localhost:5173'], 
+//   methods: ['GET', 'POST', 'PUT'], 
+//   allowedHeaders: ['Content-Type'], 
+// }));
 // Generate and store a new member ID
 router.post("/generate-member-id", async (req, res) => {
   const { name, email, phone, college } = req.body;
