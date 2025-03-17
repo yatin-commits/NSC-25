@@ -18,6 +18,7 @@ router.post("/generate-member-id", async (req, res) => {
   }
 
   try {
+    
     // Check for duplicate phone number
     const existingPhone = await Member.findOne({ phone });
     if (existingPhone) {
