@@ -76,38 +76,48 @@ const Events = forwardRef((props, ref) => {
       toast.error("Please log in to register.");
       return;
     }
-
+  
     const requiredFields = ["memberId", ...(baseEventFields[eventId] || []).map((f) => f.name)];
     const sizeField = baseEventFields[eventId]?.find((f) =>
       ["teamSize", "groupSize", "castSize"].includes(f.name)
     );
+    let memberIds = [formData.memberId];
     if (sizeField) {
       const teamSize = parseInt(formData[sizeField.name]) || 0;
       if (eventIsTeamBased(eventId) && teamSize > 1) {
         for (let i = 1; i <= teamSize - 1; i++) {
           requiredFields.push(`teamMemberId${i}`);
+          memberIds.push(formData[`teamMemberId${i}`]);
         }
       }
     }
-
-    console.log("Event ID:", eventId);
-    console.log("Required fields:", requiredFields);
-    console.log("formData:", formData);
-
+  
     if (!requiredFields.every((field) => formData[field]?.trim())) {
-      toast.error("Please fill all required fields, including Member ID and Team Member IDs if applicable.");
+      toast.error("Please fill all required fields.");
       return;
     }
-
-    const payload = {
-      eventId,
-      userId: user.uid,
-      fields: formData,
-      name: name || null,
-      email: email || null,
-    };
-
-    const loadingToast = toast.loading(isEdit ? "Updating..." : "Registering...");
+  
+    const loadingToast = toast.loading("Verifying member IDs...");
+    try {
+      const verifyResponse = await fetch("https://nsc-25-backend.vercel.app/api/verify-member-ids", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ memberIds }),
+      });
+      const verifyData = await verifyResponse.json();
+      if (!verifyResponse.ok) {
+        toast.error(verifyData.message || "Invalid member IDs", { id: loadingToast });
+        return;
+      }
+      toast.dismiss(loadingToast);
+    } catch (error) {
+      toast.error("Verification failed", { id: loadingToast });
+      return;
+    }
+  
+    // Proceed with registration (unchanged from your original)
+    const payload = { eventId, userId: user.uid, fields: formData, name, email };
+    const registerToast = toast.loading(isEdit ? "Updating..." : "Registering...");
     try {
       const response = await fetch("https://nsc-25-backend.vercel.app/api/register", {
         method: isEdit ? "PUT" : "POST",
@@ -116,15 +126,14 @@ const Events = forwardRef((props, ref) => {
       });
       const data = await response.json();
       if (response.ok) {
-        toast.success(isEdit ? "Details updated successfully!" : "Registration successful!", { id: loadingToast });
+        toast.success(isEdit ? "Details updated!" : "Registration successful!", { id: registerToast });
         await fetchRegistrations(user.uid, false);
         if (!isEdit) setFormData({});
       } else {
-        toast.error(data.error || (isEdit ? "Update failed." : "Registration failed."), { id: loadingToast });
+        toast.error(data.error || (isEdit ? "Update failed." : "Registration failed."), { id: registerToast });
       }
     } catch (error) {
-      console.error(`Error during ${isEdit ? "update" : "registration"}:`, error.message);
-      toast.error(`${isEdit ? "Update" : "Registration"} error occurred.`, { id: loadingToast });
+      toast.error(`${isEdit ? "Update" : "Registration"} error occurred.`, { id: registerToast });
     }
   };
 

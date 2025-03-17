@@ -10,6 +10,7 @@ const MemberForm = () => {
   const [memberId, setMemberId] = useState("");
   const [copied, setCopied] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -17,18 +18,7 @@ const MemberForm = () => {
       ...prev,
       [name]: value,
     }));
-    // Clear error for this field when user starts typing
     setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
-
-  const generateMemberId = () => {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // 36 possible characters
-    let randomCode = "NSC";
-    for (let i = 0; i < 4; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      randomCode += characters[randomIndex];
-    }
-    return randomCode; // e.g., NSC6D3R
   };
 
   const validateForm = () => {
@@ -49,16 +39,31 @@ const MemberForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      const newMemberId = generateMemberId();
-      setMemberId(newMemberId);
-      setCopied(false);
-      console.log("Form Data:", formData);
-      console.log("Generated Member ID:", newMemberId);
-      // Optionally, reset form after submission
-      // setFormData({ name: "", email: "", phone: "", college: "" });
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("https://nsc-25-backend.vercel.app/api/generate-member-id", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setMemberId(data.memberId);
+        setCopied(false);
+        console.log("Form Data:", formData);
+        console.log("Generated Member ID:", data.memberId);
+      } else {
+        setErrors({ submit: data.message || "Failed to generate member ID" });
+      }
+    } catch (error) {
+      console.error("Error generating member ID:", error);
+      setErrors({ submit: "Server error occurred" });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -71,7 +76,7 @@ const MemberForm = () => {
       })
       .catch((err) => {
         console.error("Failed to copy: ", err);
-        alert("Failed to copy member ID");
+        setErrors({ copy: "Failed to copy member ID" });
       });
   };
 
@@ -93,6 +98,7 @@ const MemberForm = () => {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
+              disabled={isLoading}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.name ? "border-red-500" : "border-gray-300"
               }`}
@@ -111,6 +117,7 @@ const MemberForm = () => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
+              disabled={isLoading}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.email ? "border-red-500" : "border-gray-300"
               }`}
@@ -129,6 +136,7 @@ const MemberForm = () => {
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
+              disabled={isLoading}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.phone ? "border-red-500" : "border-gray-300"
               }`}
@@ -147,6 +155,7 @@ const MemberForm = () => {
               name="college"
               value={formData.college}
               onChange={handleInputChange}
+              disabled={isLoading}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.college ? "border-red-500" : "border-gray-300"
               }`}
@@ -157,10 +166,16 @@ const MemberForm = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300"
+            disabled={isLoading}
+            className={`w-full py-2 px-4 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ${
+              isLoading
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
-            Generate Member ID
+            {isLoading ? "Generating..." : "Generate Member ID"}
           </button>
+          {errors.submit && <p className="text-red-500 text-xs mt-2 text-center">{errors.submit}</p>}
         </form>
 
         {memberId && (
@@ -170,13 +185,17 @@ const MemberForm = () => {
               <p className="text-xl font-mono text-blue-600 select-all">{memberId}</p>
               <button
                 onClick={handleCopy}
+                disabled={isLoading}
                 className={`px-3 py-1 rounded-md text-sm font-medium transition duration-300 ${
-                  copied ? "bg-green-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  copied
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
               >
                 {copied ? "Copied!" : "Copy"}
               </button>
             </div>
+            {errors.copy && <p className="text-red-500 text-xs mt-2">{errors.copy}</p>}
             <p className="text-xs text-gray-500 mt-2">
               Save this ID to register for events!
             </p>

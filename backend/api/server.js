@@ -24,6 +24,8 @@ mongoose.connect("mongodb+srv://yatin2104:yatin2104@bvicam-nsc.z71wy.mongodb.net
 
 // Mount routes
 app.use('/api', registrationRoutes);
+const memberRoutes = require("../routes/memberRoutes");
+app.use("/api", memberRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
