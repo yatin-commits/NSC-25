@@ -45,7 +45,7 @@ const Events = forwardRef((props, ref) => {
     const loadingToast = toast.loading("Fetching data...");
     try {
       const response = await fetch(
-        `http://localhost:5000/api/registrations?userId=${uid}`,
+        `https://nsc-25-backend.vercel.app/api/registrations?userId=${uid}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -136,7 +136,7 @@ const Events = forwardRef((props, ref) => {
     const loadingToast = toast.loading("Verifying member IDs...");
     try {
       const verifyResponse = await fetch(
-        "http://localhost:5000/api/verify-member-ids",
+        "https://nsc-25-backend.vercel.app/5000/api/verify-member-ids",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -176,7 +176,7 @@ const Events = forwardRef((props, ref) => {
     );
     try {
       const response = await fetch(
-        "http://localhost:5000/api/register",
+        "https://nsc-25-backend.vercel.app/5000/api/register",
         {
           method: isEdit ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
