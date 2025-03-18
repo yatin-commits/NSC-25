@@ -17,7 +17,7 @@ const AdminPanel = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [error, setError] = useState(null);
   const [expandedRows, setExpandedRows] = useState(new Set());
-  const [selectedImage, setSelectedImage] = useState(null); // For modal
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const adminUserId = "29BruJMxHXMB6mbdAZyvKVUixW13";
 
@@ -30,9 +30,10 @@ const AdminPanel = () => {
     setError(null);
     try {
       const registrationsResponse = await axios.get(
-        `https://nsc-25-backend.vercel.app/api/registrations/all?userId=${adminUserId}`
+        `http://localhost:5000/api/registrations/all?userId=${adminUserId}`
       );
       const data = Array.isArray(registrationsResponse.data) ? registrationsResponse.data : [];
+      console.log("Fetched registrations:", data);
       setRegistrations(data);
       if (data.length === 0) {
         setError("No registrations found in the database.");
@@ -45,6 +46,56 @@ const AdminPanel = () => {
       setLoading(false);
     }
   };
+
+  // Flatten registrations to include team members with their own name and email
+  const flattenRegistrations = () => {
+    const flattened = [];
+    registrations.forEach((reg) => {
+      const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields;
+      const eventId = reg.eventId;
+      const isTeamBased = eventFields[eventId]?.some((f) =>
+        ["teamSize", "groupSize", "castSize"].includes(f)
+      );
+      const sizeField = eventFields[eventId]?.find((f) =>
+        ["teamSize", "groupSize", "castSize"].includes(f)
+      );
+      const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
+
+      // Add team leader
+      flattened.push({
+        ...reg,
+        memberId: fields.memberId,
+        name: reg.name,
+        email: reg.email,
+        isTeamLeader: true,
+        teamLeaderId: fields.memberId,
+      });
+
+      // Add team members with their own name and email
+      if (isTeamBased && teamSize > 1) {
+        for (let i = 1; i <= teamSize - 1; i++) {
+          const teamMemberId = fields[`teamMemberId${i}`];
+          const teamMemberName = fields[`teamMemberName${i}`];
+          const teamMemberEmail = fields[`teamMemberEmail${i}`];
+          if (teamMemberId) {
+            flattened.push({
+              ...reg,
+              memberId: teamMemberId,
+              name: teamMemberName || "Unknown Member",
+              email: teamMemberEmail || "N/A",
+              isTeamLeader: false,
+              teamLeaderId: fields.memberId,
+              fields: { ...fields, memberId: teamMemberId }, // Keep fields for consistency
+            });
+          }
+        }
+      }
+    });
+    console.log("Flattened registrations:", flattened);
+    return flattened;
+  };
+
+  const allParticipants = flattenRegistrations();
 
   const exportToExcel = () => {
     if (filteredRegistrations.length === 0) {
@@ -62,8 +113,10 @@ const AdminPanel = () => {
         "Registration Date": reg.registeredAt
           ? new Date(reg.registeredAt).toLocaleString("default", { day: "numeric", month: "short" })
           : "Not Recorded",
-        "Member ID": reg.fields.memberId,
-        "Payment Receipt": reg.paymentReceipt || "N/A", // Include URL in Excel
+        "Member ID": reg.memberId,
+        "Team Leader ID": reg.teamLeaderId,
+        "Role": reg.isTeamLeader ? "Team Leader" : "Team Member",
+        "Payment Receipt": reg.paymentReceipt || "N/A",
         ...reg.fields,
       };
     });
@@ -71,10 +124,13 @@ const AdminPanel = () => {
     const worksheet = XLSX.utils.json_to_sheet(formattedData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Registrations");
-    XLSX.writeFile(workbook, `registrations_${selectedEvent ? eventsData.find((e) => e.id === Number(selectedEvent))?.name : "all_events"}.xlsx`);
+    XLSX.writeFile(
+      workbook,
+      `registrations_${selectedEvent ? eventsData.find((e) => e.id === Number(selectedEvent))?.name : "all_events"}.xlsx`
+    );
   };
 
-  const filteredRegistrations = registrations
+  const filteredRegistrations = allParticipants
     .filter((reg) => {
       const matchesEvent = selectedEvent ? reg.eventId === Number(selectedEvent) : true;
       const matchesSearch =
@@ -83,9 +139,11 @@ const AdminPanel = () => {
          Object.values(reg.fields).some((val) =>
            val?.toString().toLowerCase().includes(searchTerm.toLowerCase())
          ));
-      const matchesMemberId = memberIdFilter
-        ? reg.fields.memberId?.toLowerCase().includes(memberIdFilter.toLowerCase())
-        : true;
+      let matchesMemberId = true;
+      if (memberIdFilter && memberIdFilter !== "all") {
+        // Show all team members when filtering by a team leader's memberId
+        matchesMemberId = reg.teamLeaderId?.toLowerCase() === memberIdFilter.toLowerCase();
+      }
       return matchesEvent && matchesSearch && matchesMemberId;
     })
     .sort((a, b) => {
@@ -101,9 +159,28 @@ const AdminPanel = () => {
         return sortOrder === "asc"
           ? (a.email || "").localeCompare(b.email || "")
           : (b.email || "").localeCompare(a.name || "");
+      } else if (sortField === "memberId") {
+        return sortOrder === "asc"
+          ? (a.memberId || "").localeCompare(b.memberId || "")
+          : (b.memberId || "").localeCompare(a.memberId || "");
       }
       return 0;
     });
+
+  const uniqueMemberIds = [
+    "all",
+    ...new Set(
+      registrations
+        .filter((reg) => !selectedEvent || reg.eventId === Number(selectedEvent))
+        .map((reg) => {
+          const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields;
+          return fields.memberId;
+        })
+    ),
+  ].sort((a, b) => (a === "all" ? -1 : b === "all" ? 1 : a.localeCompare(b)));
+
+  console.log("Unique Member IDs:", uniqueMemberIds);
+  console.log("Filtered Registrations:", filteredRegistrations);
 
   const toggleRow = (index) => {
     const newExpandedRows = new Set(expandedRows);
@@ -182,22 +259,18 @@ const AdminPanel = () => {
 
           <div className="relative">
             <label className="block text-lg font-medium text-gray-600 mb-2">Filter by Member ID:</label>
-            <input
-              type="text"
-              placeholder="Enter Member ID..."
+            <select
               value={memberIdFilter}
               onChange={(e) => setMemberIdFilter(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Search className="absolute left-3 top-10 w-5 h-5 text-gray-400" />
-            {memberIdFilter && (
-              <button
-                onClick={() => setMemberIdFilter("")}
-                className="absolute right-3 top-10 text-gray-400 hover:text-gray-600 text-xl"
-              >
-                ×
-              </button>
-            )}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Member IDs</option>
+              {uniqueMemberIds.map((id) => (
+                <option key={id} value={id}>
+                  {id === "all" ? "Show All Team Members" : id}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -210,6 +283,7 @@ const AdminPanel = () => {
             <option value="registeredAt">Sort by Date</option>
             <option value="name">Sort by Name</option>
             <option value="email">Sort by Email</option>
+            <option value="memberId">Sort by Member ID</option>
           </select>
           <select
             value={sortOrder}
@@ -234,13 +308,13 @@ const AdminPanel = () => {
         ) : (
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-3">
-              Total Registrations: {filteredRegistrations.length}
+              Total Participants: {filteredRegistrations.length}
             </h3>
             {filteredRegistrations.length === 0 ? (
               <p className="text-center text-gray-500">
                 {searchTerm || memberIdFilter
-                  ? "No registrations match your filter criteria."
-                  : "No registrations found."}
+                  ? "No participants match your filter criteria."
+                  : "No participants found."}
               </p>
             ) : (
               <div className="overflow-x-auto">
@@ -252,6 +326,8 @@ const AdminPanel = () => {
                       <th className="p-4 text-left text-gray-600 font-medium">Name</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Email</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Member ID</th>
+                      <th className="p-4 text-left text-gray-600 font-medium">Role</th>
+                      <th className="p-4 text-left text-gray-600 font-medium">Team Leader ID</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Payment Receipt</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Registration Date</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Details</th>
@@ -267,9 +343,11 @@ const AdminPanel = () => {
                           </td>
                           <td className="p-4">{reg.name || "N/A"}</td>
                           <td className="p-4">{reg.email || "N/A"}</td>
-                          <td className="p-4">{reg.fields.memberId || "N/A"}</td>
+                          <td className="p-4">{reg.memberId || "N/A"}</td>
+                          <td className="p-4">{reg.isTeamLeader ? "Team Leader" : "Team Member"}</td>
+                          <td className="p-4">{reg.teamLeaderId || "N/A"}</td>
                           <td className="p-4">
-                            {reg.paymentReceipt ? (
+                            {reg.paymentReceipt && reg.isTeamLeader ? (
                               <div>
                                 <img
                                   src={reg.paymentReceipt}
@@ -311,7 +389,7 @@ const AdminPanel = () => {
                         </tr>
                         {expandedRows.has(index) && (
                           <tr className="bg-gray-50">
-                            <td colSpan="8" className="p-4">
+                            <td colSpan="10" className="p-4">
                               <div className="grid grid-cols-2 gap-2">
                                 {Object.entries(reg.fields).map(([key, value]) => (
                                   <div key={key}>
@@ -331,7 +409,6 @@ const AdminPanel = () => {
           </div>
         )}
 
-        {/* Modal for expanding image */}
         {selectedImage && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
             <div className="relative max-w-4xl w-full p-4">

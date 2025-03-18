@@ -51,7 +51,7 @@ const Events = forwardRef((props, ref) => {
     const loadingToast = toast.loading("Fetching data...");
     try {
       const response = await fetch(
-        `https://nsc-25-backend.vercel.app/api/registrations?userId=${uid}`,
+        `https://nsc-25-backend.vercel.app/api/registrations?userId=${uid}`, // Local testing URL
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -151,7 +151,7 @@ const Events = forwardRef((props, ref) => {
     const loadingToast = toast.loading("Verifying member IDs...");
     try {
       const verifyResponse = await fetch(
-        "https://nsc-25-backend.vercel.app/api/verify-member-ids",
+        "https://nsc-25-backend.vercel.app/api/verify-member-ids", // Local testing URL
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -180,13 +180,22 @@ const Events = forwardRef((props, ref) => {
     formPayload.append("name", name);
     formPayload.append("email", email);
     formPayload.append("fields", JSON.stringify(formData));
-    if (requiresPayment && !isEdit && paymentReceiptFile) {
-      formPayload.append("paymentReceipt", paymentReceiptFile);
+    if (requiresPayment) {
+      if (!isEdit && paymentReceiptFile) {
+        formPayload.append("paymentReceipt", paymentReceiptFile); // New file for POST
+      } else if (isEdit && paymentReceipt) {
+        formPayload.append("paymentReceipt", paymentReceipt); // Existing URL for PUT
+      }
+    }
+
+    console.log('Sending request with payload:');
+    for (let [key, value] of formPayload.entries()) {
+      console.log(`${key}: ${value}`);
     }
 
     const registerToast = toast.loading(isEdit ? "Updating..." : "Registering...");
     try {
-      const response = await fetch("https://nsc-25-backend.vercel.app/api/register", {
+      const response = await fetch("https://nsc-25-backend.vercel.app/api/register", { // Local testing URL
         method: isEdit ? "PUT" : "POST",
         body: formPayload,
       });
@@ -203,11 +212,13 @@ const Events = forwardRef((props, ref) => {
           setShowPaymentStep(false);
         }
       } else {
+        console.error('Server error response:', data);
         toast.error(data.error || (isEdit ? "Update failed." : "Registration failed."), {
           id: registerToast,
         });
       }
     } catch (error) {
+      console.error('Fetch error:', error);
       toast.error(`${isEdit ? "Update" : "Registration"} error occurred.`, {
         id: registerToast,
       });
@@ -587,6 +598,9 @@ const Events = forwardRef((props, ref) => {
                                 >
                                   Register Now
                                 </button>
+                                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-2 text-center">
+                                  Unable to register? Contact Yatin Sharma (8587921049) & Shreya Singhal (9910394481)
+                                </p>
                               </>
                             )}
                           </div>
