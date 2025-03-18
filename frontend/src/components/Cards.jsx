@@ -2,7 +2,7 @@ import { FaLinkedin } from "react-icons/fa";
 import "./Cards.css";
 import myImage from "../assets/me.jpg";
 import mukul from "../assets/mukul.jpg"
-import ujjwal from "../assets/ujjwal.jpg"
+import ujjwal from "../assets/Ujjwal.jpg"
 import yatin from "../assets/yatin.jpg"
 
 const Cards = () => {
