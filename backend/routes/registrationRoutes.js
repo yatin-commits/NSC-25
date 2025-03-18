@@ -5,6 +5,7 @@ const multer = require('multer');
 const { v2: cloudinary } = require('cloudinary');
 const nodemailer = require('nodemailer');
 
+const Member =require('../modules/Members')
 // Apply middleware
 router.use(cors({
   origin: ['https://bvicam-nsc-25.vercel.app', 'http://localhost:5173'],
@@ -194,6 +195,90 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
   }
 });
 // Update registration
+router.get('/members', async (req, res) => {
+  try {
+    console.log('Fetching all registrations...');
+    const registrations = await Registration.find();
+    console.log(`Found ${registrations.length} registrations`);
+
+    console.log('Fetching all events...');
+    const events = await Event.find();
+    const eventMap = new Map(events.map(e => [e.eventId, e.name]));
+    console.log(`Found ${events.length} events`);
+
+    // Collect all unique member IDs
+    const memberIds = new Set();
+    registrations.forEach((reg) => {
+      const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields || {};
+      if (fields.memberId) memberIds.add(fields.memberId);
+
+      const sizeField = Object.keys(fields).find((key) =>
+        ['teamSize', 'groupSize', 'castSize'].includes(key)
+      );
+      const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
+      if (teamSize > 1) {
+        for (let i = 1; i <= teamSize - 1; i++) {
+          const teamMemberId = fields[`teamMemberId${i}`];
+          if (teamMemberId) memberIds.add(teamMemberId);
+        }
+      }
+    });
+    console.log(`Collected ${memberIds.size} unique member IDs`);
+
+    // Fetch member details
+    const members = await Member.find({ memberId: { $in: Array.from(memberIds) } });
+    const memberMap = new Map(members.map(m => [m.memberId, { name: m.name, email: m.email }]));
+    console.log(`Found ${members.length} members`);
+
+    // Map members to their events
+    const memberEvents = new Map();
+    for (const reg of registrations) {
+      const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields || {};
+      const eventId = reg.eventId;
+      const eventName = eventMap.get(eventId) || `Event ${eventId}`;
+
+      if (fields.memberId && memberMap.has(fields.memberId)) {
+        if (!memberEvents.has(fields.memberId)) {
+          memberEvents.set(fields.memberId, { events: new Set() });
+        }
+        memberEvents.get(fields.memberId).events.add(eventName);
+      }
+
+      const sizeField = Object.keys(fields).find((key) =>
+        ['teamSize', 'groupSize', 'castSize'].includes(key)
+      );
+      const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
+      if (teamSize > 1) {
+        for (let i = 1; i <= teamSize - 1; i++) {
+          const teamMemberId = fields[`teamMemberId${i}`];
+          if (teamMemberId && memberMap.has(teamMemberId)) {
+            if (!memberEvents.has(teamMemberId)) {
+              memberEvents.set(teamMemberId, { events: new Set() });
+            }
+            memberEvents.get(teamMemberId).events.add(eventName);
+          }
+        }
+      }
+    }
+
+    // Combine member details with their events
+    const result = Array.from(memberMap.entries()).map(([memberId, { name, email }]) => ({
+      memberId,
+      name,
+      email,
+      events: memberEvents.has(memberId) ? Array.from(memberEvents.get(memberId).events).sort() : [],
+    })).sort((a, b) => a.memberId.localeCompare(b.memberId));
+
+    if (result.length === 0) {
+      return res.status(200).json({ message: 'No members found with registrations', data: [] });
+    }
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Fetch members error:', error);
+    res.status(500).json({ error: 'Failed to fetch members', details: error.message });
+  }
+});
 router.put('/register', upload.none(), async (req, res) => {
   console.log('Raw req.body:', req.body);
   const { eventId, userId, fields, name, email, paymentReceipt } = req.body;
