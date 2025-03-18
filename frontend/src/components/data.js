@@ -9,6 +9,7 @@ import script from "../assets/script.png";
 import dancing from "../assets/dancing.png";
 import debate from "../assets/debate.png";
 import bkball from "../assets/bkball.jpg"
+import volleyballQR from "../assets/volleyballQR.jpg"
 import guitar from "../assets/guitar.png";
 import painting from "../assets/painting.png";
 import basketballQR from '../assets/basketballQR.jpg'
@@ -321,7 +322,7 @@ export const eventsData = [
     contact: ["Ravi: 9876543210", "Neha: 8765432109"],
     requiresPayment: true,
     registrationFee: 600, // Note: Update this if specific fee provided later
-    qrCode: "/images/volleyball-qr.png",
+    qrCode: volleyballQR,
   },
 ];
 
