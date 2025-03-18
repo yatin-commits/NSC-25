@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 import MemberForm from "./pages/MemberForm";
 import ProtectedRouteMember from "./components/ProtectedRouteMember";
+import Members from "./pages/Members";
 
 const App = () => {
   const eventsRef = useRef(null);
@@ -22,6 +23,9 @@ const App = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<Home />} />
+        <ProtectedRouteMember>
+        <Route path="/members" element={<Members />} />
+        </ProtectedRouteMember>
         
         <Route path="/MemberForm" element={
           <ProtectedRouteMember>

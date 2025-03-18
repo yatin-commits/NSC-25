@@ -27,13 +27,15 @@ cloudinary.config({
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: "shreyasinghal706@gmail.com", // Your Gmail address from .env
-    pass: "gvvhdammjnztrbub", // Your Gmail App Password from .env
+    user: "shreyasinghal706@gmail.com",
+    pass: "gvvhdammjnztrbub",
   },
 });
 
+// Import models
 const Registration = require('../modules/registrationModule');
-const Event = require('../modules/evetModules'); // Assuming typo fixed to 'eventModules'
+const Event = require('../modules/evetModules'); // Ensure this path is correct
+const Member = require('../modules/Members'); // Ensure this path is correct
 
 const eventFields = {
   1: ['teamName', 'teamSize', 'preferredLanguage'],
@@ -57,7 +59,7 @@ const isTeamBasedEvent = (eventId) => {
   return fields.some(field => ['teamSize', 'groupSize', 'castSize'].includes(field));
 };
 
-// Register for an event
+// Register for an event (unchanged)
 router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
   const { eventId, userId, fields, name, email } = req.body;
   let paymentReceiptUrl = null;
@@ -176,7 +178,6 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
     console.log('Sending registration email to:', email);
     await transporter.sendMail(mailOptions).catch((error) => {
       console.error('Email sending failed:', error);
-      // Don’t fail the response if email fails
     });
     console.log('Registration email sent successfully');
 
@@ -193,8 +194,9 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
   }
 });
 
-// Update registration (unchanged, no email here unless requested)
+// Update registration (unchanged)
 router.put('/register', upload.none(), async (req, res) => {
+  console.log('Raw req.body:', req.body);
   const { eventId, userId, fields, name, email, paymentReceipt } = req.body;
 
   if (!eventId || !userId) {
@@ -314,6 +316,90 @@ router.get('/registrations/all', async (req, res) => {
   } catch (error) {
     console.error('Fetch admin registrations error:', error);
     res.status(500).json({ error: 'Failed to fetch registrations' });
+  }
+});
+
+// New route to fetch member details with event registrations
+router.get('/members', async (req, res) => {
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'User ID required' });
+  }
+
+  if (userId !== "29BruJMxHXMB6mbdAZyvKVUixW13") {
+    return res.status(403).json({ error: 'Unauthorized: Admin access required' });
+  }
+
+  try {
+    // Fetch all registrations
+    const registrations = await Registration.find();
+
+    // Collect all unique member IDs
+    const memberIds = new Set();
+    registrations.forEach((reg) => {
+      const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields;
+      if (fields.memberId) memberIds.add(fields.memberId);
+
+      const sizeField = Object.keys(fields).find((key) =>
+        ['teamSize', 'groupSize', 'castSize'].includes(key)
+      );
+      const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
+      if (teamSize > 1) {
+        for (let i = 1; i <= teamSize - 1; i++) {
+          const teamMemberId = fields[`teamMemberId${i}`];
+          if (teamMemberId) memberIds.add(teamMemberId);
+        }
+      }
+    });
+
+    // Fetch member details from Member collection
+    const members = await Member.find({ memberId: { $in: Array.from(memberIds) } });
+    const memberMap = new Map(members.map(m => [m.memberId, { name: m.name, email: m.email }]));
+
+    // Map members to their events
+    const memberEvents = new Map();
+    for (const reg of registrations) {
+      const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields;
+      const eventId = reg.eventId;
+      const eventName = (await Event.findOne({ eventId }))?.name || `Event ${eventId}`;
+
+      if (fields.memberId && memberMap.has(fields.memberId)) {
+        if (!memberEvents.has(fields.memberId)) {
+          memberEvents.set(fields.memberId, { events: new Set() });
+        }
+        memberEvents.get(fields.memberId).events.add(eventName);
+      }
+
+      const sizeField = Object.keys(fields).find((key) =>
+        ['teamSize', 'groupSize', 'castSize'].includes(key)
+      );
+      const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
+      if (teamSize > 1) {
+        for (let i = 1; i <= teamSize - 1; i++) {
+          const teamMemberId = fields[`teamMemberId${i}`];
+          if (teamMemberId && memberMap.has(teamMemberId)) {
+            if (!memberEvents.has(teamMemberId)) {
+              memberEvents.set(teamMemberId, { events: new Set() });
+            }
+            memberEvents.get(teamMemberId).events.add(eventName);
+          }
+        }
+      }
+    }
+
+    // Combine member details with their events
+    const result = Array.from(memberMap.entries()).map(([memberId, { name, email }]) => ({
+      memberId,
+      name,
+      email,
+      events: memberEvents.has(memberId) ? Array.from(memberEvents.get(memberId).events).sort() : [],
+    })).sort((a, b) => a.memberId.localeCompare(b.memberId));
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Fetch members error:', error);
+    res.status(500).json({ error: 'Failed to fetch members', details: error.message });
   }
 });
 

@@ -12,7 +12,6 @@ const AdminPanel = () => {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [memberIdFilter, setMemberIdFilter] = useState("");
   const [sortField, setSortField] = useState("registeredAt");
   const [sortOrder, setSortOrder] = useState("desc");
   const [error, setError] = useState(null);
@@ -30,7 +29,7 @@ const AdminPanel = () => {
     setError(null);
     try {
       const registrationsResponse = await axios.get(
-        `http://localhost:5000/api/registrations/all?userId=${adminUserId}`
+        `https://nsc-25-backend.vercel.app/api/registrations/all?userId=${adminUserId}`
       );
       const data = Array.isArray(registrationsResponse.data) ? registrationsResponse.data : [];
       console.log("Fetched registrations:", data);
@@ -139,12 +138,7 @@ const AdminPanel = () => {
          Object.values(reg.fields).some((val) =>
            val?.toString().toLowerCase().includes(searchTerm.toLowerCase())
          ));
-      let matchesMemberId = true;
-      if (memberIdFilter && memberIdFilter !== "all") {
-        // Show all team members when filtering by a team leader's memberId
-        matchesMemberId = reg.teamLeaderId?.toLowerCase() === memberIdFilter.toLowerCase();
-      }
-      return matchesEvent && matchesSearch && matchesMemberId;
+      return matchesEvent && matchesSearch;
     })
     .sort((a, b) => {
       if (sortField === "registeredAt") {
@@ -166,21 +160,6 @@ const AdminPanel = () => {
       }
       return 0;
     });
-
-  const uniqueMemberIds = [
-    "all",
-    ...new Set(
-      registrations
-        .filter((reg) => !selectedEvent || reg.eventId === Number(selectedEvent))
-        .map((reg) => {
-          const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields;
-          return fields.memberId;
-        })
-    ),
-  ].sort((a, b) => (a === "all" ? -1 : b === "all" ? 1 : a.localeCompare(b)));
-
-  console.log("Unique Member IDs:", uniqueMemberIds);
-  console.log("Filtered Registrations:", filteredRegistrations);
 
   const toggleRow = (index) => {
     const newExpandedRows = new Set(expandedRows);
@@ -220,7 +199,7 @@ const AdminPanel = () => {
 
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Admin Panel</h2>
 
-        <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-lg font-medium text-gray-600 mb-2">Filter by Event:</label>
             <select
@@ -256,22 +235,6 @@ const AdminPanel = () => {
               </button>
             )}
           </div>
-
-          <div className="relative">
-            <label className="block text-lg font-medium text-gray-600 mb-2">Filter by Member ID:</label>
-            <select
-              value={memberIdFilter}
-              onChange={(e) => setMemberIdFilter(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Member IDs</option>
-              {uniqueMemberIds.map((id) => (
-                <option key={id} value={id}>
-                  {id === "all" ? "Show All Team Members" : id}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
 
         <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center">
@@ -299,6 +262,12 @@ const AdminPanel = () => {
           >
             <SiGooglesheets /> Export to Excel
           </button>
+          <Link
+            to="/members"
+            className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 flex items-center gap-2"
+          >
+            Individual Members
+          </Link>
         </div>
 
         {loading ? (
@@ -312,9 +281,7 @@ const AdminPanel = () => {
             </h3>
             {filteredRegistrations.length === 0 ? (
               <p className="text-center text-gray-500">
-                {searchTerm || memberIdFilter
-                  ? "No participants match your filter criteria."
-                  : "No participants found."}
+                {searchTerm ? "No participants match your filter criteria." : "No participants found."}
               </p>
             ) : (
               <div className="overflow-x-auto">
