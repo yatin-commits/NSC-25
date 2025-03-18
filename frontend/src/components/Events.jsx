@@ -20,6 +20,7 @@ const Events = forwardRef((props, ref) => {
   const [paymentReceipt, setPaymentReceipt] = useState(null); // For preview (URL.createObjectURL)
   const [paymentReceiptFile, setPaymentReceiptFile] = useState(null); // Raw file for upload
   const [showPaymentStep, setShowPaymentStep] = useState(false); // Toggle payment step
+  const [isQrExpanded, setIsQrExpanded] = useState(false); // New state for QR expansion
 
   useEffect(() => {
     if (expandedEvent !== null) {
@@ -178,7 +179,7 @@ const Events = forwardRef((props, ref) => {
     formPayload.append("userId", user.uid);
     formPayload.append("name", name);
     formPayload.append("email", email);
-    formPayload.append("fields", JSON.stringify(formData)); // Stringify fields for FormData
+    formPayload.append("fields", JSON.stringify(formData));
     if (requiresPayment && !isEdit && paymentReceiptFile) {
       formPayload.append("paymentReceipt", paymentReceiptFile);
     }
@@ -187,7 +188,7 @@ const Events = forwardRef((props, ref) => {
     try {
       const response = await fetch("https://nsc-25-backend.vercel.app/api/register", {
         method: isEdit ? "PUT" : "POST",
-        body: formPayload, // No headers needed; FormData sets Content-Type automatically
+        body: formPayload,
       });
       const data = await response.json();
       if (response.ok) {
@@ -451,6 +452,7 @@ const Events = forwardRef((props, ref) => {
                   setExpandedEvent(null);
                   setShowEditFields(false);
                   setShowPaymentStep(false);
+                  setIsQrExpanded(false); // Reset QR expansion on close
                 }}
                 className="absolute top-2 sm:top-3 right-2 sm:right-3 p-1 sm:p-1.5 md:p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 z-10"
               >
@@ -490,14 +492,6 @@ const Events = forwardRef((props, ref) => {
                               </ul>
                             </div>
                           </div>
-                          {/* <div>
-                            <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
-                              Prize
-                            </h3>
-                            <p className="text-xs sm:text-sm md:text-base lg:text-lg font-medium bg-indigo-50 dark:bg-indigo-900/20 p-1.5 sm:p-2 md:p-3 rounded-lg">
-                              {event.prize}
-                            </p>
-                          </div> */}
                         </div>
                         {user && !isRegistered ? (
                           <div className="mt-4 sm:mt-6">
@@ -532,11 +526,14 @@ const Events = forwardRef((props, ref) => {
                                     <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
                                       Scan the QR code below to pay the registration fee:
                                     </p>
-                                    <img
-                                      src={event.qrCode || "/images/placeholder-qr.png"} // Placeholder QR code
-                                      alt="Payment QR Code"
-                                      className="w-32 h-32 mx-auto mb-2"
-                                    />
+                                    <div className="flex justify-center">
+                                      <img
+                                        src={event.qrCode || "/images/placeholder-qr.png"}
+                                        alt="Payment QR Code"
+                                        className="w-32 h-32 mb-2 cursor-pointer hover:opacity-80 transition-opacity"
+                                        onClick={() => setIsQrExpanded(true)}
+                                      />
+                                    </div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                       Upload Payment Receipt
                                     </label>
@@ -683,6 +680,7 @@ const Events = forwardRef((props, ref) => {
                     setExpandedEvent(null);
                     setShowEditFields(false);
                     setShowPaymentStep(false);
+                    setIsQrExpanded(false); // Reset QR expansion on close
                   }}
                   className="bg-red-500 cursor-pointer text-white px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-lg hover:bg-red-600 text-xs sm:text-sm md:text-base"
                 >
@@ -690,6 +688,34 @@ const Events = forwardRef((props, ref) => {
                 </button>
               </div>
             </div>
+
+            {/* Expanded QR Code Overlay */}
+            {isQrExpanded && (
+              <motion.div
+                className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsQrExpanded(false)} // Close on background click
+              >
+                <div className="relative bg-white p-4 rounded-lg shadow-lg max-w-[90vw] max-h-[90vh]">
+                  <button
+                    onClick={() => setIsQrExpanded(false)}
+                    className="absolute top-2 right-2 p-1 bg-gray-200 rounded-full hover:bg-gray-300"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                  <img
+                    src={
+                      eventsData.find((e) => e.id === expandedEvent)?.qrCode ||
+                      "/images/placeholder-qr.png"
+                    }
+                    alt="Expanded Payment QR Code"
+                    className="max-w-full max-h-[80vh] object-contain"
+                  />
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

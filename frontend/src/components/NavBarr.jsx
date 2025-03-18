@@ -29,7 +29,7 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
   const navigate = useNavigate();
   const location = useLocation();
 
-  const adminEmails = import.meta.env.VITE_ADMIN_EMAILS.split(",");
+  const adminEmails = import.meta.env.VITE_ADMIN_EMAILS;
   const isAdmin = user && adminEmails.includes(user.email);
 
   // Handle scroll after navigation
