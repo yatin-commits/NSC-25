@@ -194,7 +194,7 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
 });
 
 // Update registration (unchanged, no email here unless requested)
-router.put('/register', async (req, res) => {
+router.put('/register', upload.none(), async (req, res) => {
   const { eventId, userId, fields, name, email, paymentReceipt } = req.body;
 
   if (!eventId || !userId) {
