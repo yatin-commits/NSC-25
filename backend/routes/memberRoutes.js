@@ -1,32 +1,53 @@
 const express = require("express");
 const router = express.Router();
 const Member = require("../modules/Members");
-const cors = require('cors');
-// const app = express();
-// app.use(cors());
-// app.use(cors({
-//   origin: ['https://bvicam-nsc-25.vercel.app','http://localhost:5173'], 
-//   methods: ['GET', 'POST', 'PUT'], 
-//   allowedHeaders: ['Content-Type'], 
-// }));
-// Generate and store a new member ID
-//added dummy changes
+const cors = require("cors");
+const nodemailer = require("nodemailer");
+
+// CORS configuration
+router.use(cors({
+  origin: ["https://bvicam-nsc-25.vercel.app", "http://localhost:5173"],
+  methods: ["GET", "POST", "PUT"],
+  allowedHeaders: ["Content-Type"],
+}));
+
+router.use(express.json());
+
+// Nodemailer transporter configuration
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "shreyasinghal706@gmail.com",
+    pass: "gvvhdammjnztrbub",
+  },
+});
+
+// Generate and store a new member ID, then send it via email
 router.post("/generate-member-id", async (req, res) => {
   const { name, email, phone, college } = req.body;
+
+  console.log("Request received:", { name, email, phone, college });
 
   if (!name || !email || !phone || !college) {
     return res.status(400).json({ success: false, message: "All fields are required" });
   }
 
   try {
-    
-    // Check for duplicate phone number
-    const existingPhone = await Member.findOne({ phone });
-    if (existingPhone) {
-      return res.status(400).json({
-        success: false,
-        message: "Phone number is already registered",
-      });
+    // Check for duplicate email or phone number
+    const existingMember = await Member.findOne({ $or: [{ email }, { phone }] });
+    if (existingMember) {
+      if (existingMember.email === email) {
+        return res.status(400).json({
+          success: false,
+          message: "Email is already registered",
+        });
+      }
+      if (existingMember.phone === phone) {
+        return res.status(400).json({
+          success: false,
+          message: "Phone number is already registered",
+        });
+      }
     }
 
     // Generate unique member ID
@@ -42,22 +63,53 @@ router.post("/generate-member-id", async (req, res) => {
       if (!existingMember) isUnique = true;
     }
 
+    // Save member to database
     const member = new Member({ memberId, name, email, phone, college });
     await member.save();
+    console.log("Member saved:", { memberId, email });
+
+    // Send email with memberId
+    const mailOptions = {
+      from: `"NSC 25 Team" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your NSC 25 Member ID",
+      text: `Dear ${name},\n\nThank you for registering with NSC 25! Your Member ID is: ${memberId}\n\nUse this ID to register for events.\n\nBest regards,\nNSC 25 Team`,
+      html: `
+        <h2>Welcome to NSC 25, ${name}!</h2>
+        <p>Thank you for registering. Your Member ID is:</p>
+        <h3 style="color: #4f46e5;">${memberId}</h3>
+        <p>Use this ID to register for events.</p>
+        <p>Best regards,<br>NSC 25 Team</p>
+      `,
+    };
+
+    console.log("Sending email to:", email);
+    const emailResult = await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully:", emailResult);
+
+    // Respond to frontend
     res.status(201).json({ success: true, memberId });
   } catch (error) {
-    console.error("Error generating member ID:", error);
-    if (error.code === 11000 && error.keyPattern.phone) {
-      return res.status(400).json({
-        success: false,
-        message: "Phone number is already registered",
-      });
+    console.error("Error in /generate-member-id:", error);
+    if (error.code === 11000) {
+      if (error.keyPattern.email) {
+        return res.status(400).json({
+          success: false,
+          message: "Email is already registered",
+        });
+      }
+      if (error.keyPattern.phone) {
+        return res.status(400).json({
+          success: false,
+          message: "Phone number is already registered",
+        });
+      }
     }
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 });
 
-// Verify member IDs (unchanged from previous)
+// Verify member IDs (unchanged)
 router.post("/verify-member-ids", async (req, res) => {
   const { memberIds } = req.body;
 

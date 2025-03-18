@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { Search, ChevronDown, ChevronUp } from "lucide-react";
 
 const AdminPanel = () => {
-  const [selectedEvent, setSelectedEvent] = useState(""); // "" for all events
+  const [selectedEvent, setSelectedEvent] = useState("");
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,6 +17,7 @@ const AdminPanel = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [error, setError] = useState(null);
   const [expandedRows, setExpandedRows] = useState(new Set());
+  const [selectedImage, setSelectedImage] = useState(null); // For modal
 
   const adminUserId = "29BruJMxHXMB6mbdAZyvKVUixW13";
 
@@ -33,7 +34,6 @@ const AdminPanel = () => {
       );
       const data = Array.isArray(registrationsResponse.data) ? registrationsResponse.data : [];
       setRegistrations(data);
-
       if (data.length === 0) {
         setError("No registrations found in the database.");
       }
@@ -62,6 +62,8 @@ const AdminPanel = () => {
         "Registration Date": reg.registeredAt
           ? new Date(reg.registeredAt).toLocaleString("default", { day: "numeric", month: "short" })
           : "Not Recorded",
+        "Member ID": reg.fields.memberId,
+        "Payment Receipt": reg.paymentReceipt || "N/A", // Include URL in Excel
         ...reg.fields,
       };
     });
@@ -98,7 +100,7 @@ const AdminPanel = () => {
       } else if (sortField === "email") {
         return sortOrder === "asc"
           ? (a.email || "").localeCompare(b.email || "")
-          : (b.email || "").localeCompare(a.email || "");
+          : (b.email || "").localeCompare(a.name || "");
       }
       return 0;
     });
@@ -111,6 +113,14 @@ const AdminPanel = () => {
       newExpandedRows.add(index);
     }
     setExpandedRows(newExpandedRows);
+  };
+
+  const openImageModal = (url) => {
+    setSelectedImage(url);
+  };
+
+  const closeImageModal = () => {
+    setSelectedImage(null);
   };
 
   return (
@@ -242,6 +252,7 @@ const AdminPanel = () => {
                       <th className="p-4 text-left text-gray-600 font-medium">Name</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Email</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Member ID</th>
+                      <th className="p-4 text-left text-gray-600 font-medium">Payment Receipt</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Registration Date</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Details</th>
                     </tr>
@@ -257,6 +268,29 @@ const AdminPanel = () => {
                           <td className="p-4">{reg.name || "N/A"}</td>
                           <td className="p-4">{reg.email || "N/A"}</td>
                           <td className="p-4">{reg.fields.memberId || "N/A"}</td>
+                          <td className="p-4">
+                            {reg.paymentReceipt ? (
+                              <div>
+                                <img
+                                  src={reg.paymentReceipt}
+                                  alt="Payment Receipt"
+                                  className="w-24 h-24 object-cover cursor-pointer rounded-md"
+                                  onClick={() => openImageModal(reg.paymentReceipt)}
+                                  onError={(e) => (e.target.src = "/images/placeholder.png")}
+                                />
+                                <a
+                                  href={reg.paymentReceipt}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:underline text-sm mt-1 block"
+                                >
+                                  Open in new tab
+                                </a>
+                              </div>
+                            ) : (
+                              "N/A"
+                            )}
+                          </td>
                           <td className="p-4">
                             {reg.registeredAt
                               ? new Date(reg.registeredAt).toLocaleString("default", {
@@ -277,7 +311,7 @@ const AdminPanel = () => {
                         </tr>
                         {expandedRows.has(index) && (
                           <tr className="bg-gray-50">
-                            <td colSpan="7" className="p-4">
+                            <td colSpan="8" className="p-4">
                               <div className="grid grid-cols-2 gap-2">
                                 {Object.entries(reg.fields).map(([key, value]) => (
                                   <div key={key}>
@@ -294,6 +328,25 @@ const AdminPanel = () => {
                 </table>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Modal for expanding image */}
+        {selectedImage && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="relative max-w-4xl w-full p-4">
+              <button
+                onClick={closeImageModal}
+                className="absolute top-2 right-2 text-white bg-red-600 rounded-full w-8 h-8 flex items-center justify-center"
+              >
+                ×
+              </button>
+              <img
+                src={selectedImage}
+                alt="Expanded Payment Receipt"
+                className="w-full h-auto max-h-[80vh] object-contain rounded-md"
+              />
+            </div>
           </div>
         )}
       </div>
