@@ -1,32 +1,56 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
+const multer = require('multer');
+const { v2: cloudinary } = require('cloudinary');
+const nodemailer = require('nodemailer');
 
-// Apply middleware directly to router for Vercel compatibility
+// Apply middleware
 router.use(cors({
-  origin: 'https://bvicam-nsc-25.vercel.app',
+  origin: ['https://bvicam-nsc-25.vercel.app', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT'],
   allowedHeaders: ['Content-Type'],
 }));
-router.use(express.json());
+router.use(express.json({ limit: '10mb' }));
+
+// Multer setup for file uploads
+const upload = multer({ storage: multer.memoryStorage() });
+
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: "dhhxe2l2u",
+  api_key: "461416841383678",
+  api_secret: "aS6XR3GzZNlmcfbW5bYNfCjzols",
+});
+
+// Nodemailer transporter configuration
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: "shreyasinghal706@gmail.com", // Your Gmail address from .env
+    pass: "gvvhdammjnztrbub", // Your Gmail App Password from .env
+  },
+});
 
 const Registration = require('../modules/registrationModule');
-const Event = require('../modules/evetModules'); // Fixed typo
+const Event = require('../modules/evetModules'); // Assuming typo fixed to 'eventModules'
 
 const eventFields = {
   1: ['teamName', 'teamSize', 'preferredLanguage'],
   2: ['performanceType', 'groupSize', 'songChoice'],
   3: ['teamName', 'teamSize'],
-  4: ['codingLanguage', 'experienceLevel'],
+  4: ['teamSize'], // Basketball
   5: ['pitchTitle', 'teamSize', 'industry'],
   6: ['cameraType', 'photoTheme'],
   7: ['filmTitle', 'teamSize', 'genre'],
   8: ['playTitle', 'castSize'],
   9: ['danceStyle', 'groupSize'],
-  10: ['debateTopicPreference', 'teamName'],
+  10: ['teamSize'], // Volleyball
   11: ['songChoice', 'groupSize', 'choreographer'],
   12: ['artMedium', 'artTheme'],
 };
+
+const eventsRequiringPayment = [4, 10]; // Basketball and Volleyball
 
 const isTeamBasedEvent = (eventId) => {
   const fields = eventFields[eventId] || [];
@@ -34,36 +58,73 @@ const isTeamBasedEvent = (eventId) => {
 };
 
 // Register for an event
-router.post('/register', async (req, res) => {
+router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
   const { eventId, userId, fields, name, email } = req.body;
+  let paymentReceiptUrl = null;
+
+  console.log('Request Body:', req.body);
+  console.log('Uploaded File:', req.file);
 
   if (!userId || !eventId || !name || !email || !fields) {
     return res.status(400).json({ error: 'All fields (eventId, userId, name, email, fields) are required' });
   }
 
-  if (!fields.memberId || !fields.memberId.trim()) {
+  let parsedFields;
+  try {
+    parsedFields = JSON.parse(fields);
+  } catch (error) {
+    console.error('Fields parsing error:', error);
+    return res.status(400).json({ error: 'Invalid fields format; must be valid JSON' });
+  }
+
+  if (!parsedFields.memberId || !parsedFields.memberId.trim()) {
     return res.status(400).json({ error: 'Member ID is required' });
   }
 
   const requiredFields = eventFields[eventId];
-  if (!requiredFields || !requiredFields.every(field => fields[field] && fields[field].trim())) {
+  if (!requiredFields || !requiredFields.every(field => parsedFields[field] && parsedFields[field].trim())) {
     return res.status(400).json({ error: 'Missing or empty required event-specific fields' });
   }
 
   if (isTeamBasedEvent(eventId)) {
     const sizeField = requiredFields.find(f => ['teamSize', 'groupSize', 'castSize'].includes(f));
     if (sizeField) {
-      const teamSize = parseInt(fields[sizeField]) || 0;
+      const teamSize = parseInt(parsedFields[sizeField]) || 0;
       if (teamSize > 1) {
         for (let i = 1; i <= teamSize - 1; i++) {
-          if (!fields[`teamMemberId${i}`] || !fields[`teamMemberId${i}`].trim()) {
+          if (!parsedFields[`teamMemberId${i}`] || !parsedFields[`teamMemberId${i}`].trim()) {
             return res.status(400).json({ error: `Team Member ID ${i} is required` });
           }
         }
-        for (let i = teamSize; fields[`teamMemberId${i}`]; i++) {
+        for (let i = teamSize; parsedFields[`teamMemberId${i}`]; i++) {
           return res.status(400).json({ error: `Extra team member ID (teamMemberId${i}) provided` });
         }
       }
+    }
+  }
+
+  if (eventsRequiringPayment.includes(Number(eventId))) {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Payment receipt file is required for this event' });
+    }
+    try {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'nsc-25/receipts', public_id: `${Date.now()}-${req.file.originalname}` },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(req.file.buffer);
+      });
+      paymentReceiptUrl = result.secure_url;
+      if (!paymentReceiptUrl) {
+        throw new Error('Cloudinary returned no secure_url');
+      }
+      console.log('Cloudinary Upload Success:', { paymentReceiptUrl });
+    } catch (error) {
+      console.error('Cloudinary upload error:', error);
+      return res.status(500).json({ error: 'Failed to upload payment receipt to Cloudinary' });
     }
   }
 
@@ -73,47 +134,102 @@ router.post('/register', async (req, res) => {
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    const registration = new Registration({ eventId, userId, name, email, fields });
-    await registration.save();
-    res.status(201).json({ message: 'Registration successful' });
+    const registrationData = {
+      eventId: Number(eventId),
+      userId,
+      name,
+      email,
+      fields: new Map(Object.entries(parsedFields)),
+      paymentReceipt: paymentReceiptUrl,
+      registeredAt: new Date(),
+    };
+    console.log('Registration Data to Save:', registrationData);
+
+    const registration = new Registration(registrationData);
+    const savedRegistration = await registration.save();
+    console.log('Saved Registration:', savedRegistration);
+
+    // Send email notification
+    const eventName = event.name || `Event ${eventId}`;
+    const mailOptions = {
+      from: `"NSC 25 Team" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: `Registration Confirmation for ${eventName}`,
+      text: `Dear ${name},\n\nYou have successfully registered for ${eventName}!\n\nDetails:\n- Member ID: ${parsedFields.memberId}\n${
+        paymentReceiptUrl ? `- Payment Receipt: ${paymentReceiptUrl}\n` : ''
+      }- Registered At: ${new Date().toLocaleString()}\n\nThank you for participating!\n\nBest regards,\nNSC 25 Team`,
+      html: `
+        <h2>Registration Confirmation</h2>
+        <p>Dear ${name},</p>
+        <p>You have successfully registered for <strong>${eventName}</strong>!</p>
+        <h3>Details:</h3>
+        <ul>
+          <li><strong>Member ID:</strong> ${parsedFields.memberId}</li>
+          ${paymentReceiptUrl ? `<li><strong>Payment Receipt:</strong> <a href="${paymentReceiptUrl}" target="_blank">View Receipt</a></li>` : ''}
+          <li><strong>Registered At:</strong> ${new Date().toLocaleString()}</li>
+        </ul>
+        <p>Thank you for participating!</p>
+        <p>Best regards,<br>NSC 25 Team</p>
+      `,
+    };
+
+    console.log('Sending registration email to:', email);
+    await transporter.sendMail(mailOptions).catch((error) => {
+      console.error('Email sending failed:', error);
+      // Don’t fail the response if email fails
+    });
+    console.log('Registration email sent successfully');
+
+    res.status(201).json({
+      message: 'Registration successful',
+      registration: savedRegistration,
+    });
   } catch (error) {
     if (error.code === 11000) {
       return res.status(400).json({ error: 'You are already registered for this event' });
     }
-    console.error('Registration error:', error);
-    res.status(500).json({ error: 'Registration failed' });
+    console.error('Registration save error:', error);
+    res.status(500).json({ error: 'Registration failed', details: error.message });
   }
 });
 
-// Update registration
+// Update registration (unchanged, no email here unless requested)
 router.put('/register', async (req, res) => {
-  const { eventId, userId, fields, name, email } = req.body;
+  const { eventId, userId, fields, name, email, paymentReceipt } = req.body;
 
   if (!eventId || !userId) {
     return res.status(400).json({ error: 'eventId and userId are required' });
   }
 
+  let parsedFields;
   if (fields) {
-    if (!fields.memberId || !fields.memberId.trim()) {
+    try {
+      parsedFields = JSON.parse(fields);
+    } catch (error) {
+      console.error('Fields parsing error:', error);
+      return res.status(400).json({ error: 'Invalid fields format; must be valid JSON' });
+    }
+
+    if (!parsedFields.memberId || !parsedFields.memberId.trim()) {
       return res.status(400).json({ error: 'Member ID is required' });
     }
 
     const requiredFields = eventFields[eventId];
-    if (!requiredFields || !requiredFields.every(field => fields[field] && fields[field].trim())) {
+    if (!requiredFields || !requiredFields.every(field => parsedFields[field] && parsedFields[field].trim())) {
       return res.status(400).json({ error: 'Missing or empty required event-specific fields' });
     }
 
     if (isTeamBasedEvent(eventId)) {
       const sizeField = requiredFields.find(f => ['teamSize', 'groupSize', 'castSize'].includes(f));
       if (sizeField) {
-        const teamSize = parseInt(fields[sizeField]) || 0;
+        const teamSize = parseInt(parsedFields[sizeField]) || 0;
         if (teamSize > 1) {
           for (let i = 1; i <= teamSize - 1; i++) {
-            if (!fields[`teamMemberId${i}`] || !fields[`teamMemberId${i}`].trim()) {
+            if (!parsedFields[`teamMemberId${i}`] || !parsedFields[`teamMemberId${i}`].trim()) {
               return res.status(400).json({ error: `Team Member ID ${i} is required` });
             }
           }
-          for (let i = teamSize; fields[`teamMemberId${i}`]; i++) {
+          for (let i = teamSize; parsedFields[`teamMemberId${i}`]; i++) {
             return res.status(400).json({ error: `Extra team member ID (teamMemberId${i}) provided` });
           }
         }
@@ -128,9 +244,10 @@ router.put('/register', async (req, res) => {
     }
 
     const updateData = {};
-    if (fields) updateData.fields = fields;
+    if (parsedFields) updateData.fields = new Map(Object.entries(parsedFields));
     if (name !== undefined) updateData.name = name;
     if (email !== undefined) updateData.email = email;
+    if (paymentReceipt !== undefined) updateData.paymentReceipt = paymentReceipt;
 
     const registration = await Registration.findOneAndUpdate(
       { eventId: Number(eventId), userId },
@@ -152,7 +269,7 @@ router.put('/register', async (req, res) => {
   }
 });
 
-// Get user's registrations
+// Get user's registrations (unchanged)
 router.get('/registrations', async (req, res) => {
   const { userId } = req.query;
 
@@ -174,7 +291,7 @@ router.get('/registrations', async (req, res) => {
   }
 });
 
-// Get all registrations (admin only)
+// Get all registrations (admin only, unchanged)
 router.get('/registrations/all', async (req, res) => {
   const { userId, eventId } = req.query;
 
@@ -200,7 +317,7 @@ router.get('/registrations/all', async (req, res) => {
   }
 });
 
-// Event visibility endpoints
+// Event visibility endpoints (unchanged)
 router.get('/visibility/:eventId', async (req, res) => {
   try {
     const { eventId } = req.params;
