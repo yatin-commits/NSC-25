@@ -136,7 +136,7 @@ const Events = forwardRef((props, ref) => {
     const loadingToast = toast.loading("Verifying member IDs...");
     try {
       const verifyResponse = await fetch(
-        "https://nsc-25-backend.vercel.app/5000/api/verify-member-ids",
+        "https://nsc-25-backend.vercel.app/api/verify-member-ids",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -176,7 +176,7 @@ const Events = forwardRef((props, ref) => {
     );
     try {
       const response = await fetch(
-        "https://nsc-25-backend.vercel.app/5000/api/register",
+        "https://nsc-25-backend.vercel.app/api/register",
         {
           method: isEdit ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
