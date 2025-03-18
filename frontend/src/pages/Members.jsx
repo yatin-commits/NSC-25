@@ -2,15 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbarr from "../components/NavBarr";
 import { Link } from "react-router-dom";
-import { Search } from "lucide-react";
+import { Search, RefreshCw } from "lucide-react";
 
 const Members = () => {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const adminUserId = "29BruJMxHXMB6mbdAZyvKVUixW13";
 
   useEffect(() => {
     fetchMembers();
@@ -20,16 +18,14 @@ const Members = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(
-        `https://nsc-25-backend.vercel.app/api/members?userId=${adminUserId}`
-      );
-      const memberList = Array.isArray(response.data) ? response.data : [];
+      const response = await axios.get("https://nsc-25-backend.vercel.app/api/members");
+      const memberList = Array.isArray(response.data) ? response.data : response.data.data || [];
       console.log("Fetched members:", memberList);
 
       setMembers(memberList);
 
       if (memberList.length === 0) {
-        setError("No members found in the database.");
+        setError(response.data.message || "No members found in the database.");
       }
     } catch (error) {
       console.error("Error fetching members:", error);
@@ -52,7 +48,7 @@ const Members = () => {
     <>
       <Navbarr />
       <div className="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-20">
-        <div className="flex items-center mb-6">
+        <div className="flex items-center justify-between mb-6">
           <Link to="/" className="flex items-center gap-2 text-blue-600 hover:underline">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -64,6 +60,13 @@ const Members = () => {
             </svg>
             Back to Home
           </Link>
+          <button
+            onClick={fetchMembers}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Refresh
+          </button>
         </div>
 
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">All Members</h2>
@@ -91,7 +94,10 @@ const Members = () => {
         </div>
 
         {loading ? (
-          <div className="text-center text-blue-600 font-medium">Loading members...</div>
+          <div className="text-center text-blue-600 font-medium flex items-center justify-center gap-2">
+            <RefreshCw className="w-5 h-5 animate-spin" />
+            Loading members...
+          </div>
         ) : error ? (
           <div className="text-center text-red-500 font-medium">{error}</div>
         ) : (
