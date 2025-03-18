@@ -35,25 +35,36 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
   // Handle scroll after navigation
   useEffect(() => {
     if (location.pathname === "/" && location.state?.scrollTo) {
+      const scrollTarget = location.state.scrollTo;
       setTimeout(() => {
-        location.state.scrollTo();
+        switch (scrollTarget) {
+          case "schedule":
+            scrollToSchedule();
+            break;
+          case "events":
+            scrollToEvents();
+            break;
+          case "coordinators":
+            scrollToCoordinators();
+            break;
+          case "faq":
+            scrollToFAQ();
+            break;
+          default:
+            break;
+        }
       }, 100); // Small delay to ensure page is rendered
     }
-  }, [location]);
+  }, [location, scrollToSchedule, scrollToEvents, scrollToCoordinators, scrollToFAQ]);
 
   const handleLogin = () => {
     login(false);
     setIsMenuOpen(false);
   };
 
-  const handleNavClick = (scrollAction) => {
-    if (location.pathname === "/") {
-      // If already on homepage, scroll immediately
-      scrollAction();
-    } else {
-      // Navigate to homepage with scroll action in state
-      navigate("/", { state: { scrollTo: scrollAction } });
-    }
+  const handleNavClick = (section) => {
+    // Navigate to "/" with a string identifier in state
+    navigate("/", { state: { scrollTo: section } });
     setIsMenuOpen(false);
   };
 
@@ -63,10 +74,10 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
   };
 
   const navItems = [
-    { name: "Schedule", action: () => handleNavClick(scrollToSchedule) },
-    { name: "Events", action: () => handleNavClick(scrollToEvents) },
-    { name: "Coordinators", action: () => handleNavClick(scrollToCoordinators) },
-    { name: "FAQ's", action: () => handleNavClick(scrollToFAQ) },
+    { name: "Schedule", section: "schedule" },
+    { name: "Events", section: "events" },
+    { name: "Coordinators", section: "coordinators" },
+    { name: "FAQ's", section: "faq" },
   ];
 
   return (
@@ -79,7 +90,9 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <div className="flex items-center">
-          <img src={bvicamlogo} alt="BVICAM Logo" className="h-18 p-2" />
+          <NavLink to="/">
+            <img src={bvicamlogo} alt="BVICAM Logo" className="h-18 p-2" />
+          </NavLink>
         </div>
 
         <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
@@ -89,7 +102,7 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
               setActive={setActive}
               active={active}
               item={item.name}
-              onClick={item.action}
+              onClick={() => handleNavClick(item.section)}
             />
           ))}
           {user && (
@@ -151,32 +164,36 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
       >
         {navItems.map((item) => (
           <div key={item.name} className="py-2">
-            <p
+            <NavLink
+              to="/"
+              state={{ scrollTo: item.section }}
               className="cursor-pointer text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
-              onClick={item.action}
+              onClick={() => setIsMenuOpen(false)}
             >
               {item.name}
-            </p>
+            </NavLink>
           </div>
         ))}
         {user && (
           <div className="py-2">
-            <p
+            <NavLink
+              to="/MemberForm"
               className="cursor-pointer text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
-              onClick={handleMemberFormClick}
+              onClick={() => setIsMenuOpen(false)}
             >
               Member ID
-            </p>
+            </NavLink>
           </div>
         )}
         {isAdmin && (
           <div className="py-2">
-            <p
+            <NavLink
+              to="/admin"
               className="cursor-pointer text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
-              onClick={() => navigate("/admin")}
+              onClick={() => setIsMenuOpen(false)}
             >
               Admin Panel
-            </p>
+            </NavLink>
           </div>
         )}
         <div className="py-2">
