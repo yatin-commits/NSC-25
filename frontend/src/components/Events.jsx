@@ -5,7 +5,7 @@ import { MapPin, X, Award, Search } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { eventFields as baseEventFields, eventsData } from "./data";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom"; // Added for navigation
+import { useNavigate } from "react-router-dom";
 
 const Events = forwardRef((props, ref) => {
   const [expandedEvent, setExpandedEvent] = useState(null);
@@ -13,22 +13,17 @@ const Events = forwardRef((props, ref) => {
   const [formData, setFormData] = useState({});
   const [registrations, setRegistrations] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { user, login, logout } = useAuth();
+  const { user, login } = useAuth();
   const name = user?.name;
   const email = user?.email;
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (expandedEvent !== null) {
       document.body.classList.add("overflow-hidden");
-      const registration = registrations.find(
-        (r) => r.eventId === expandedEvent
-      );
-      if (registration) {
-        setFormData(registration.fields);
-      } else {
-        setFormData({});
-      }
+      const registration = registrations.find((r) => r.eventId === expandedEvent);
+      if (registration) setFormData(registration.fields);
+      else setFormData({});
     } else {
       document.body.classList.remove("overflow-hidden");
     }
@@ -36,9 +31,7 @@ const Events = forwardRef((props, ref) => {
   }, [expandedEvent, registrations]);
 
   useEffect(() => {
-    if (user) {
-      fetchRegistrations(user.uid, true);
-    }
+    if (user) fetchRegistrations(user.uid, true);
   }, [user]);
 
   const fetchRegistrations = async (uid, showWelcome = true) => {
@@ -46,20 +39,13 @@ const Events = forwardRef((props, ref) => {
     try {
       const response = await fetch(
         `https://nsc-25-backend.vercel.app/api/registrations?userId=${uid}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
+        { method: "GET", headers: { "Content-Type": "application/json" } }
       );
-      if (!response.ok)
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setRegistrations(data || []);
       if (showWelcome) {
-        toast.success(`Welcome, ${user.name || user.email}!`, {
-          id: loadingToast,
-          duration: 3000,
-        });
+        toast.success(`Welcome, ${user.name || user.email}!`, { id: loadingToast, duration: 3000 });
       } else {
         toast.dismiss(loadingToast);
       }
@@ -74,9 +60,7 @@ const Events = forwardRef((props, ref) => {
     const { name, value } = e.target;
     setFormData((prev) => {
       const newFormData = { ...prev, [name]: value };
-      const sizeField = ["teamSize", "groupSize", "castSize"].find(
-        (field) => field === name
-      );
+      const sizeField = ["teamSize", "groupSize", "castSize"].find((field) => field === name);
       if (sizeField) {
         const teamSize = parseInt(value) || 0;
         for (let i = 1; i <= Math.max(teamSize, prev[sizeField] || 0); i++) {
@@ -93,37 +77,27 @@ const Events = forwardRef((props, ref) => {
       return;
     }
 
-    const requiredFields = [
-      "memberId",
-      ...(baseEventFields[eventId] || []).map((f) => f.name),
-    ];
+    const requiredFields = ["memberId", ...(baseEventFields[eventId] || []).map((f) => f.name)];
     const sizeField = baseEventFields[eventId]?.find((f) =>
       ["teamSize", "groupSize", "castSize"].includes(f.name)
     );
-    let memberIds = [formData.memberId];
     if (sizeField) {
       const teamSize = parseInt(formData[sizeField.name]) || 0;
       if (eventIsTeamBased(eventId) && teamSize > 1) {
         for (let i = 1; i <= teamSize - 1; i++) {
           requiredFields.push(`teamMemberId${i}`);
-          memberIds.push(formData[`teamMemberId${i}`]);
         }
       }
     }
 
     if (!requiredFields.every((field) => formData[field]?.trim())) {
-      // Check if memberId is missing and prompt navigation
       if (!formData.memberId?.trim()) {
         toast.error(
           <div>
             You need a Member ID to register.{" "}
-            <button
-              onClick={() => navigate("/MemberForm")}
-              className="underline text-blue-600 hover:text-blue-800"
-            >
+            <button onClick={() => navigate("/MemberForm")} className="underline text-blue-600 hover:text-blue-800">
               Generate one now
-            </button>
-            .
+            </button>.
           </div>,
           { duration: 5000 }
         );
@@ -133,74 +107,23 @@ const Events = forwardRef((props, ref) => {
       return;
     }
 
-    const loadingToast = toast.loading("Verifying member IDs...");
-    try {
-      const verifyResponse = await fetch(
-        "https://nsc-25-backend.vercel.app/api/verify-member-ids",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ memberIds }),
-        }
-      );
-      const verifyData = await verifyResponse.json();
-      if (!verifyResponse.ok) {
-        // Check for invalid member IDs and report specifics
-        if (verifyData.invalidIds && verifyData.invalidIds.length > 0) {
-          const invalidList = verifyData.invalidIds.join(", ");
-          toast.error(`Invalid member ID(s): ${invalidList}`, {
-            id: loadingToast,
-          });
-        } else {
-          toast.error(verifyData.message || "Invalid member IDs", {
-            id: loadingToast,
-          });
-        }
-        return;
-      }
-      toast.dismiss(loadingToast);
-    } catch (error) {
-      toast.error("Verification failed", { id: loadingToast });
-      return;
-    }
-
-    const payload = {
-      eventId,
-      userId: user.uid,
-      fields: formData,
-      name,
-      email,
-    };
-    const registerToast = toast.loading(
-      isEdit ? "Updating..." : "Registering..."
-    );
+    const payload = { eventId, userId: user.uid, fields: formData, name, email };
+    const registerToast = toast.loading(isEdit ? "Updating..." : "Registering...");
     try {
       const response = await fetch(
         "https://nsc-25-backend.vercel.app/api/register",
-        {
-          method: isEdit ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
+        { method: isEdit ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }
       );
       const data = await response.json();
       if (response.ok) {
-        toast.success(
-          isEdit ? "Details updated!" : "Registration successful!",
-          { id: registerToast }
-        );
+        toast.success(isEdit ? "Details updated!" : "Registration successful!", { id: registerToast });
         await fetchRegistrations(user.uid, false);
         if (!isEdit) setFormData({});
       } else {
-        toast.error(
-          data.error || (isEdit ? "Update failed." : "Registration failed."),
-          { id: registerToast }
-        );
+        toast.error(data.error || (isEdit ? "Update failed." : "Registration failed."), { id: registerToast });
       }
     } catch (error) {
-      toast.error(`${isEdit ? "Update" : "Registration"} error occurred.`, {
-        id: registerToast,
-      });
+      toast.error(`${isEdit ? "Update" : "Registration"} error occurred.`, { id: registerToast });
     }
   };
 
@@ -228,9 +151,7 @@ const Events = forwardRef((props, ref) => {
           >
             <option value="">Select an option</option>
             {field.options.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
+              <option key={option} value={option}>{option}</option>
             ))}
           </select>
         );
@@ -238,10 +159,7 @@ const Events = forwardRef((props, ref) => {
         return (
           <div className="flex flex-wrap gap-4">
             {field.options.map((option) => (
-              <label
-                key={option}
-                className="flex items-center text-sm sm:text-base"
-              >
+              <label key={option} className="flex items-center text-sm sm:text-base">
                 <input
                   type="radio"
                   name={fieldName}
@@ -282,9 +200,7 @@ const Events = forwardRef((props, ref) => {
     const event = eventsData.find((e) => e.id === eventId);
     return (
       event?.isTeamBased ||
-      baseEventFields[eventId]?.some((f) =>
-        ["teamSize", "groupSize", "castSize"].includes(f.name)
-      )
+      baseEventFields[eventId]?.some((f) => ["teamSize", "groupSize", "castSize"].includes(f.name))
     );
   };
 
@@ -297,7 +213,6 @@ const Events = forwardRef((props, ref) => {
 
   return (
     <div ref={ref} className="mt-4 md:mt-8 w-full mx-auto px-2 sm:px-4 md:px-8">
-      {/* Prize Banner */}
       <div className="w-full mx-auto mb-4 sm:mb-6 py-3 sm:py-4 px-3 sm:px-4 text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-xl shadow-xl overflow-hidden">
         <div className="flex sm:flex-row items-center justify-center gap-2 sm:gap-4">
           <Award className="w-6 h-6 sm:w-8 sm:h-8 text-white flex-shrink-0" />
@@ -307,8 +222,6 @@ const Events = forwardRef((props, ref) => {
           <Award className="w-6 h-6 sm:w-8 sm:h-8 text-white flex-shrink-0" />
         </div>
       </div>
-
-      {/* Header with Login/Logout */}
       <motion.div
         className="w-full mx-auto py-4 sm:py-6 px-3 sm:px-4 rounded-b-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg"
         initial={{ y: -50 }}
@@ -322,9 +235,7 @@ const Events = forwardRef((props, ref) => {
           {user ? (
             <span className="text-xs sm:text-sm md:text-base lg:text-lg font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 px-3 sm:px-4 py-1 sm:py-2 rounded-md shadow-sm">
               Welcome,{" "}
-              <span className="text-indigo-600 dark:text-indigo-400">
-                {user.name || user.email}
-              </span>
+              <span className="text-indigo-600 dark:text-indigo-400">{user.name || user.email}</span>
             </span>
           ) : (
             <span className="text-xs flex flex-col sm:text-sm md:text-base lg:text-lg font-medium text-gray-700 dark:text-gray-200 text-center">
@@ -334,28 +245,11 @@ const Events = forwardRef((props, ref) => {
                 className="flex items-center justify-center gap-2 px-4 py-2 mt-2 text-sm font-medium text-white bg-black hover:bg-white hover:text-black hover:border-[1px] hover:border-black rounded-md transition"
                 onClick={handleLogin}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 48 48"
-                >
-                  <path
-                    fill="#FFC107"
-                    d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
-                  ></path>
-                  <path
-                    fill="#FF3D00"
-                    d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
-                  ></path>
-                  <path
-                    fill="#4CAF50"
-                    d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
-                  ></path>
-                  <path
-                    fill="#1976D2"
-                    d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
-                  ></path>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+                  <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
+                  <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
+                  <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
+                  <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
                 </svg>
                 Login with Google
               </button>
@@ -363,8 +257,6 @@ const Events = forwardRef((props, ref) => {
           )}
         </div>
       </motion.div>
-
-      {/* Search Bar */}
       <div className="relative mb-6 px-5 sm:px-4 mt-6">
         <div className="relative max-w-2xl mx-auto">
           <input
@@ -376,17 +268,13 @@ const Events = forwardRef((props, ref) => {
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-indigo-600 dark:text-indigo-400" />
           {searchTerm && (
-            <button
+            <X
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
               onClick={() => setSearchTerm("")}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl md:text-2xl"
-            >
-              ×
-            </button>
+            />
           )}
         </div>
       </div>
-
-      {/* Main Events Content */}
       <AnimatePresence mode="wait">
         {!expandedEvent ? (
           <motion.div
@@ -410,19 +298,13 @@ const Events = forwardRef((props, ref) => {
               >
                 <div className="relative h-32 sm:h-40 md:h-48 lg:h-52 flex justify-center items-center overflow-hidden">
                   <img
-                    src={
-                      typeof event.image === "string"
-                        ? event.image
-                        : event.image.src
-                    }
+                    src={typeof event.image === "string" ? event.image : event.image.src}
                     alt={event.name}
                     className="max-h-full max-w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
                 <div className="p-3 sm:p-4 md:p-5">
-                  <h2 className="text-base sm:text-lg md:text-xl font-bold mb-2 text-indigo-600">
-                    {event.name}
-                  </h2>
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold mb-2 text-indigo-600">{event.name}</h2>
                   <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm md:text-base mb-2 sm:mb-3 line-clamp-2">
                     {event.shortDescription}
                   </p>
@@ -431,28 +313,25 @@ const Events = forwardRef((props, ref) => {
                       <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="truncate">{event.venue}</span>
                     </div>
-                    {user &&
-                      registrations.some((r) => r.eventId === event.id) && (
-                        <div className="flex space-x-3">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-4 text-blue-500 h-4 sm:w-5 sm:h-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.732 5.732z"
-                            />
-                          </svg>
-                          <span className="text-green-600 cursor-pointer flex font-medium">
-                            Registered
-                          </span>
-                        </div>
-                      )}
+                    {user && registrations.some((r) => r.eventId === event.id) && (
+                      <div className="flex space-x-3">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-4 text-blue-500 h-4 sm:w-5 sm:h-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.732 5.732z"
+                          />
+                        </svg>
+                        <span className="text-green-600 cursor-pointer flex font-medium">Registered</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -486,204 +365,158 @@ const Events = forwardRef((props, ref) => {
                 <X className="w-4 cursor-pointer h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </button>
               <div className="overflow-y-auto p-3 sm:p-4 md:p-6 flex-1">
-                {eventsData
-                  .filter((e) => e.id === expandedEvent)
-                  .map((event) => {
-                    const isRegistered =
-                      user && registrations.some((r) => r.eventId === event.id);
-                    const isTeamBased = eventIsTeamBased(event.id);
-                    const sizeFieldName = getTeamSizeFieldName(event.id);
-                    const teamSize = sizeFieldName
-                      ? parseInt(formData[sizeFieldName]) || 0
-                      : 0;
+                {eventsData.filter((e) => e.id === expandedEvent).map((event) => {
+                  const isRegistered = user && registrations.some((r) => r.eventId === event.id);
+                  const isTeamBased = eventIsTeamBased(event.id);
+                  const sizeFieldName = getTeamSizeFieldName(event.id);
+                  const teamSize = sizeFieldName ? parseInt(formData[sizeFieldName]) || 0 : 0;
 
-                    return (
-                      <div key={event.id} className="flex flex-col">
-                        <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-indigo-600 mb-3 sm:mb-4 text-center">
-                          {event.name}
-                        </h2>
-                        <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 dark:text-gray-300 mb-4 sm:mb-6">
-                          {event.longDescription}
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-                          <div>
-                            <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
-                              Rules
-                            </h3>
-                            <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm md:text-base">
-                              {event.rules.map((rule, i) => (
-                                <li
-                                  key={i}
-                                  className="flex items-start gap-1 sm:gap-2"
-                                >
-                                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 bg-indigo-400 rounded-full mt-1 sm:mt-1.5 flex-shrink-0" />
-                                  <span>{rule}</span>
-                                </li>
-                              ))}
-                            </ul> 
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
-                              Prize
-                            </h3>
-                            <p className="text-xs sm:text-sm md:text-base lg:text-lg font-medium bg-indigo-50 dark:bg-indigo-900/20 p-1.5 sm:p-2 md:p-3 rounded-lg">
-                              {event.prize}
-                            </p>
-                          </div>
-                        </div>
-                        {user && !isRegistered ? (
-                          <div className="mt-4 sm:mt-6">
-                            <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 ">
-                              Register
-                            </h3>
-                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 sm:mb-2 md:mb-3 ">
-                              Don’t have a Member ID?{" "}
-                              <button
-                                onClick={() => navigate("/MemberForm")}
-                                className="text-indigo-600 cursor-pointer hover:text-indigo-800 underline"
-                              >
-                                Generate one
-                              </button>
-                            </p>
-                            {/* Member ID Field */}
-                            <div className="mb-3 sm:mb-4">
-                              <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
-                                Your Member ID
-                              </label>
-                              {renderField({ name: "memberId", type: "text" })}
-                            </div>
-                            {/* Base Event Fields */}
-                            {(baseEventFields[event.id] || []).map((field) => (
-                              <div key={field.name} className="mb-3 sm:mb-4">
-                                <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300 capitalize">
-                                  {field.name.replace(/([A-Z])/g, " $1").trim()}
-                                </label>
-                                {renderField(field)}
-                              </div>
+                  return (
+                    <div key={event.id} className="flex flex-col">
+                      <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-indigo-600 mb-3 sm:mb-4 text-center">
+                        {event.name}
+                      </h2>
+                      <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 dark:text-gray-300 mb-4 sm:mb-6">
+                        {event.longDescription}
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                        <div>
+                          <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">Rules</h3>
+                          <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm md:text-base">
+                            {event.rules.map((rule, i) => (
+                              <li key={i} className="flex items-start gap-1 sm:gap-2">
+                                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 bg-indigo-400 rounded-full mt-1 sm:mt-1.5 flex-shrink-0" />
+                                <span>{rule}</span>
+                              </li>
                             ))}
-                            {/* Team Member ID Fields */}
-                            {isTeamBased && sizeFieldName && teamSize > 1 && (
+                          </ul>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">Prize</h3>
+                          <p className="text-xs sm:text-sm md:text-base lg:text-lg font-medium bg-indigo-50 dark:bg-indigo-900/20 p-1.5 sm:p-2 md:p-3 rounded-lg">
+                            {event.prize}
+                          </p>
+                        </div>
+                      </div>
+                      {user && !isRegistered ? (
+                        <div className="mt-4 sm:mt-6">
+                          <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1">Register</h3>
+                          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 sm:mb-2 md:mb-3">
+                            Don’t have a Member ID?{" "}
+                            <button
+                              onClick={() => navigate("/MemberForm")}
+                              className="text-indigo-600 cursor-pointer hover:text-indigo-800 underline"
+                            >
+                              Generate one
+                            </button>
+                          </p>
+                          <div className="mb-3 sm:mb-4">
+                            <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
+                              Your Member ID
+                            </label>
+                            {renderField({ name: "memberId", type: "text" })}
+                          </div>
+                          {(baseEventFields[event.id] || []).map((field) => (
+                            <div key={field.name} className="mb-3 sm:mb-4">
+                              <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300 capitalize">
+                                {field.name.replace(/([A-Z])/g, " $1").trim()}
+                              </label>
+                              {renderField(field)}
+                            </div>
+                          ))}
+                          {isTeamBased && sizeFieldName && teamSize > 1 && (
+                            <div className="mb-3 sm:mb-4">
+                              <h4 className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Team Member IDs (excluding you)
+                              </h4>
+                              {Array.from({ length: teamSize - 1 }, (_, i) => (
+                                <div key={i} className="mb-2">
+                                  <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
+                                    Team Member {i + 1} ID
+                                  </label>
+                                  {renderField({ name: `teamMemberId${i + 1}`, type: "text" })}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          <button
+                            onClick={() => handleRegister(event.id, false)}
+                            className="mt-3 sm:mt-4 w-full bg-indigo-600 cursor-pointer text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-indigo-700 text-sm sm:text-base md:text-lg"
+                          >
+                            Register Now
+                          </button>
+                        </div>
+                      ) : user && isRegistered ? (
+                        <div className="mt-4 sm:mt-6">
+                          <div className="flex items-center justify-between flex-col sm:flex-row gap-2">
+                            <p className="text-green-600 text-xs sm:text-sm md:text-base lg:text-lg">
+                              You are already registered for this event!
+                            </p>
+                            <button
+                              onClick={() => setShowEditFields(!showEditFields)}
+                              className="text-blue-600 cursor-pointer hover:text-blue-800 flex items-center gap-1 sm:gap-2"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="w-4 h-4 sm:w-5 sm:h-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.732 5.732z"
+                                />
+                              </svg>
+                              Edit Response
+                            </button>
+                          </div>
+                          {showEditFields && (
+                            <div className="mt-3 sm:mt-4">
                               <div className="mb-3 sm:mb-4">
-                                <h4 className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                  Team Member IDs (excluding you)
-                                </h4>
-                                {Array.from(
-                                  { length: teamSize - 1 },
-                                  (_, i) => (
+                                <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
+                                  Your Member ID
+                                </label>
+                                {renderField({ name: "memberId", type: "text" })}
+                              </div>
+                              {(baseEventFields[event.id] || []).map((field) => (
+                                <div key={field.name} className="mb-3 sm:mb-4">
+                                  <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300 capitalize">
+                                    {field.name.replace(/([A-Z])/g, " $1").trim()}
+                                  </label>
+                                  {renderField(field)}
+                                </div>
+                              ))}
+                              {isTeamBased && sizeFieldName && teamSize > 1 && (
+                                <div className="mb-3 sm:mb-4">
+                                  <h4 className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Team Member IDs (excluding you)
+                                  </h4>
+                                  {Array.from({ length: teamSize - 1 }, (_, i) => (
                                     <div key={i} className="mb-2">
                                       <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
                                         Team Member {i + 1} ID
                                       </label>
-                                      {renderField({
-                                        name: `teamMemberId${i + 1}`,
-                                        type: "text",
-                                      })}
+                                      {renderField({ name: `teamMemberId${i + 1}`, type: "text" })}
                                     </div>
-                                  )
-                                )}
-                              </div>
-                            )}
-                            <button
-                              onClick={() => handleRegister(event.id, false)}
-                              className="mt-3 sm:mt-4 w-full bg-indigo-600 cursor-pointer text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-indigo-700 text-sm sm:text-base md:text-lg"
-                            >
-                              Register Now
-                            </button>
-                          </div>
-                        ) : user && isRegistered ? (
-                          <div className="mt-4 sm:mt-6">
-                            <div className="flex items-center justify-between flex-col sm:flex-row gap-2">
-                              <p className="text-green-600 text-xs sm:text-sm md:text-base lg:text-lg">
-                                You are already registered for this event!
-                              </p>
+                                  ))}
+                                </div>
+                              )}
                               <button
-                                onClick={() =>
-                                  setShowEditFields(!showEditFields)
-                                }
-                                className="text-blue-600 cursor-pointer hover:text-blue-800 flex items-center gap-1 sm:gap-2"
+                                onClick={() => handleRegister(event.id, true)}
+                                className="mt-3 sm:mt-4 w-full bg-blue-600 text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-blue-700 text-sm sm:text-base md:text-lg cursor-pointer"
                               >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="w-4 h-4 sm:w-5 sm:h-5"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.732 5.732z"
-                                  />
-                                </svg>
-                                Edit Response
+                                Update Details
                               </button>
                             </div>
-                            {showEditFields && (
-                              <div className="mt-3 sm:mt-4">
-                                {/* Member ID Field */}
-                                <div className="mb-3 sm:mb-4">
-                                  <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
-                                    Your Member ID
-                                  </label>
-                                  {renderField({
-                                    name: "memberId",
-                                    type: "text",
-                                  })}
-                                </div>
-                                {/* Base Event Fields */}
-                                {(baseEventFields[event.id] || []).map(
-                                  (field) => (
-                                    <div
-                                      key={field.name}
-                                      className="mb-3 sm:mb-4"
-                                    >
-                                      <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300 capitalize">
-                                        {field.name
-                                          .replace(/([A-Z])/g, " $1")
-                                          .trim()}
-                                      </label>
-                                      {renderField(field)}
-                                    </div>
-                                  )
-                                )}
-                                {/* Team Member ID Fields */}
-                                {isTeamBased &&
-                                  sizeFieldName &&
-                                  teamSize > 1 && (
-                                    <div className="mb-3 sm:mb-4">
-                                      <h4 className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Team Member IDs (excluding you)
-                                      </h4>
-                                      {Array.from(
-                                        { length: teamSize - 1 },
-                                        (_, i) => (
-                                          <div key={i} className="mb-2">
-                                            <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
-                                              Team Member {i + 1} ID
-                                            </label>
-                                            {renderField({
-                                              name: `teamMemberId${i + 1}`,
-                                              type: "text",
-                                            })}
-                                          </div>
-                                        )
-                                      )}
-                                    </div>
-                                  )}
-                                <button
-                                  onClick={() => handleRegister(event.id, true)}
-                                  className="mt-3 sm:mt-4 w-full bg-blue-600 text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-blue-700 text-sm sm:text-base md:text-lg cursor-pointer"
-                                >
-                                  Update Details
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        ) : null}
-                      </div>
-                    );
-                  })}
+                          )}
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
               </div>
               <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 flex justify-center">
                 <button

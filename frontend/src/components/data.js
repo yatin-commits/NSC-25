@@ -260,6 +260,22 @@ export const eventFields = {
       ],
       prize: "Winner: ₹7,000, Runner-up: ₹3,500",
     },
+    {
+      id: 13,
+      name: "BASKETBALL",
+      image: painting,
+      shortDescription: "Paint your masterpiece!",
+      longDescription:
+        "An art competition where participants create themed artworks on the spot.",
+      time: "11:00 AM - 2:00 PM",
+      venue: "Art Room",
+      rules: [
+        "Individual participation.",
+        "2-hour time limit.",
+        "Materials provided.",
+      ],
+      prize: "Winner: ₹7,000, Runner-up: ₹3,500",
+    },
   ];
 
 

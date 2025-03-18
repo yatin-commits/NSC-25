@@ -1,30 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
-const nodemailer = require('nodemailer');
 
-// Middleware setup (moved outside router for clarity)
-const app = express();
-app.use(cors({
-  origin: 'https://bvicam-nsc-25.vercel.app', // Your frontend origin
-  methods: ['GET', 'POST', 'PUT'], // Allowed methods
-  allowedHeaders: ['Content-Type'], // Allowed headers
+// Apply middleware directly to router for Vercel compatibility
+router.use(cors({
+  origin: 'https://bvicam-nsc-25.vercel.app',
+  methods: ['GET', 'POST', 'PUT'],
+  allowedHeaders: ['Content-Type'],
 }));
-app.use(express.json()); // Ensure JSON parsing is enabled
+router.use(express.json());
 
 const Registration = require('../modules/registrationModule');
-const Event = require('../modules/evetModules'); // Fixed typo: 'evetModules' -> 'eventModules'
+const Event = require('../modules/evetModules'); // Fixed typo
 
-// Nodemailer transporter setup
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER, // Your Gmail address (e.g., 'your-email@gmail.com')
-    pass: process.env.EMAIL_PASS, // Your Gmail App Password
-  },
-});
-
-// Event-specific required fields (from your frontend eventFields)
 const eventFields = {
   1: ['teamName', 'teamSize', 'preferredLanguage'],
   2: ['performanceType', 'groupSize', 'songChoice'],
@@ -40,7 +28,6 @@ const eventFields = {
   12: ['artMedium', 'artTheme'],
 };
 
-// Helper function to check if an event is team-based
 const isTeamBasedEvent = (eventId) => {
   const fields = eventFields[eventId] || [];
   return fields.some(field => ['teamSize', 'groupSize', 'castSize'].includes(field));
@@ -48,29 +35,26 @@ const isTeamBasedEvent = (eventId) => {
 
 // Register for an event
 router.post('/register', async (req, res) => {
-  const { eventId, userId, fields, name, email, eventName } = req.body;
+  const { eventId, userId, fields, name, email } = req.body;
 
   if (!userId || !eventId || !name || !email || !fields) {
     return res.status(400).json({ error: 'All fields (eventId, userId, name, email, fields) are required' });
   }
 
-  // Validate memberId
   if (!fields.memberId || !fields.memberId.trim()) {
     return res.status(400).json({ error: 'Member ID is required' });
   }
 
-  // Validate event-specific fields
   const requiredFields = eventFields[eventId];
   if (!requiredFields || !requiredFields.every(field => fields[field] && fields[field].trim())) {
     return res.status(400).json({ error: 'Missing or empty required event-specific fields' });
   }
 
-  // Validate team member IDs for team-based events
   if (isTeamBasedEvent(eventId)) {
     const sizeField = requiredFields.find(f => ['teamSize', 'groupSize', 'castSize'].includes(f));
     if (sizeField) {
       const teamSize = parseInt(fields[sizeField]) || 0;
-      if (teamSize > 1) { // Assuming memberId counts as one
+      if (teamSize > 1) {
         for (let i = 1; i <= teamSize - 1; i++) {
           if (!fields[`teamMemberId${i}`] || !fields[`teamMemberId${i}`].trim()) {
             return res.status(400).json({ error: `Team Member ID ${i} is required` });
@@ -84,53 +68,16 @@ router.post('/register', async (req, res) => {
   }
 
   try {
-    // Check if the event exists
     const event = await Event.findOne({ eventId: Number(eventId) });
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    // Save the registration
     const registration = new Registration({ eventId, userId, name, email, fields });
     await registration.save();
-
-    // Send email
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: `Registration Confirmation for ${eventName}`,
-      html: `
-        <h2>Thank You for Registering!</h2>
-        <p>Dear ${name},</p>
-        <p>You have successfully registered for <strong>${eventName}</strong>!</p>
-        <p><strong>Your Member ID:</strong> ${fields.memberId}</p>
-        ${
-          isTeamBasedEvent(eventId) && fields[sizeField]
-            ? `
-          <p><strong>Team Details:</strong></p>
-          <ul>
-            ${Array.from({ length: parseInt(fields[sizeField]) - 1 }, (_, i) => `
-              <li>Team Member ${i + 1} ID: ${fields[`teamMemberId${i + 1}`]}</li>
-            `).join("")}
-          </ul>
-        `
-            : ""
-        }
-        <p><strong>Venue:</strong> ${event.venue || "To be announced"}</p>
-        <p>We look forward to seeing you at the event. For any queries, contact us at <a href="mailto:support@bvicam.ac.in">support@bvicam.ac.in</a>.</p>
-        <p>Best regards,<br/>The BVICAM NSC Team</p>
-      `,
-    };
-
-    try {
-      await transporter.sendMail(mailOptions);
-      res.status(201).json({ message: 'Registration successful and email sent' });
-    } catch (emailError) {
-      console.error('Email sending failed:', emailError);
-      res.status(201).json({ message: 'Registration successful, but email sending failed' });
-    }
+    res.status(201).json({ message: 'Registration successful' });
   } catch (error) {
-    if (error.code === 11000) { // Duplicate key error from unique index
+    if (error.code === 11000) {
       return res.status(400).json({ error: 'You are already registered for this event' });
     }
     console.error('Registration error:', error);
@@ -214,7 +161,7 @@ router.get('/registrations', async (req, res) => {
   }
 
   try {
-    if (userId === "29BruJMxHXMB6mbdAZyvKVUixW13") { // Admin UID
+    if (userId === "29BruJMxHXMB6mbdAZyvKVUixW13") {
       const registrations = await Registration.find();
       return res.json(registrations);
     }
@@ -235,7 +182,7 @@ router.get('/registrations/all', async (req, res) => {
     return res.status(401).json({ error: 'User ID required' });
   }
 
-  if (userId !== "29BruJMxHXMB6mbdAZyvKVUixW13") { // Admin UID check
+  if (userId !== "29BruJMxHXMB6mbdAZyvKVUixW13") {
     return res.status(403).json({ error: 'Unauthorized: Admin access required' });
   }
 
@@ -253,7 +200,7 @@ router.get('/registrations/all', async (req, res) => {
   }
 });
 
-// Event visibility endpoints (unchanged)
+// Event visibility endpoints
 router.get('/visibility/:eventId', async (req, res) => {
   try {
     const { eventId } = req.params;
