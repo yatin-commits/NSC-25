@@ -474,7 +474,7 @@ const Events = forwardRef((props, ref) => {
                         <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 dark:text-gray-300 mb-4 sm:mb-6">
                           {event.longDescription}
                         </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                        <div className="sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
                           <div>
                             <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
                               Rules
@@ -490,14 +490,14 @@ const Events = forwardRef((props, ref) => {
                               </ul>
                             </div>
                           </div>
-                          <div>
+                          {/* <div>
                             <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
                               Prize
                             </h3>
                             <p className="text-xs sm:text-sm md:text-base lg:text-lg font-medium bg-indigo-50 dark:bg-indigo-900/20 p-1.5 sm:p-2 md:p-3 rounded-lg">
                               {event.prize}
                             </p>
-                          </div>
+                          </div> */}
                         </div>
                         {user && !isRegistered ? (
                           <div className="mt-4 sm:mt-6">

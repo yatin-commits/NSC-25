@@ -1,15 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import bvicamlogo from "../assets/bvicamLogo.png";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { NavLink, useNavigate } from "react-router-dom";
-import MemberForm  from "../pages/MemberForm";
-
-// const adminEmails = ["sharmayatin0882@gmail.com", "shreyasinghal706@gmail.com", "amrendraex@gmail.com"];
-const adminEmails= import.meta.env.VITE_ADMIN_EMAILS;
-// console.log(adminEmails);
-
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 
 const MenuItem = ({ setActive, active, item, onClick }) => {
   return (
@@ -32,41 +26,47 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
   const [active, setActive] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, login, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  const adminEmails = import.meta.env.VITE_ADMIN_EMAILS.split(",");
   const isAdmin = user && adminEmails.includes(user.email);
 
-  const navigate = useNavigate();
+  // Handle scroll after navigation
+  useEffect(() => {
+    if (location.pathname === "/" && location.state?.scrollTo) {
+      setTimeout(() => {
+        location.state.scrollTo();
+      }, 100); // Small delay to ensure page is rendered
+    }
+  }, [location]);
 
   const handleLogin = () => {
     login(false);
     setIsMenuOpen(false);
   };
 
-  // const handleNavClick = (scrollAction) => {
-  //   setIsMenuOpen(false);
-  //   setTimeout(scrollAction, 300); // Wait for menu to close before scrolling
-  // };
-
-  function clickHandler(){
-    navigate("/MemberForm");
-  }
-
-  const handleHomeClick = (scrollAction) => {
+  const handleNavClick = (scrollAction) => {
     if (location.pathname === "/") {
       // If already on homepage, scroll immediately
-      setTimeout(scrollAction, 200); // Delay to allow menu to close
+      scrollAction();
     } else {
-      // If on another page, navigate to homepage and scroll after
+      // Navigate to homepage with scroll action in state
       navigate("/", { state: { scrollTo: scrollAction } });
     }
     setIsMenuOpen(false);
   };
 
+  const handleMemberFormClick = () => {
+    navigate("/MemberForm");
+    setIsMenuOpen(false);
+  };
+
   const navItems = [
-    { name: "Schedule", action: () => handleHomeClick(scrollToSchedule) },
-    { name: "Events", action: () => handleHomeClick(scrollToEvents) },
-    { name: "Coordinators", action: () => handleHomeClick(scrollToCoordinators) },
-    { name: "FAQ's", action: () => handleHomeClick(scrollToFAQ) }
+    { name: "Schedule", action: () => handleNavClick(scrollToSchedule) },
+    { name: "Events", action: () => handleNavClick(scrollToEvents) },
+    { name: "Coordinators", action: () => handleNavClick(scrollToCoordinators) },
+    { name: "FAQ's", action: () => handleNavClick(scrollToFAQ) },
   ];
 
   return (
@@ -75,7 +75,7 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       onMouseLeave={() => setActive(null)}
-      className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900  border-gray-700/50"
+      className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900 border-gray-700/50"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <div className="flex items-center">
@@ -84,30 +84,45 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
 
         <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
           {navItems.map((item) => (
-            <MenuItem key={item.name} setActive={setActive} active={active} item={item.name} onClick={item.action} />
+            <MenuItem
+              key={item.name}
+              setActive={setActive}
+              active={active}
+              item={item.name}
+              onClick={item.action}
+            />
           ))}
-          {/* {
-            item.name === "Member ID" && (
-              <NavLink to = "/register" />
-            )
-          } */}
-          {
-            user && (
-              <MenuItem key="Member ID" setActive={setActive} active={active} item="Member ID" onClick={clickHandler} />
-            )
-          }
+          {user && (
+            <MenuItem
+              key="Member ID"
+              setActive={setActive}
+              active={active}
+              item="Member ID"
+              onClick={handleMemberFormClick}
+            />
+          )}
           {isAdmin && (
-            <a href="/admin" className="text-gray-200 cursor-pointer text-sm md:text-base font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300">
-              Admin Panel
-            </a>
+            <MenuItem
+              key="Admin Panel"
+              setActive={setActive}
+              active={active}
+              item="Admin Panel"
+              onClick={() => navigate("/admin")}
+            />
           )}
           <div>
             {user ? (
-              <button onClick={logout} className="text-gray-200 cursor-pointer text-sm md:text-base font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300">
+              <button
+                onClick={logout}
+                className="text-gray-200 cursor-pointer text-sm md:text-base font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+              >
                 Logout
               </button>
             ) : (
-              <button onClick={handleLogin} className="text-gray-200 cursor-pointer text-sm md:text-base font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300">
+              <button
+                onClick={handleLogin}
+                className="text-gray-200 cursor-pointer text-sm md:text-base font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+              >
                 Login with Google
               </button>
             )}
@@ -116,7 +131,10 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-200 hover:text-purple-500 focus:outline-none transition-colors duration-300">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="text-gray-200 hover:text-purple-500 focus:outline-none transition-colors duration-300"
+          >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
@@ -127,7 +145,9 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
         initial={{ opacity: 0, height: 0 }}
         animate={isMenuOpen ? { opacity: 1, height: "auto" } : { opacity: 0, height: 0 }}
         transition={{ duration: 0.3 }}
-        className={`md:hidden bg-gradient-to-r from-gray-900 to-black/80 border-t border-gray-700/50 px-4 pt-2 pb-4 overflow-hidden ${isMenuOpen ? "block" : "hidden"}`}
+        className={`md:hidden bg-gradient-to-r from-gray-900 to-black/80 border-t border-gray-700/50 px-4 pt-2 pb-4 overflow-hidden ${
+          isMenuOpen ? "block" : "hidden"
+        }`}
       >
         {navItems.map((item) => (
           <div key={item.name} className="py-2">
@@ -139,20 +159,42 @@ const Navbarr = ({ scrollToSchedule, scrollToEvents, scrollToCoordinators, scrol
             </p>
           </div>
         ))}
+        {user && (
+          <div className="py-2">
+            <p
+              className="cursor-pointer text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+              onClick={handleMemberFormClick}
+            >
+              Member ID
+            </p>
+          </div>
+        )}
         {isAdmin && (
           <div className="py-2">
-            <a href="/admin" className="text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300">
+            <p
+              className="cursor-pointer text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+              onClick={() => navigate("/admin")}
+            >
               Admin Panel
-            </a>
+            </p>
           </div>
         )}
         <div className="py-2">
           {user ? (
-            <button onClick={() => { logout(); setIsMenuOpen(false); }} className="text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300">
+            <button
+              onClick={() => {
+                logout();
+                setIsMenuOpen(false);
+              }}
+              className="text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+            >
               Logout
             </button>
           ) : (
-            <button onClick={handleLogin} className="text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300">
+            <button
+              onClick={handleLogin}
+              className="text-gray-200 text-sm font-medium hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+            >
               Login with Google
             </button>
           )}
