@@ -8,9 +8,10 @@ import volleyball from "../assets/volleyball.png";
 import script from "../assets/script.png";
 import dancing from "../assets/dancing.png";
 import debate from "../assets/debate.png";
+import bkball from "../assets/bkball.jpg"
 import guitar from "../assets/guitar.png";
 import painting from "../assets/painting.png";
-
+import basketballQR from '../assets/basketballQR.jpg'
 export const eventFields = {
   1: [
     { name: "teamName", type: "text" },
@@ -68,8 +69,8 @@ export const eventFields = {
 export const eventsData = [
   {
     id: 1,
-    name: "binary", // Assuming this is "Battle Bytes" (BGMI)
-    image: "battle_bytes",
+    name: "Battle Bytes", // Assuming this is "Battle Bytes" (BGMI)
+    image: binary,
     shortDescription: "Compete in an intense BGMI mobile gaming showdown!",
     longDescription: "A thrilling BGMI tournament where players battle it out on mobile devices to prove their gaming prowess.",
     time: "TBD",
@@ -87,7 +88,7 @@ export const eventsData = [
   {
     id: 2,
     name: "Shark Tank",
-    image: "shark",
+    image: shark,
     shortDescription: "Pitch your innovative ideas to the sharks!",
     longDescription: "Present your startup idea to a panel of judges in a Shark Tank-inspired competition for students.",
     time: "TBD",
@@ -114,7 +115,7 @@ export const eventsData = [
   {
     id: 3,
     name: "Rangmanch",
-    image: "rangmanch",
+    image: script,
     shortDescription: "Stage a powerful Nukkad Natak with a social message!",
     longDescription: "A street play competition where teams deliver impactful performances with a strong social message in Hindi.",
     time: "TBD",
@@ -151,7 +152,7 @@ export const eventsData = [
   {
     id: 4,
     name: "Basketball",
-    image: "basketball",
+    image: bkball,
     shortDescription: "Dominate the court in a 3x3 basketball showdown!",
     longDescription: "A fast-paced 3x3 basketball tournament played on half a court with one basket.",
     time: "TBD",
@@ -177,12 +178,12 @@ export const eventsData = [
     contact: ["Vijay: 72173 52469", "Harsh: 79064 27749"],
     requiresPayment: true,
     registrationFee: 700, // Updated to match provided data
-    qrCode: "/images/basketball-qr.png",
+    qrCode: basketballQR,
   },
   {
     id: 5,
     name: "War of Words",
-    image: "debate",
+    image: debate,
     shortDescription: "Debate your way to victory!",
     longDescription: "A debate competition where participants argue with facts, fluency, and creativity in English or Hindi.",
     time: "TBD",
@@ -202,7 +203,7 @@ export const eventsData = [
   {
     id: 6,
     name: "Fandango",
-    image: "dancing",
+    image: dancing,
     shortDescription: "Dance your heart out in this vibrant competition!",
     longDescription: "A dance event where teams from colleges showcase their moves within a 10-minute limit.",
     time: "TBD",
@@ -225,7 +226,7 @@ export const eventsData = [
   {
     id: 7,
     name: "Creative Canvas",
-    image: "painting",
+    image: painting,
     shortDescription: "Paint a masterpiece on the spot!",
     longDescription: "An art competition where participants create themed posters within a 2-hour limit.",
     time: "TBD",
@@ -243,7 +244,7 @@ export const eventsData = [
   {
     id: 8,
     name: "Candid Moments",
-    image: "candid_moments",
+    image: candid,
     shortDescription: "Capture the essence of NSC BVICAM 2025 through photography!",
     longDescription: "Join us in capturing the emotions and highlights of NSC BVICAM 2025 through your lens in this photography competition.",
     time: "Submissions: 12 PM - 2 PM",
@@ -271,7 +272,7 @@ export const eventsData = [
   {
     id: 9,
     name: "CODE AVENGERS",
-    image: "code_avengers",
+    image: code,
     shortDescription: "Test your coding skills in a thrilling two-round competition!",
     longDescription: "Challenge yourself with debugging and coding problems in this epic Code Avengers showdown featuring two rounds.",
     time: "Round 1: 30 mins, Round 2: 2 hrs",
@@ -303,7 +304,7 @@ export const eventsData = [
   {
     id: 10,
     name: "Volleyball",
-    image: "volleyball",
+    image: volleyball,
     shortDescription: "Spike your way to victory in a thrilling volleyball match!",
     longDescription: "A competitive volleyball tournament where teams showcase their skills on the court.",
     time: "TBD",
