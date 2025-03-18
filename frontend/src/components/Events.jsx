@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 
 const Events = forwardRef((props, ref) => {
   const [expandedEvent, setExpandedEvent] = useState(null);
-  const [showEditFields, setShowEditFields] = useState(false);
   const [formData, setFormData] = useState({});
   const [registrations, setRegistrations] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,7 +28,7 @@ const Events = forwardRef((props, ref) => {
       if (registration) {
         setFormData(registration.fields);
         setPaymentReceipt(registration.paymentReceipt || null); // Cloudinary URL
-        setPaymentReceiptFile(null); // Reset file on edit
+        setPaymentReceiptFile(null); // Reset file
       } else {
         setFormData({});
         setPaymentReceipt(null);
@@ -98,7 +97,7 @@ const Events = forwardRef((props, ref) => {
     }
   };
 
-  const handleRegister = async (eventId, isEdit = false) => {
+  const handleRegister = async (eventId) => {
     if (!user) {
       toast.error("Please log in to register.");
       return;
@@ -107,7 +106,7 @@ const Events = forwardRef((props, ref) => {
     const event = eventsData.find((e) => e.id === eventId);
     const requiresPayment = event.requiresPayment;
 
-    if (requiresPayment && !isEdit && !paymentReceiptFile) {
+    if (requiresPayment && !paymentReceiptFile) {
       toast.error("Please upload your payment receipt.");
       return;
     }
@@ -180,12 +179,8 @@ const Events = forwardRef((props, ref) => {
     formPayload.append("name", name);
     formPayload.append("email", email);
     formPayload.append("fields", JSON.stringify(formData));
-    if (requiresPayment) {
-      if (!isEdit && paymentReceiptFile) {
-        formPayload.append("paymentReceipt", paymentReceiptFile); // New file for POST
-      } else if (isEdit && paymentReceipt) {
-        formPayload.append("paymentReceipt", paymentReceipt); // Existing URL for PUT
-      }
+    if (requiresPayment && paymentReceiptFile) {
+      formPayload.append("paymentReceipt", paymentReceiptFile); // New file for POST
     }
 
     console.log('Sending request with payload:');
@@ -193,35 +188,27 @@ const Events = forwardRef((props, ref) => {
       console.log(`${key}: ${value}`);
     }
 
-    const registerToast = toast.loading(isEdit ? "Updating..." : "Registering...");
+    const registerToast = toast.loading("Registering...");
     try {
-      const response = await fetch("https://nsc-25-backend.vercel.app/api/register", { // Local testing URL
-        method: isEdit ? "PUT" : "POST",
+      const response = await fetch("https://nsc-25-backend.vercel.app/api/register", {
+        method: "POST",
         body: formPayload,
       });
       const data = await response.json();
       if (response.ok) {
-        toast.success(isEdit ? "Details updated!" : "Registration successful!", {
-          id: registerToast,
-        });
+        toast.success("Registration successful!", { id: registerToast });
         await fetchRegistrations(user.uid, false);
-        if (!isEdit) {
-          setFormData({});
-          setPaymentReceipt(null);
-          setPaymentReceiptFile(null);
-          setShowPaymentStep(false);
-        }
+        setFormData({});
+        setPaymentReceipt(null);
+        setPaymentReceiptFile(null);
+        setShowPaymentStep(false);
       } else {
         console.error('Server error response:', data);
-        toast.error(data.error || (isEdit ? "Update failed." : "Registration failed."), {
-          id: registerToast,
-        });
+        toast.error(data.error || "Registration failed.", { id: registerToast });
       }
     } catch (error) {
       console.error('Fetch error:', error);
-      toast.error(`${isEdit ? "Update" : "Registration"} error occurred.`, {
-        id: registerToast,
-      });
+      toast.error("Registration error occurred.", { id: registerToast });
     }
   };
 
@@ -415,25 +402,7 @@ const Events = forwardRef((props, ref) => {
                       <span className="truncate">{event.venue}</span>
                     </div>
                     {user && registrations.some((r) => r.eventId === event.id) && (
-                      <div className="flex space-x-3">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-4 text-blue-500 h-4 sm:w-5 sm:h-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.732 5.732z"
-                          />
-                        </svg>
-                        <span className="text-green-600 cursor-pointer flex font-medium">
-                          Registered
-                        </span>
-                      </div>
+                      <span className="text-green-600 font-medium">Registered</span>
                     )}
                   </div>
                 </div>
@@ -461,7 +430,6 @@ const Events = forwardRef((props, ref) => {
               <button
                 onClick={() => {
                   setExpandedEvent(null);
-                  setShowEditFields(false);
                   setShowPaymentStep(false);
                   setIsQrExpanded(false); // Reset QR expansion on close
                 }}
@@ -593,7 +561,7 @@ const Events = forwardRef((props, ref) => {
                                   </div>
                                 )}
                                 <button
-                                  onClick={() => handleRegister(event.id, false)}
+                                  onClick={() => handleRegister(event.id)}
                                   className="mt-3 sm:mt-4 w-full bg-indigo-600 cursor-pointer text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-indigo-700 text-sm sm:text-base md:text-lg"
                                 >
                                   Register Now
@@ -606,82 +574,9 @@ const Events = forwardRef((props, ref) => {
                           </div>
                         ) : user && isRegistered ? (
                           <div className="mt-4 sm:mt-6">
-                            <div className="flex items-center justify-between flex-col sm:flex-row gap-2">
-                              <p className="text-green-600 text-xs sm:text-sm md:text-base lg:text-lg">
-                                You are already registered for this event!
-                              </p>
-                              <button
-                                onClick={() => setShowEditFields(!showEditFields)}
-                                className="text-blue-600 cursor-pointer hover:text-blue-800 flex items-center gap-1 sm:gap-2"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="w-4 h-4 sm:w-5 sm:h-5"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.732 5.732z"
-                                  />
-                                </svg>
-                                Edit Response
-                              </button>
-                            </div>
-                            {showEditFields && (
-                              <div className="mt-3 sm:mt-4">
-                                {requiresPayment && paymentReceipt && (
-                                  <div className="mb-4">
-                                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-                                      Payment Receipt:
-                                    </p>
-                                    <img
-                                      src={paymentReceipt}
-                                      alt="Payment Receipt"
-                                      className="w-32 h-32 mx-auto"
-                                    />
-                                  </div>
-                                )}
-                                <div className="mb-3 sm:mb-4">
-                                  <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
-                                    Your Member ID
-                                  </label>
-                                  {renderField({ name: "memberId", type: "text" })}
-                                </div>
-                                {(baseEventFields[event.id] || []).map((field) => (
-                                  <div key={field.name} className="mb-3 sm:mb-4">
-                                    <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300 capitalize">
-                                      {field.name.replace(/([A-Z])/g, " $1").trim()}
-                                    </label>
-                                    {renderField(field)}
-                                  </div>
-                                ))}
-                                {isTeamBased && sizeFieldName && teamSize > 1 && (
-                                  <div className="mb-3 sm:mb-4">
-                                    <h4 className="text-sm sm:text-base md:text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                      Team Member IDs (excluding you)
-                                    </h4>
-                                    {Array.from({ length: teamSize - 1 }, (_, i) => (
-                                      <div key={i} className="mb-2">
-                                        <label className="block text-xs sm:text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
-                                          Team Member {i + 1} ID
-                                        </label>
-                                        {renderField({ name: `teamMemberId${i + 1}`, type: "text" })}
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                                <button
-                                  onClick={() => handleRegister(event.id, true)}
-                                  className="mt-3 sm:mt-4 w-full bg-blue-600 text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-lg hover:bg-blue-700 text-sm sm:text-base md:text-lg cursor-pointer"
-                                >
-                                  Update Details
-                                </button>
-                              </div>
-                            )}
+                            <p className="text-green-600 text-xs sm:text-sm md:text-base lg:text-lg">
+                              You are already registered for this event!
+                            </p>
                           </div>
                         ) : null}
                       </div>
@@ -692,7 +587,6 @@ const Events = forwardRef((props, ref) => {
                 <button
                   onClick={() => {
                     setExpandedEvent(null);
-                    setShowEditFields(false);
                     setShowPaymentStep(false);
                     setIsQrExpanded(false); // Reset QR expansion on close
                   }}

@@ -4,67 +4,6 @@ const cors = require('cors');
 const multer = require('multer');
 const { v2: cloudinary } = require('cloudinary');
 const nodemailer = require('nodemailer');
- const eventFields = {
-  1: [
-    { name: "teamName", type: "text" },
-    // { name: "teamSize", type: "select", options: ["3", "4", "5"] },
-    { name: "preferredLanguage", type: "select", options: ["JavaScript", "Python", "Java"] },
-  ],
-  2: [
-    { name: "performanceType", type: "select", options: ["Dance", "Drama"] },
-    { name: "groupSize", type: "select", options: ["2", "4", "6", "8"] },
-    { name: "songChoice", type: "text" },
-  ],
-  3: [
-    { name: "teamName", type: "text" },
-    { name: "teamSize", type: "select", options: ["6"] }, // Changed from radio to select for consistency
-  ],
-  4: [
-    { name: "teamSize", type: "select", options: ["5"] }, // Basketball: Fixed team size per standard rules
-  ],
-  5: [
-    { name: "pitchTitle", type: "text" },
-    { name: "teamSize", type: "select", options: ["1", "2", "3", "4"] },
-    { name: "industry", type: "select", options: ["Tech", "Health", "Finance"] },
-  ],
-  6: [
-    { name: "cameraType", type: "select", options: ["DSLR", "Mirrorless", "Point-and-Shoot"] },
-    { name: "photoTheme", type: "text" },
-  ],
-  7: [
-    { name: "filmTitle", type: "text" },
-    { name: "teamSize", type: "select", options: ["3", "4", "5", "6"] },
-    { name: "genre", type: "select", options: ["Drama", "Comedy", "Action"] },
-  ],
-  8: [
-    { name: "playTitle", type: "text" },
-    { name: "castSize", type: "select", options: ["4", "6", "8", "10"] },
-  ],
-  9: [
-    { name: "danceStyle", type: "select", options: ["Hip-Hop", "Contemporary", "Ballet"] },
-    { name: "groupSize", type: "select", options: ["1", "2", "3", "4", "5", "6"] },
-  ],
-  10: [
-    { name: "teamSize", type: "select", options: ["6"] }, // Volleyball: Fixed team size per standard rules
-  ],
-  11: [
-    { name: "songChoice", type: "text" },
-    { name: "groupSize", type: "select", options: ["2", "4", "6", "8"] },
-    { name: "choreographer", type: "text" },
-  ],
-  12: [
-    { name: "artMedium", type: "select", options: ["Painting", "Sculpture", "Digital"] },
-    { name: "artTheme", type: "text" },
-  ],
-};
-
-// async function loadData() {
-//   const eventFields = await import("../../frontend/src/components/data.js");
-//   console.log(eventFields.default);
-// }
-
-// loadData();
-
 
 // Apply middleware
 router.use(cors({
@@ -93,25 +32,23 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Import models
 const Registration = require('../modules/registrationModule');
-const Event = require('../modules/evetModules'); // Ensure this path is correct
-const Member = require('../modules/Members'); // Ensure this path is correct
+const Event = require('../modules/evetModules'); // Fixed typo
 
-// const eventFields = {
-//   1: ['teamName', 'teamSize', 'preferredLanguage'],
-//   2: ['performanceType', 'groupSize', 'songChoice'],
-//   3: ['teamName', 'teamSize'],
-//   4: ['teamSize'], // Basketball
-//   5: ['pitchTitle', 'teamSize', 'industry'],
-//   6: ['cameraType', 'photoTheme'],
-//   7: ['filmTitle', 'teamSize', 'genre'],
-//   8: ['playTitle', 'castSize'],
-//   9: ['danceStyle', 'groupSize'],
-//   10: ['teamSize'], // Volleyball
-//   11: ['songChoice', 'groupSize', 'choreographer'],
-//   12: ['artMedium', 'artTheme'],
-// };
+const eventFields = {
+  1: ['teamName', 'teamSize', 'preferredLanguage'],
+  2: ['performanceType', 'groupSize', 'songChoice'],
+  3: ['teamName', 'teamSize'],
+  4: ['teamSize'], // Basketball
+  5: ['pitchTitle', 'teamSize', 'industry'],
+  6: ['cameraType', 'photoTheme'],
+  7: ['filmTitle', 'teamSize', 'genre'],
+  8: ['playTitle', 'castSize'],
+  9: ['danceStyle', 'groupSize'],
+  10: ['teamSize'], // Volleyball
+  11: ['songChoice', 'groupSize', 'choreographer'],
+  12: ['artMedium', 'artTheme'],
+};
 
 const eventsRequiringPayment = [4, 10]; // Basketball and Volleyball
 
@@ -120,7 +57,7 @@ const isTeamBasedEvent = (eventId) => {
   return fields.some(field => ['teamSize', 'groupSize', 'castSize'].includes(field));
 };
 
-// Register for an event (unchanged)
+// Register for an event
 router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
   const { eventId, userId, fields, name, email } = req.body;
   let paymentReceiptUrl = null;
@@ -155,8 +92,10 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
       const teamSize = parseInt(parsedFields[sizeField]) || 0;
       if (teamSize > 1) {
         for (let i = 1; i <= teamSize - 1; i++) {
-          if (!parsedFields[`teamMemberId${i}`] || !parsedFields[`teamMemberId${i}`].trim()) {
-            return res.status(400).json({ error: `Team Member ID ${i} is required` });
+          if (!parsedFields[`teamMemberId${i}`]?.trim()) {
+            return res.status(400).json({
+              error: `Team Member ID ${i} (teamMemberId${i}) is required`,
+            });
           }
         }
         for (let i = teamSize; parsedFields[`teamMemberId${i}`]; i++) {
@@ -254,8 +193,7 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
     res.status(500).json({ error: 'Registration failed', details: error.message });
   }
 });
-
-// Update registration (unchanged)
+// Update registration
 router.put('/register', upload.none(), async (req, res) => {
   console.log('Raw req.body:', req.body);
   const { eventId, userId, fields, name, email, paymentReceipt } = req.body;
@@ -288,8 +226,14 @@ router.put('/register', upload.none(), async (req, res) => {
         const teamSize = parseInt(parsedFields[sizeField]) || 0;
         if (teamSize > 1) {
           for (let i = 1; i <= teamSize - 1; i++) {
-            if (!parsedFields[`teamMemberId${i}`] || !parsedFields[`teamMemberId${i}`].trim()) {
-              return res.status(400).json({ error: `Team Member ID ${i} is required` });
+            if (
+              !parsedFields[`teamMemberId${i}`]?.trim() ||
+              !parsedFields[`teamMemberName${i}`]?.trim() ||
+              !parsedFields[`teamMemberEmail${i}`]?.trim()
+            ) {
+              return res.status(400).json({
+                error: `Team Member ${i} must have ID, name, and email (teamMemberId${i}, teamMemberName${i}, teamMemberEmail${i})`,
+              });
             }
           }
           for (let i = teamSize; parsedFields[`teamMemberId${i}`]; i++) {
@@ -332,7 +276,7 @@ router.put('/register', upload.none(), async (req, res) => {
   }
 });
 
-// Get user's registrations (unchanged)
+// Get user's registrations
 router.get('/registrations', async (req, res) => {
   const { userId } = req.query;
 
@@ -354,7 +298,7 @@ router.get('/registrations', async (req, res) => {
   }
 });
 
-// Get all registrations (admin only, unchanged)
+// Get all registrations (admin only)
 router.get('/registrations/all', async (req, res) => {
   const { userId, eventId } = req.query;
 
@@ -377,90 +321,6 @@ router.get('/registrations/all', async (req, res) => {
   } catch (error) {
     console.error('Fetch admin registrations error:', error);
     res.status(500).json({ error: 'Failed to fetch registrations' });
-  }
-});
-
-// New route to fetch member details with event registrations
-router.get('/members', async (req, res) => {
-  const { userId } = req.query;
-
-  if (!userId) {
-    return res.status(401).json({ error: 'User ID required' });
-  }
-
-  if (userId !== "29BruJMxHXMB6mbdAZyvKVUixW13") {
-    return res.status(403).json({ error: 'Unauthorized: Admin access required' });
-  }
-
-  try {
-    // Fetch all registrations
-    const registrations = await Registration.find();
-
-    // Collect all unique member IDs
-    const memberIds = new Set();
-    registrations.forEach((reg) => {
-      const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields;
-      if (fields.memberId) memberIds.add(fields.memberId);
-
-      const sizeField = Object.keys(fields).find((key) =>
-        ['teamSize', 'groupSize', 'castSize'].includes(key)
-      );
-      const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
-      if (teamSize > 1) {
-        for (let i = 1; i <= teamSize - 1; i++) {
-          const teamMemberId = fields[`teamMemberId${i}`];
-          if (teamMemberId) memberIds.add(teamMemberId);
-        }
-      }
-    });
-
-    // Fetch member details from Member collection
-    const members = await Member.find({ memberId: { $in: Array.from(memberIds) } });
-    const memberMap = new Map(members.map(m => [m.memberId, { name: m.name, email: m.email }]));
-
-    // Map members to their events
-    const memberEvents = new Map();
-    for (const reg of registrations) {
-      const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields;
-      const eventId = reg.eventId;
-      const eventName = (await Event.findOne({ eventId }))?.name || `Event ${eventId}`;
-
-      if (fields.memberId && memberMap.has(fields.memberId)) {
-        if (!memberEvents.has(fields.memberId)) {
-          memberEvents.set(fields.memberId, { events: new Set() });
-        }
-        memberEvents.get(fields.memberId).events.add(eventName);
-      }
-
-      const sizeField = Object.keys(fields).find((key) =>
-        ['teamSize', 'groupSize', 'castSize'].includes(key)
-      );
-      const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
-      if (teamSize > 1) {
-        for (let i = 1; i <= teamSize - 1; i++) {
-          const teamMemberId = fields[`teamMemberId${i}`];
-          if (teamMemberId && memberMap.has(teamMemberId)) {
-            if (!memberEvents.has(teamMemberId)) {
-              memberEvents.set(teamMemberId, { events: new Set() });
-            }
-            memberEvents.get(teamMemberId).events.add(eventName);
-          }
-        }
-      }
-    }
-
-    // Combine member details with their events
-    const result = Array.from(memberMap.entries()).map(([memberId, { name, email }]) => ({
-      memberId,
-      name,
-      email,
-      events: memberEvents.has(memberId) ? Array.from(memberEvents.get(memberId).events).sort() : [],
-    })).sort((a, b) => a.memberId.localeCompare(b.memberId));
-
-    res.status(200).json(result);
-  } catch (error) {
-    console.error('Fetch members error:', error);
-    res.status(500).json({ error: 'Failed to fetch members', details: error.message });
   }
 });
 
