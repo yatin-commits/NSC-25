@@ -1,6 +1,9 @@
 import { FaLinkedin } from "react-icons/fa";
 import "./Cards.css";
 import myImage from "../assets/me.jpg";
+import mukul from "../assets/mukul.jpg"
+import ujjwal from "../assets/ujjwal.jpg"
+import yatin from "../assets/yatin.jpg"
 
 const Cards = () => {
     const cards = [
@@ -11,32 +14,32 @@ const Cards = () => {
             url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
         },
         {   
-            img: myImage,
-            name: "Shreya Singhal",
+            img: mukul,
+            name: "Mukul Bhardwaj",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
+        },
+        {   
+            img: ujjwal,
+            name: "Ujjwal chauhan",
             education: "MCA 1st Year",
             url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
         },
         {   
             img: myImage,
-            name: "Shreya Singhal",
+            name: "Mahak bansal",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/mahak-bansal-2004-"
+        },
+        {   
+            img: yatin,
+            name: "Yatin Sharma",
             education: "MCA 1st Year",
             url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
         },
         {   
             img: myImage,
-            name: "Shreya Singhal",
-            education: "MCA 1st Year",
-            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
-        },
-        {   
-            img: myImage,
-            name: "Shreya Singhal",
-            education: "MCA 1st Year",
-            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
-        },
-        {   
-            img: myImage,
-            name: "Shreya Singhal",
+            name: "Gunshita Varun",
             education: "MCA 1st Year",
             url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
         }
