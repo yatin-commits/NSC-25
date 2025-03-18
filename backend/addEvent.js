@@ -17,52 +17,45 @@ mongoose.connect(mongoURI, {
 const eventsData = [
   {
     id: 1,
-    name: "Code Avengers",
+    name: "Battle Bytes",
   },
   {
     id: 2,
-    name: "Bollywood Bazigar",
-  },
-  {
-    id: 3,
-    name: "Volleyball",
-  },
-  {
-    id: 4,
-    name: "Battle Byte",
-  },
-  {
-    id: 5,
     name: "Shark Tank",
   },
   {
-    id: 6,
-    name: "Candid Moments",
-  },
-  {
-    id: 7,
-    name: "Cine Blitz",
-  },
-  {
-    id: 8,
+    id: 3,
     name: "Rangmanch",
   },
   {
-    id: 9,
-    name: "Fandango",
+    id: 4,
+    name: "Basketball",
   },
   {
-    id: 10,
+    id: 5,
     name: "War of Words",
   },
   {
-    id: 11,
-    name: "Bollywood Beats",
+    id: 6,
+    name: "Fandango",
   },
   {
-    id: 12,
+    id: 7,
     name: "Creative Canvas",
   },
+  {
+    id: 8,
+    name: "Candid Moments",
+  },
+  {
+    id: 9,
+    name: "Code Avengers",
+  },
+  {
+    id: 10,
+    name: "Volleyball",
+  },
+  
 ];
 
 // Function to insert filtered events into MongoDB

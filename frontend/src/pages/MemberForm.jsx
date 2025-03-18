@@ -143,6 +143,12 @@ const MemberForm = () => {
             </p>
           </div>
         )}
+        <p className="text-xs text-gray-600 dark:text-gray-300 mt-4 text-center">
+          Facing any issue? Contact Us
+         <br></br>
+            Yatin Sharma : 8587921049 , Shreya Singhal : 9910394481
+          
+        </p>
       </div>
     </div>
   );

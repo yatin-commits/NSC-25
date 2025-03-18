@@ -16,7 +16,7 @@ import basketballQR from '../assets/basketballQR.jpg'
 export const eventFields = {
   1: [
     { name: "teamName", type: "text" },
-    { name: "teamSize", type: "select", options: ["3", "4", "5"] },
+    // { name: "teamSize", type: "select", options: ["3", "4", "5"] },
     { name: "preferredLanguage", type: "select", options: ["JavaScript", "Python", "Java"] },
   ],
   2: [
@@ -330,22 +330,43 @@ export const eventsData = [
 
 
   export const events = [
-      { name: "Nukkad-Natak", time: "11:00 AM", heads: [
-          { name: "Shreya Srivastava", mobile: "+91 63872 99487" },
-          { name: "Harshit", mobile: "+91 97172 25929" },
+      { name: "Code Avengers", time: "10:00 AM onwards", heads: [
+          { name: "Deepanshu", mobile: "+91 8800621391" },
+          { name: "Pranav", mobile: "+91 9582349597" },
         ] },
-      { name: "Nukkad-Natak", time: "11:00 AM", heads: [
-          { name: "Shreya Srivastava", mobile: "+91 63872 99487" },
-          { name: "Harshit", mobile: "+91 97172 25929" },
+      { name: "Battle Bytes", time: "10:00 AM onwards", heads: [
+          { name: "Tushar", mobile: "+91 63872 99487" },
+          { name: "Prashant", mobile: "+91 9311314126" },
         ] },
-      { name: "Nukkad-Natak", time: "11:00 AM", heads: [
-          { name: "Shreya Srivastava", mobile: "+91 63872 99487" },
-          { name: "Harshit", mobile: "+91 97172 25929" },
+      { name: "Shark Tank", time: "10:00 AM onwards", heads: [
+          { name: "Hiya", mobile: "+91 9650733212" },
+          { name: "Darhsita", mobile: "+91 9810748780" },
         ] },
-      { name: "Tech Talk", time: "10:00 AM", heads: [
-          { name: "Alice Johnson", mobile: "+91 99999 88888" },
+      { name: "Volley Ball",time: "10:00 AM onwards", heads: [
+          { name: "Ujjwal", mobile: "+91 7303782547" },
         ] },
-      { name: "Code Sprint", time: "1:00 PM", heads: [
-          { name: "Ravi Kumar", mobile: "+91 98765 43210" },
+      { name: "BasketBall", time: "10:00 AM onwards", heads: [
+          { name: "Vijay", mobile: "+91 7217352469" },
+          { name: "Harsh", mobile: "+91 7906427749" },
+        ] },
+      { name: "Rangmanch", time: "10:00 AM onwards", heads: [
+          { name: "Tashmeen", mobile: "+91 9354379839" },
+          { name: "Ira", mobile: "+91 8595807792" },
+        ] },
+      { name: "Candid Moments", time: "10:00 AM onwards", heads: [
+          { name: "Revant", mobile: "+91 8447751703" },
+          { name: "Somil", mobile: "+91 9205337823" },
+        ] },
+      { name: "Creative Canvas", time: "10:00 AM onwards", heads: [
+          { name: "Lakshita", mobile: "+91 8744047511" },
+          { name: "Kanishka", mobile: "+91 9810041645" },
+        ] },
+      { name: "War Of Words", time: "10:00 AM onwards", heads: [
+          { name: "Navya", mobile: "+91 7827776854" },
+          { name: "Tarushi", mobile: "+91 9211790589" },
+        ] },
+      { name: "Fandango", time: "10:00 AM onwards", heads: [
+          { name: "Gunshita", mobile: "+91 9873760414"},
+          { name: "Sourav", mobile: "+91 9871169532" },
         ] },
     ];
