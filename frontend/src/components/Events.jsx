@@ -275,6 +275,15 @@ const Events = forwardRef((props, ref) => {
         );
     }
   };
+  const getFormattedDates = (dateArray) => {
+    return dateArray.map(dateString => {
+      const date = new Date(dateString);
+      const day = date.getDate();
+      const month = date.toLocaleDateString('en-US', { month: 'long' });
+      const weekday = date.toLocaleDateString('en-US', { weekday: 'short' });
+      return `${day} ${month}, ${weekday}`;
+    }).join(' - ');
+  };
 
   const filteredEvents = eventsData.filter(
     (event) =>
@@ -455,7 +464,11 @@ const Events = forwardRef((props, ref) => {
                         </h2>
                         <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 dark:text-gray-300 mb-4 sm:mb-6">
                           {event.longDescription}
+                          
                         </p>
+                        {event.dates && (
+  <p className="text-sm text-gray-600 mb-2">DATE :<b> {getFormattedDates(event.dates)}</b></p>
+)}
                         <div className="sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
                           <div>
                             <h3 className="font-semibold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
