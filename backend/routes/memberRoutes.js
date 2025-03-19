@@ -17,8 +17,8 @@ router.use(express.json());
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "shreyasinghal706@gmail.com",
-    pass: "gvvhdammjnztrbub",
+    user: "nsc.event@bvicam.in",
+    pass: "fgssbwjgqzljtnya",
   },
 });
 
@@ -70,7 +70,7 @@ router.post("/generate-member-id", async (req, res) => {
 
     // Send email with memberId
     const mailOptions = {
-      from: `"NSC 25 Team" <${process.env.EMAIL_USER}>`,
+      from: `"NSC 25 Team"`,
       to: email,
       subject: "Your NSC 25 Member ID",
       text: `Dear ${name},\n\nThank you for registering with NSC 25! Your Member ID is: ${memberId}\n\nUse this ID to register for events.\n\nBest regards,\nNSC 25 Team`,

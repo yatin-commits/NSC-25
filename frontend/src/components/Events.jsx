@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, X, Award, Search } from "lucide-react";
+import { Clock, X, Award, Search } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { eventFields as baseEventFields, eventsData } from "./data";
 import toast from "react-hot-toast";
@@ -398,7 +398,7 @@ const Events = forwardRef((props, ref) => {
                   </p>
                   <div className="flex items-center justify-between gap-2 text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
                     <div className="flex items-center gap-1 sm:gap-2">
-                      <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="truncate">{event.venue}</span>
                     </div>
                     {user && registrations.some((r) => r.eventId === event.id) && (
@@ -577,7 +577,7 @@ const Events = forwardRef((props, ref) => {
                         ) : user && isRegistered ? (
                           <div className="mt-4 sm:mt-6">
                             <p className="text-green-600 text-xs sm:text-sm md:text-base lg:text-lg">
-                             You have been Registered.    Please check you email !
+                             You have Registered.    Please check you email !
                             </p>
                           </div>
                         ) : 
