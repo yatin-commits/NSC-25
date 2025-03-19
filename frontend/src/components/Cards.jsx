@@ -5,6 +5,7 @@ import mukul from "../assets/mukul.jpg"
 import ujjwal from "../assets/Ujjwal.jpg"
 import yatin from "../assets/yatin.jpg"
 import navya from "../assets/navya.jpg"
+import rohit from "../assets/rohit.jpg"
 import lakshita from "../assets/lakshita.jpg"
 import amd from "../assets/amd.jpg"
 import hiya from "../assets/hiya.jpg"
@@ -106,10 +107,10 @@ const Cards = () => {
             url: "https://www.linkedin.com/in/lakshita-garg-85956b262?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
         },
         {   
-            img: myImage,
+            img: rohit,
             name: "Rohit Rawat",
             education: "MCA 1st Year",
-            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
+            url: "https://www.linkedin.com/in/rohit-rawat-006115221"
         },
         {   
             img: siya,
@@ -168,7 +169,7 @@ const Cards = () => {
        
         {   
             img: hiya,
-            name: "Hiya Chowdhary",
+            name: "Hiya Chowdhry",
             education: "MCA 1st Year",
             url: "https://www.linkedin.com/in/hiya-chowdhry-b5b1a8252?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
         },

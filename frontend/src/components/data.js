@@ -60,10 +60,7 @@ export const eventFields = {
   10: [
     { name: "teamSize", type: "select", options: ["6","7","8"] }, // Volleyball: Fixed team size per standard rules
   ],
-  11: [
-    { name: "Movie Title", type: "text" },
-    { name: "teamSize", type: "select", options: ["4","5","6"] }, // Volleyball: Fixed team size per standard rules
-  ],
+  11: [{ name: "Movie Title", type: "text" }],
   
 };
 
@@ -233,6 +230,7 @@ export const eventsData = [
     time: "TBD",
     venue: "10:00 AM",
     rules: [
+      "𝑻𝒉𝒆𝒎𝒆 :Unity in diversity: celebrating cultural heritage",
       "Posters must adhere to the specified theme.",
       "Posters must be of the specified size i.e. A3 and it should be original and created by the participant only.",
       "Participants would be given 2 hours to complete their posters and they must submit it before the specified deadline.",
@@ -327,26 +325,42 @@ export const eventsData = [
     qrCode: volleyballQR,
   },
   {
-    id: 11,
+    id:11,
     name: "Cine Blitz",
-    image: movie,
-    shortDescription: "Spike your way to victory in a thrilling volleyball match!",
-    longDescription: "A competitive volleyball tournament where teams showcase their skills on the court.",
+    image: cinema,
+    shortDescription: "Showcase Your Vision, Craft Stories, Compete & Conquer!",
+    longDescription: "Showcase your filmmaking skills by creating original, high-quality short films or documentaries that captivate audiences and impress judges with creativity and storytelling.",
     time: "TBD",
-    venue: "9:00 AM",
-    rules: [
-      // Note: Volleyball rules were not fully provided; using placeholder rules from original data
-      "Each team shall consist of 6 players (plus up to 2 substitutes).",
-      "Matches will follow standard volleyball rules with 3 sets to 25 points.",
-      "A coin toss determines the first serve.",
-      "Teams must adhere to fair play and sportsmanship guidelines.",
-      "Registration fee must be paid and receipt uploaded before registration.",
-    ],
+    venue: "9:30 AM",
+    rules:[
+      "Open to college students (must carry a valid College ID).",
+      "Multiple teams from the same institution allowed (one submission per team and registration should be made separately).",
+      "No theme restriction – only short films or documentaries accepted.",
+      "No withdrawals after submission.",
+      "Duration: 5-10 minutes.",
+      "Must be original, high-quality, and watermark-free.",
+      "Obscene or inappropriate content will lead to disqualification.",
+      "Proper credits for cast & crew required.",
+      "Non-English/Hindi films must include English subtitles.",
+      "4 to 5 members should be present during the Prize Distribution Ceremony (On-Campus) to claim prizes.",
+      "Submit your entry via Google Drive.",
+      "Films can be recorded via Mobile/Camera.",
+      "File Size: Minimum 8 GB, Maximum 10 GB.",
+      "Format: MP4.",
+      "Synopsis of the Film/Documentary must be submitted.",
+      "Script of the Film/Documentary must be submitted.",
+      "Poster of the Film/Documentary must be submitted.",
+      "Last date of submission: 1st April 2025.",
+      "Time Limit: Each speaker gets 5 minutes to present.",
+      "Cross-Questioning: Allowed with clear, fair, and relevant questions.",
+      "Content: Facts must be accurate and well-researched.",
+      "Fluency: Participants must speak coherently in either English or Hindi.",
+      "Creativity: Evaluated on uniqueness, clarity, and confident delivery.",
+      "Preparation Time: 15 minutes before the debate.",
+      "Our esteemed judges' decisions will be final."
+    ],    
     prize: "TBD",
-    contact: ["Ravi: 9876543210", "Neha: 8765432109"],
-    requiresPayment: false,
-    // registrationFee: 600, // Note: Update this if specific fee provided later
-    // qrCode: volleyballQR,
+    contact: ["Navya: 78277 76854", "Tarushi: 92117 90589"],
   },
 ];
 

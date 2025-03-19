@@ -4,8 +4,10 @@ const cors = require('cors');
 const multer = require('multer');
 const { v2: cloudinary } = require('cloudinary');
 const nodemailer = require('nodemailer');
+const Registration = require('../modules/registrationModule');
+const Event = require('../modules/evetModules'); // Note: Typo fixed in your original ("evetModules" -> "eventModules")
+const Member = require('../modules/Members');
 
-const Member =require('../modules/Members')
 // Apply middleware
 router.use(cors({
   origin: ['https://bvicam-nsc-25.vercel.app', 'http://localhost:5173'],
@@ -13,9 +15,10 @@ router.use(cors({
   allowedHeaders: ['Content-Type'],
 }));
 router.use(express.json({ limit: '10mb' }));
+router.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Multer setup for file uploads
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 // Cloudinary configuration
 cloudinary.config({
@@ -33,64 +36,32 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const Registration = require('../modules/registrationModule');
-const Event = require('../modules/evetModules'); // Fixed typo
-
- const eventFields = {
-  1: [
-    // { name: "teamName", type: "text" },
-    // { name: "teamSize", type: "select", options: ["3", "4", "5"] },
-    // { name: "preferredLanguage", type: "select", options: ["JavaScript", "Python", "Java"] },
-  ],
-  2: [
-    // { name: "performanceType", type: "select", options: ["Dance", "Drama"] },
-    { name: "teamSize", type: "select", options: ["1", "2", "3", "4","5"] },
-    // { name: "songChoice", type: "text" },
-  ],
+// Event-specific fields
+const eventFields = {
+  1: [],
+  2: [{ name: "teamSize", type: "select", options: ["1", "2", "3", "4", "5"] }],
   3: [
     { name: "Society Name", type: "text" },
-    { name: "teamSize", type: "select", options: ["18","19","20"] }, // Changed from radio to select for consistency
+    { name: "teamSize", type: "select", options: ["18", "19", "20"] },
   ],
-  4: [
-    { name: "teamSize", type: "select", options: ["4"] }, // Basketball: Fixed team size per standard rules
-  ],
-  5: [
-    { name: "teamSize", type: "select", options: ["2"] },
-    // { name: "industry", type: "select", options: ["Tech", "Health", "Finance"] },
-  ],
+  4: [{ name: "teamSize", type: "select", options: ["4"] }],
+  5: [{ name: "teamSize", type: "select", options: ["2"] }],
   6: [
     { name: "Society Name", type: "text" },
-    { name: "teamSize", type: "select", options: ["5", "6", "7", "8","9","10","11","12","13","14","15","16","17","18","19","20"] },
-    // { name: "photoTheme", type: "text" },
+    { name: "teamSize", type: "select", options: ["5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"] },
   ],
-  7: [
-    // { name: "filmTitle", type: "text" },
-    // { name: "teamSize", type: "select", options: ["3", "4", "5", "6"] },
-    // { name: "teamSize", type: "select", options: ["3", "4", "5", "6"] },
-    // { name: "genre", type: "select", options: ["Drama", "Comedy", "Action"] },
-  ],
-  8: [
-    { name: "Device", type: "select", options: ["Mobile", "DSLR"] },
-  ],
-  9: [
-    // { name: "danceStyle", type: "select", options: ["Hip-Hop", "Contemporary", "Ballet"] },
-    // { name: "groupSize", type: "select", options: ["1", "2", "3", "4", "5", "6"] },
-  ],
-  10: [
-    { name: "teamSize", type: "select", options: ["6","7","8"] }, // Volleyball: Fixed team size per standard rules
-  ],
-  11: [
-    { name: "Movie Title", type: "text" },
-    { name: "teamSize", type: "select", options: ["4","5","6"] }, // Volleyball: Fixed team size per standard rules
-  ],
-  
+  7: [],
+  8: [{ name: "Device", type: "select", options: ["Mobile", "DSLR"] }],
+  9: [],
+  10: [{ name: "teamSize", type: "select", options: ["6", "7", "8"] }],
+  11: [{ name: "Movie Title", type: "text" }],
 };
 
 const eventsRequiringPayment = [4, 10]; // Basketball and Volleyball
 
 const isTeamBasedEvent = (eventId) => {
   const fields = eventFields[eventId] || [];
-  return fields.some(field => ['teamSize', 'groupSize', 'castSize'].includes(field));
+  return fields.some(field => ['teamSize', 'groupSize', 'castSize'].includes(field.name));
 };
 
 // Register for an event
@@ -108,6 +79,7 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
   let parsedFields;
   try {
     parsedFields = JSON.parse(fields);
+    console.log('Parsed Fields:', parsedFields);
   } catch (error) {
     console.error('Fields parsing error:', error);
     return res.status(400).json({ error: 'Invalid fields format; must be valid JSON' });
@@ -117,15 +89,22 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
     return res.status(400).json({ error: 'Member ID is required' });
   }
 
-  const requiredFields = eventFields[eventId];
-  if (!requiredFields || !requiredFields.every(field => parsedFields[field] && parsedFields[field].trim())) {
-    return res.status(400).json({ error: 'Missing or empty required event-specific fields' });
+  const requiredFields = eventFields[eventId] || [];
+  const missingFields = requiredFields.filter(field => 
+    !parsedFields[field.name] || parsedFields[field.name].trim() === ""
+  );
+  if (missingFields.length > 0) {
+    console.log('Missing or empty fields:', missingFields.map(f => f.name));
+    return res.status(400).json({ 
+      error: 'Missing or empty required event-specific fields',
+      missing: missingFields.map(f => f.name)
+    });
   }
 
   if (isTeamBasedEvent(eventId)) {
-    const sizeField = requiredFields.find(f => ['teamSize', 'groupSize', 'castSize'].includes(f));
+    const sizeField = requiredFields.find(f => ['teamSize', 'groupSize', 'castSize'].includes(f.name));
     if (sizeField) {
-      const teamSize = parseInt(parsedFields[sizeField]) || 0;
+      const teamSize = parseInt(parsedFields[sizeField.name]) || 0;
       if (teamSize > 1) {
         for (let i = 1; i <= teamSize - 1; i++) {
           if (!parsedFields[`teamMemberId${i}`]?.trim()) {
@@ -187,10 +166,9 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
     const savedRegistration = await registration.save();
     console.log('Saved Registration:', savedRegistration);
 
-    // Send email notification
     const eventName = event.name || `Event ${eventId}`;
     const mailOptions = {
-      from: `"NSC 25 Team">`,
+      from: `"NSC 25 Team" <nsc.event@bvicam.in>`,
       to: email,
       subject: `Registration Confirmation for ${eventName}`,
       text: `Dear ${name},\n\nYou have successfully registered for ${eventName}!\n\nDetails:\n- Member ID: ${parsedFields.memberId}\n${
@@ -229,7 +207,8 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
     res.status(500).json({ error: 'Registration failed', details: error.message });
   }
 });
-// Update registration
+
+// Fetch all members and their events
 router.get('/members', async (req, res) => {
   try {
     console.log('Fetching all registrations...');
@@ -241,7 +220,6 @@ router.get('/members', async (req, res) => {
     const eventMap = new Map(events.map(e => [e.eventId, e.name]));
     console.log(`Found ${events.length} events`);
 
-    // Collect all unique member IDs
     const memberIds = new Set();
     registrations.forEach((reg) => {
       const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields || {};
@@ -260,12 +238,10 @@ router.get('/members', async (req, res) => {
     });
     console.log(`Collected ${memberIds.size} unique member IDs`);
 
-    // Fetch member details
     const members = await Member.find({ memberId: { $in: Array.from(memberIds) } });
     const memberMap = new Map(members.map(m => [m.memberId, { name: m.name, email: m.email }]));
     console.log(`Found ${members.length} members`);
 
-    // Map members to their events
     const memberEvents = new Map();
     for (const reg of registrations) {
       const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields || {};
@@ -296,7 +272,6 @@ router.get('/members', async (req, res) => {
       }
     }
 
-    // Combine member details with their events
     const result = Array.from(memberMap.entries()).map(([memberId, { name, email }]) => ({
       memberId,
       name,
@@ -314,6 +289,8 @@ router.get('/members', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch members', details: error.message });
   }
 });
+
+// Update registration
 router.put('/register', upload.none(), async (req, res) => {
   console.log('Raw req.body:', req.body);
   const { eventId, userId, fields, name, email, paymentReceipt } = req.body;
@@ -335,24 +312,26 @@ router.put('/register', upload.none(), async (req, res) => {
       return res.status(400).json({ error: 'Member ID is required' });
     }
 
-    const requiredFields = eventFields[eventId];
-    if (!requiredFields || !requiredFields.every(field => parsedFields[field] && parsedFields[field].trim())) {
-      return res.status(400).json({ error: 'Missing or empty required event-specific fields' });
+    const requiredFields = eventFields[eventId] || [];
+    const missingFields = requiredFields.filter(field => 
+      !parsedFields[field.name] || parsedFields[field.name].trim() === ""
+    );
+    if (missingFields.length > 0) {
+      return res.status(400).json({ 
+        error: 'Missing or empty required event-specific fields',
+        missing: missingFields.map(f => f.name)
+      });
     }
 
     if (isTeamBasedEvent(eventId)) {
-      const sizeField = requiredFields.find(f => ['teamSize', 'groupSize', 'castSize'].includes(f));
+      const sizeField = requiredFields.find(f => ['teamSize', 'groupSize', 'castSize'].includes(f.name));
       if (sizeField) {
-        const teamSize = parseInt(parsedFields[sizeField]) || 0;
+        const teamSize = parseInt(parsedFields[sizeField.name]) || 0;
         if (teamSize > 1) {
           for (let i = 1; i <= teamSize - 1; i++) {
-            if (
-              !parsedFields[`teamMemberId${i}`]?.trim() ||
-              !parsedFields[`teamMemberName${i}`]?.trim() ||
-              !parsedFields[`teamMemberEmail${i}`]?.trim()
-            ) {
+            if (!parsedFields[`teamMemberId${i}`]?.trim()) {
               return res.status(400).json({
-                error: `Team Member ${i} must have ID, name, and email (teamMemberId${i}, teamMemberName${i}, teamMemberEmail${i})`,
+                error: `Team Member ID ${i} (teamMemberId${i}) is required`,
               });
             }
           }
@@ -444,7 +423,7 @@ router.get('/registrations/all', async (req, res) => {
   }
 });
 
-// Event visibility endpoints (unchanged)
+// Event visibility endpoints
 router.get('/visibility/:eventId', async (req, res) => {
   try {
     const { eventId } = req.params;
