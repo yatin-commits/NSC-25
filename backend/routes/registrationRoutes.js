@@ -79,6 +79,10 @@ const Event = require('../modules/evetModules'); // Fixed typo
   10: [
     { name: "teamSize", type: "select", options: ["6","7","8"] }, // Volleyball: Fixed team size per standard rules
   ],
+  11: [
+    { name: "Movie Title", type: "text" },
+    { name: "teamSize", type: "select", options: ["4","5","6"] }, // Volleyball: Fixed team size per standard rules
+  ],
   
 };
 
