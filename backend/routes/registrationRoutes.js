@@ -37,7 +37,7 @@ const Registration = require('../modules/registrationModule');
 const Event = require('../modules/evetModules'); // Fixed typo
 
 const eventFields = {
-  1: ['teamName', 'teamSize', 'preferredLanguage'],
+  1: ['teamName', 'preferredLanguage'],
   2: ['performanceType', 'groupSize', 'songChoice'],
   3: ['teamName', 'teamSize'],
   4: ['teamSize'], // Basketball
