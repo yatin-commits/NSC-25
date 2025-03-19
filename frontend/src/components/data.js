@@ -60,6 +60,10 @@ export const eventFields = {
   10: [
     { name: "teamSize", type: "select", options: ["6","7","8"] }, // Volleyball: Fixed team size per standard rules
   ],
+  11: [
+    { name: "Movie Title", type: "text" },
+    { name: "teamSize", type: "select", options: ["4","5","6"] }, // Volleyball: Fixed team size per standard rules
+  ],
   
 };
 
@@ -340,9 +344,9 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Ravi: 9876543210", "Neha: 8765432109"],
-    requiresPayment: true,
-    registrationFee: 600, // Note: Update this if specific fee provided later
-    qrCode: volleyballQR,
+    requiresPayment: false,
+    // registrationFee: 600, // Note: Update this if specific fee provided later
+    // qrCode: volleyballQR,
   },
 ];
 

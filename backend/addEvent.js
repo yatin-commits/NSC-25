@@ -55,6 +55,10 @@ const eventsData = [
     id: 10,
     name: "Volleyball",
   },
+  {
+    id: 11,
+    name: "Cine Blitz",
+  },
   
 ];
 
