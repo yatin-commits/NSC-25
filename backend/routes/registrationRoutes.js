@@ -239,7 +239,13 @@ router.get('/members', async (req, res) => {
     console.log(`Collected ${memberIds.size} unique member IDs`);
 
     const members = await Member.find({ memberId: { $in: Array.from(memberIds) } });
-    const memberMap = new Map(members.map(m => [m.memberId, { name: m.name, email: m.email }]));
+    // Use phone instead of phoneNo
+    const memberMap = new Map(members.map(m => [m.memberId, { 
+      name: m.name, 
+      email: m.email, 
+      college: m.college, 
+      phone: m.phone // Changed from phoneNo
+    }]));
     console.log(`Found ${members.length} members`);
 
     const memberEvents = new Map();
@@ -272,10 +278,12 @@ router.get('/members', async (req, res) => {
       }
     }
 
-    const result = Array.from(memberMap.entries()).map(([memberId, { name, email }]) => ({
+    const result = Array.from(memberMap.entries()).map(([memberId, { name, email, college, phone }]) => ({
       memberId,
       name,
       email,
+      college: college || "N/A",
+      phone: phone || "N/A", // Changed from phoneNo
       events: memberEvents.has(memberId) ? Array.from(memberEvents.get(memberId).events).sort() : [],
     })).sort((a, b) => a.memberId.localeCompare(b.memberId));
 
