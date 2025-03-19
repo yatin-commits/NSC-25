@@ -5,7 +5,7 @@ import { MapPin, X, Award, Search } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { eventFields as baseEventFields, eventsData } from "./data";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Events = forwardRef((props, ref) => {
   const [expandedEvent, setExpandedEvent] = useState(null);
@@ -437,6 +437,7 @@ const Events = forwardRef((props, ref) => {
               >
                 <X className="w-4 cursor-pointer h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </button>
+              
               <div className="overflow-y-auto p-3 sm:p-4 md:p-6 flex-1">
                 {eventsData
                   .filter((e) => e.id === expandedEvent)
@@ -470,6 +471,7 @@ const Events = forwardRef((props, ref) => {
                                 ))}
                               </ul>
                             </div>
+                            
                           </div>
                         </div>
                         {user && !isRegistered ? (
@@ -575,10 +577,14 @@ const Events = forwardRef((props, ref) => {
                         ) : user && isRegistered ? (
                           <div className="mt-4 sm:mt-6">
                             <p className="text-green-600 text-xs sm:text-sm md:text-base lg:text-lg">
-                              You are already registered for this event!
+                             You have been Registered.    Please check you email !
                             </p>
                           </div>
-                        ) : null}
+                        ) : 
+                        <p className="text-red-600 mt-2 text-xs sm:text-sm md:text-base lg:text-lg text-center">
+  Please log in to register for this event.
+</p>
+                        }
                       </div>
                     );
                   })}
@@ -592,7 +598,7 @@ const Events = forwardRef((props, ref) => {
                   }}
                   className="bg-red-500 cursor-pointer text-white px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-lg hover:bg-red-600 text-xs sm:text-sm md:text-base"
                 >
-                  Collapse
+                  Close
                 </button>
               </div>
             </div>
