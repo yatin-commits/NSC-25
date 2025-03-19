@@ -10,7 +10,7 @@
 .animate-scroll-reverse {
     display: flex;
     width: max-content;
-    animation: scroll-reverse 20s linear infinite;
+    animation: scroll-reverse 65s linear infinite;
 }
 
 /* Smoothly pause scrolling when hovering over any card */

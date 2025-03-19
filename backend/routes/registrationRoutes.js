@@ -28,27 +28,58 @@ cloudinary.config({
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: "shreyasinghal706@gmail.com",
-    pass: "gvvhdammjnztrbub",
+    user: "nsc.event@bvicam.in",
+    pass: "fgssbwjgqzljtnya",
   },
 });
 
 const Registration = require('../modules/registrationModule');
 const Event = require('../modules/evetModules'); // Fixed typo
 
-const eventFields = {
-  1: ['teamName', 'preferredLanguage'],
-  2: ['performanceType', 'groupSize', 'songChoice'],
-  3: ['teamName', 'teamSize'],
-  4: ['teamSize'], // Basketball
-  5: ['pitchTitle', 'teamSize', 'industry'],
-  6: ['cameraType', 'photoTheme'],
-  7: ['filmTitle', 'teamSize', 'genre'],
-  8: ['playTitle', 'castSize'],
-  9: ['danceStyle', 'groupSize'],
-  10: ['teamSize'], // Volleyball
-  11: ['songChoice', 'groupSize', 'choreographer'],
-  12: ['artMedium', 'artTheme'],
+ const eventFields = {
+  1: [
+    // { name: "teamName", type: "text" },
+    // { name: "teamSize", type: "select", options: ["3", "4", "5"] },
+    // { name: "preferredLanguage", type: "select", options: ["JavaScript", "Python", "Java"] },
+  ],
+  2: [
+    // { name: "performanceType", type: "select", options: ["Dance", "Drama"] },
+    { name: "teamSize", type: "select", options: ["1", "2", "3", "4","5"] },
+    // { name: "songChoice", type: "text" },
+  ],
+  3: [
+    { name: "Society Name", type: "text" },
+    { name: "teamSize", type: "select", options: ["18","19","20"] }, // Changed from radio to select for consistency
+  ],
+  4: [
+    { name: "teamSize", type: "select", options: ["4"] }, // Basketball: Fixed team size per standard rules
+  ],
+  5: [
+    { name: "teamSize", type: "select", options: ["2"] },
+    // { name: "industry", type: "select", options: ["Tech", "Health", "Finance"] },
+  ],
+  6: [
+    { name: "Society Name", type: "text" },
+    { name: "teamSize", type: "select", options: ["5", "6", "7", "8","9","10","11","12","13","14","15","16","17","18","19","20"] },
+    // { name: "photoTheme", type: "text" },
+  ],
+  7: [
+    // { name: "filmTitle", type: "text" },
+    // { name: "teamSize", type: "select", options: ["3", "4", "5", "6"] },
+    // { name: "teamSize", type: "select", options: ["3", "4", "5", "6"] },
+    // { name: "genre", type: "select", options: ["Drama", "Comedy", "Action"] },
+  ],
+  8: [
+    { name: "Device", type: "select", options: ["Mobile", "DSLR"] },
+  ],
+  9: [
+    // { name: "danceStyle", type: "select", options: ["Hip-Hop", "Contemporary", "Ballet"] },
+    // { name: "groupSize", type: "select", options: ["1", "2", "3", "4", "5", "6"] },
+  ],
+  10: [
+    { name: "teamSize", type: "select", options: ["6","7","8"] }, // Volleyball: Fixed team size per standard rules
+  ],
+  
 };
 
 const eventsRequiringPayment = [4, 10]; // Basketball and Volleyball
@@ -155,7 +186,7 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
     // Send email notification
     const eventName = event.name || `Event ${eventId}`;
     const mailOptions = {
-      from: `"NSC 25 Team" <${process.env.EMAIL_USER}>`,
+      from: `"NSC 25 Team">`,
       to: email,
       subject: `Registration Confirmation for ${eventName}`,
       text: `Dear ${name},\n\nYou have successfully registered for ${eventName}!\n\nDetails:\n- Member ID: ${parsedFields.memberId}\n${

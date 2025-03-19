@@ -4,6 +4,32 @@ import myImage from "../assets/me.jpg";
 import mukul from "../assets/mukul.jpg"
 import ujjwal from "../assets/Ujjwal.jpg"
 import yatin from "../assets/yatin.jpg"
+import navya from "../assets/navya.jpg"
+import lakshita from "../assets/lakshita.jpg"
+import amd from "../assets/amd.jpg"
+import hiya from "../assets/hiya.jpg"
+import pranav from "../assets/pranav.jpg"
+import sourabh from "../assets/sourabh.jpg"
+import mehak from "../assets/mehak.jpg"
+import gunshita from "../assets/gunshita.jpg"
+import ishaan from "../assets/ishaan.jpg"
+import vanshika from "../assets/vanshika.jpg"
+import karam from "../assets/karam.jpg"
+import tashmeen from "../assets/tashmeen.jpg"
+
+import pratham from "../assets/pratham.jpg"
+import vijay from "../assets/vijay.jpg"
+import nidhi from "../assets/nidhi.jpg"
+import Harsh from "../assets/harsh.jpg"
+import siya from "../assets/siya.jpg"
+import darshita from "../assets/darshita.jpg"
+import tushar from "../assets/tushar.jpg"
+import ira from "../assets/ira.jpg"
+
+import somil from "../assets/somil.jpg"
+import ananya from "../assets/ananya.jpg"
+import kanishka from "../assets/kanishka.jpg"
+
 
 const Cards = () => {
     const cards = [
@@ -14,22 +40,16 @@ const Cards = () => {
             url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
         },
         {   
-            img: mukul,
-            name: "Mukul Bhardwaj",
-            education: "MCA 1st Year",
-            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
-        },
-        {   
             img: ujjwal,
             name: "Ujjwal chauhan",
-            education: "MCA 1st Year",
+            education: "BAJMC 3rd Year",
             url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
         },
         {   
-            img: myImage,
-            name: "Mahak bansal",
-            education: "MCA 1st Year",
-            url: "https://www.linkedin.com/in/mahak-bansal-2004-"
+            img: Harsh,
+            name: "Harsh Baswani",
+            education: "B-tech 2nd Year",
+            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
         },
         {   
             img: yatin,
@@ -38,11 +58,144 @@ const Cards = () => {
             url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
         },
         {   
-            img: myImage,
+            img: gunshita,
             name: "Gunshita Varun",
+            education: "BAJMC 3rd Year",
+            url: "https://www.linkedin.com/in/gunshita-varun-795400271?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: ishaan,
+            name: "Ishaan Verma",
+            education: "MCA 2st Year",
+            url: "https://www.linkedin.com/in/ishaanverma311?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: nidhi,
+            name: "Nidhi Gupta",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/nidhigupta81?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: karam,
+            name: "Karam Kaur",
+            education: "BAJMC 2nd Year",
+            url: "https://www.linkedin.com/in/karam-kaur-4867862a4?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: sourabh,
+            name: "Sourabh Khera",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/sourabh-khera-356766227?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: ananya,
+            name: "Ananya Jain",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/ananyajain11"
+        },
+        {   
+            img: amd,
+            name: "Kumar Amrendram",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/kumar-amrendram"
+        },
+        {   
+            img: lakshita,
+            name: "Lakshita Garg",
+            education: "Bajmc 3rd Year",
+            url: "https://www.linkedin.com/in/lakshita-garg-85956b262?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: myImage,
+            name: "Rohit Rawat",
             education: "MCA 1st Year",
             url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
-        }
+        },
+        {   
+            img: siya,
+            name: "Siya Shokeen",
+            education: "Bajmc 2rd Year",
+            url: "https://www.linkedin.com/in/siya-shokeen-baa928316?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
+        },
+        {   
+            img: myImage,
+            name: "Revant",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
+        },
+        {   
+            img: somil,
+            name: "Somil",
+            education: "BAJMC 2nd Year",
+            url: "https://www.linkedin.com/in/somil-rathore-95a7872a8"
+        },
+        {   
+            img: kanishka,
+            name: "Kanishka Khurana",
+            education: "BAJMC 2nd Year",
+            url: "https://www.linkedin.com/in/kanishka-khurana-80864a291?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: vijay,
+            name: "Vijay",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/vijay-padiyar-196258348?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: navya,
+            name: "Navya Wadhwa",
+            education: "BAJMC 3rd Year",
+            url: "https://www.linkedin.com/in/navya-wadhwa-234791239?"
+        },
+        {   
+            img: vanshika,
+            name: "Vanshika Aggarwal",
+            education: "BAJMC 3rd Year",
+            url: "https://www.linkedin.com/in/vanshika-aggarwal-b16ab4253?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: pranav,
+            name: "Pranav Pathak",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/pranav-pathak-a41821209/"
+        },
+        {   
+            img: pratham,
+            name: "Pratham Bhatia",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/bhatiapratham18?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+       
+        {   
+            img: hiya,
+            name: "Hiya Chowdhary",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/hiya-chowdhry-b5b1a8252?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
+        },
+        {   
+            img: darshita,
+            name: "Darshita Dimri",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/darshita-dimri-160b9b21b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: tushar,
+            name: "Tushar Sohal",
+            education: "MCA 2st Year",
+            url: "hhttps://www.linkedin.com/in/tushar-sohal-b70b661a2?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: tashmeen,
+            name: "Tashmeen Kaur",
+            education: "BAJMC 3rd year",
+            url: "https://www.linkedin.com/in/tashmeen-kaur-21b36a271?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: ira,
+            name: "Ira Sharma",
+            education: "BAJMC 3rd Year",
+            url: "https://www.linkedin.com/in/ira-sharma-ab7388274?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
     ];
 
     return (
