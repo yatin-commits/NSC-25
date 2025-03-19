@@ -12,17 +12,15 @@ const HomePage = () => {
   const eventsRef = useRef(null);
   const coordinatorsRef = useRef(null);
   const faqRef = useRef(null);
-  const [menuOpen, setMenuOpen] = useState(false); // Track mobile menu state
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const scrollToSection = useCallback((ref) => {
     if (ref.current) {
-      // Close mobile menu first
       setMenuOpen(false);
-
       setTimeout(() => {
-        const top = ref.current.getBoundingClientRect().top + window.pageYOffset - 80; // Offset for navbar
+        const top = ref.current.getBoundingClientRect().top + window.pageYOffset - 80;
         window.scrollTo({ top, behavior: "smooth" });
-      }, 300); // Wait for menu to close before scrolling
+      }, 300);
     }
   }, []);
 
@@ -37,16 +35,16 @@ const HomePage = () => {
         scrollToFAQ={() => scrollToSection(faqRef)}
       />
       <HeroSection scrollToEvents={() => scrollToSection(eventsRef)} />
-      <div ref={scheduleRef}>
+      <div ref={scheduleRef} id="schedule">
         <ScheduleSection />
       </div>
-      <div ref={eventsRef}>
+      <div ref={eventsRef} id="events">
         <Events />
       </div>
-      <div ref={coordinatorsRef}>
+      <div ref={coordinatorsRef} id="coordinators">
         <Coordinators />
       </div>
-      <div ref={faqRef}>
+      <div ref={faqRef} id="faqs">
         <Faqs />
       </div>
       <Footer />

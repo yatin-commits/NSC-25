@@ -1,12 +1,20 @@
 import React from "react";
-import bvicamLogo from "/src/assets/bvicamLogo.png"; // Adjust path as needed
+import bvicamLogo from "/src/assets/bvicamLogo.png";
 import { FaFacebook, FaInstagram, FaLinkedin, FaPaperPlane } from "react-icons/fa";
 
 const Footer = () => {
+  // Function to handle smooth scrolling
+  const handleScroll = (e, sectionId) => {
+    e.preventDefault();
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-indigo-900 to-purple-900 text-white py-8 sm:py-12">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Main Footer Content */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           {/* Logo and Tagline */}
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
@@ -24,20 +32,25 @@ const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          
           <div className="flex flex-col items-center sm:items-start">
             <h3 className="text-lg sm:text-xl font-bold text-yellow-300 mb-4 relative">
               Quick Links
               <span className="absolute -bottom-1 left-0 w-12 h-1 bg-yellow-400 rounded-full"></span>
             </h3>
             <ul className="space-y-3 text-sm sm:text-base">
-              {["Schedule", "Events", "Coordinators", "FAQ's"].map((link) => (
-                <li key={link}>
+              {[
+                { text: "Schedule", id: "schedule" },
+                { text: "Events", id: "events" },
+                { text: "Coordinators", id: "coordinators" },
+                { text: "FAQ's", id: "faqs" },
+              ].map((link) => (
+                <li key={link.id}>
                   <a
-                    href={`#${link.toLowerCase()}`}
-                    className="text-gray-300 hover:text-yellow-400 hover:translate-x-2 transition-all duration-200"
+                    href={`#${link.id}`}
+                    onClick={(e) => handleScroll(e, link.id)}
+                    className="text-gray-300 hover:text-yellow-400 hover:translate-x-2 transition-all duration-200 cursor-pointer"
                   >
-                    {link}
+                    {link.text}
                   </a>
                 </li>
               ))}
@@ -91,41 +104,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Divider */}
         <div className="mt-8 sm:mt-12 border-t border-gray-700"></div>
-
-        {/* Footer Credits */}
-        {/* <div className="text-center text-gray-400 mt-6 sm:mt-8">
-          <p className="text-xs sm:text-sm">
-            Crafted with <span className="text-red-400 animate-pulse">❤️</span> by
-            <a
-              href="https://www.linkedin.com/in/kumar-amrendram/"
-              className="text-yellow-300 hover:underline mx-1"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Amrendram
-            </a>
-            |
-            <a
-              href="https://www.linkedin.com/in/yatinsharma01/"
-              className="text-yellow-300 hover:underline mx-1"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Yatin
-            </a>
-            |
-            <a
-              href="#"
-              className="text-yellow-300 hover:underline mx-1"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Vijay
-            </a>
-          </p>
-        </div> */}
       </div>
     </footer>
   );
