@@ -20,7 +20,7 @@ import basketballQR from '../assets/basketballQR.jpg'
 export const eventFields = {
   1: [
     // { name: "teamName", type: "text" },
-    // { name: "teamSize", type: "select", options: ["3", "4", "5"] },
+    { name: "teamSize", type: "select", options: ["1", "2", "3","4"] },
     // { name: "preferredLanguage", type: "select", options: ["JavaScript", "Python", "Java"] },
   ],
   2: [
