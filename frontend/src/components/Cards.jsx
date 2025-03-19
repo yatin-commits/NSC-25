@@ -1,7 +1,7 @@
 import { FaLinkedin } from "react-icons/fa";
 import "./Cards.css";
 import myImage from "../assets/me.jpg";
-import mukul from "../assets/mukul.jpg"
+// import mukul from "../assets/mukul.jpg"
 import ujjwal from "../assets/Ujjwal.jpg"
 import yatin from "../assets/yatin.jpg"
 import navya from "../assets/navya.jpg"
@@ -11,12 +11,13 @@ import amd from "../assets/amd.jpg"
 import hiya from "../assets/hiya.jpg"
 import pranav from "../assets/pranav.jpg"
 import sourabh from "../assets/sourabh.jpg"
-import mehak from "../assets/mehak.jpg"
+// import mehak from "../assets/mehak.jpg"
 import gunshita from "../assets/gunshita.jpg"
 import ishaan from "../assets/ishaan.jpg"
 import vanshika from "../assets/vanshika.jpg"
 import karam from "../assets/karam.jpg"
 import tashmeen from "../assets/tashmeen.jpg"
+import revant from "../assets/revant.jpg"
 
 import pratham from "../assets/pratham.jpg"
 import vijay from "../assets/vijay.jpg"
@@ -34,12 +35,7 @@ import kanishka from "../assets/kanishka.jpg"
 
 const Cards = () => {
     const cards = [
-        {   
-            img: myImage,
-            name: "Shreya Singhal",
-            education: "MCA 1st Year",
-            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
-        },
+        
         {   
             img: ujjwal,
             name: "Ujjwal chauhan",
@@ -59,6 +55,12 @@ const Cards = () => {
             url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
         },
         {   
+            img: myImage,
+            name: "Shreya Singhal",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
+        },
+        {   
             img: gunshita,
             name: "Gunshita Varun",
             education: "BAJMC 3rd Year",
@@ -67,7 +69,7 @@ const Cards = () => {
         {   
             img: ishaan,
             name: "Ishaan Verma",
-            education: "MCA 2st Year",
+            education: "MCA 2nd Year",
             url: "https://www.linkedin.com/in/ishaanverma311?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
         },
         {   
@@ -103,7 +105,7 @@ const Cards = () => {
         {   
             img: lakshita,
             name: "Lakshita Garg",
-            education: "Bajmc 3rd Year",
+            education: "BAJMC 3rd Year",
             url: "https://www.linkedin.com/in/lakshita-garg-85956b262?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
         },
         {   
@@ -115,14 +117,14 @@ const Cards = () => {
         {   
             img: siya,
             name: "Siya Shokeen",
-            education: "Bajmc 2rd Year",
+            education: "BAJMC 2nd Year",
             url: "https://www.linkedin.com/in/siya-shokeen-baa928316?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
         },
         {   
-            img: myImage,
+            img: revant,
             name: "Revant",
-            education: "MCA 1st Year",
-            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
+            education: "BAJMC 3rd Year",
+            url: "https://www.linkedin.com/in/revant-sharma-6b6a76270?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
         },
         {   
             img: somil,
@@ -182,7 +184,7 @@ const Cards = () => {
         {   
             img: tushar,
             name: "Tushar Sohal",
-            education: "MCA 2st Year",
+            education: "MCA 2nf Year",
             url: "hhttps://www.linkedin.com/in/tushar-sohal-b70b661a2?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
         },
         {   
