@@ -38,7 +38,7 @@ const transporter = nodemailer.createTransport({
 
 // Event-specific fields
 const eventFields = {
-  1: [],
+  1: [{ name: "teamSize", type: "select", options: ["1", "2", "3","4"] },],
   2: [{ name: "teamSize", type: "select", options: ["1", "2", "3", "4", "5"] }],
   3: [
     { name: "Society Name", type: "text" },
