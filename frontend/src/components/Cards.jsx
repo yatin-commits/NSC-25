@@ -40,19 +40,19 @@ const Cards = () => {
             img: ujjwal,
             name: "Ujjwal chauhan",
             education: "BAJMC 3rd Year",
-            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
+            url: "#"
         },
         {   
             img: Harsh,
             name: "Harsh Baswani",
             education: "B-tech 2nd Year",
-            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
+            url: "https://www.linkedin.com/in/harsh-baswani-a9899727b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
         },
         {   
             img: yatin,
             name: "Yatin Sharma",
             education: "MCA 1st Year",
-            url: "https://www.linkedin.com/in/shreya-singhal-00010422a"
+            url: "https://www.linkedin.com/in/yatinsharma01/"
         },
         {   
             img: myImage,
