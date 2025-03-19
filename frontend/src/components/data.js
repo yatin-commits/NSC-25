@@ -67,12 +67,13 @@ export const eventFields = {
 export const eventsData = [
   {
     id: 1,
-    name: "Battle Bytes", // Assuming this is "Battle Bytes" (BGMI)
+    name: "Battle Bytes",
     image: pubg,
     shortDescription: "Compete in an intense BGMI mobile gaming showdown!",
     longDescription: "A thrilling BGMI tournament where players battle it out on mobile devices to prove their gaming prowess.",
     time: "TBH",
     venue: "9:00 AM",
+    dates: ["2025-04-05"],
     rules: [
       "Fair Play: No cheating, hacking, or use of third-party software.",
       "Device Restrictions: Players must use mobile devices (some tournaments may allow tablets/emulators).",
@@ -91,6 +92,7 @@ export const eventsData = [
     longDescription: "Present your startup idea to a panel of judges in a Shark Tank-inspired competition for students.",
     time: "TBD",
     venue: "9:30 AM",
+    dates: ["2025-04-05"],
     rules: [
       "Open to undergraduate and postgraduate students.",
       "Teams can consist of 1 to 5 members.",
@@ -118,6 +120,7 @@ export const eventsData = [
     longDescription: "A street play competition where teams deliver impactful performances with a strong social message in Hindi.",
     time: "TBD",
     venue: "10:00 AM",
+    dates: ["2025-04-05"],
     rules: [
       "Each team must have 18 to 20 members (including helpers).",
       "Minimum: 20 minutes, Maximum: 22 minutes (including setup time).",
@@ -155,6 +158,7 @@ export const eventsData = [
     longDescription: "A fast-paced 3x3 basketball tournament played on half a court with one basket.",
     time: "TBD",
     venue: "9:00 AM",
+    dates: ["2025-04-04", "2025-04-05"],
     rules: [
       "The game will be played on a 3x3 playing court with one basket. Half of a traditional basketball court may be used.",
       "Each team shall consist of no more than 4 players (3 players on the court and 1 substitute).",
@@ -175,7 +179,7 @@ export const eventsData = [
     prize: "TBD",
     contact: ["Vijay: 72173 52469", "Harsh: 79064 27749"],
     requiresPayment: true,
-    registrationFee: 700, // Updated to match provided data
+    registrationFee: 700,
     qrCode: basketballQR,
   },
   {
@@ -186,6 +190,7 @@ export const eventsData = [
     longDescription: "A debate competition where participants argue with facts, fluency, and creativity in English or Hindi.",
     time: "TBD",
     venue: "9:30 AM",
+    dates: ["2025-04-05"],
     rules: [
       "Time Limit: Each speaker gets 5 minutes to present.",
       "Cross-Questioning: Allowed with clear, fair, and relevant questions.",
@@ -206,6 +211,7 @@ export const eventsData = [
     longDescription: "A dance event where teams from colleges showcase their moves within a 10-minute limit.",
     time: "TBD",
     venue: "9:30 AM",
+    dates: ["2025-04-04"],
     rules: [
       "Each college should only send one team to represent them.",
       "Stage limit is 5 to 20 members.",
@@ -229,8 +235,9 @@ export const eventsData = [
     longDescription: "An art competition where participants create themed posters within a 2-hour limit.",
     time: "TBD",
     venue: "10:00 AM",
+    dates: ["2025-04-05"],
     rules: [
-      "𝑻𝒉𝒆𝒎𝒆 :Unity in diversity: celebrating cultural heritage",
+      "𝑻𝒉𝒆𝒎𝒆 :Unity in diversity: celebrating cultural heritage",
       "Posters must adhere to the specified theme.",
       "Posters must be of the specified size i.e. A3 and it should be original and created by the participant only.",
       "Participants would be given 2 hours to complete their posters and they must submit it before the specified deadline.",
@@ -240,7 +247,6 @@ export const eventsData = [
     prize: "TBD",
     contact: ["Lakshita: 87440 47511", "Kanishka: 98100 41645"],
   },
-
   {
     id: 8,
     name: "Candid Moments",
@@ -249,7 +255,8 @@ export const eventsData = [
     longDescription: "Join us in capturing the emotions and highlights of NSC BVICAM 2025 through your lens in this photography competition.",
     time: "Submissions: 12 PM - 2 PM",
     venue: "9:00 AM",
-    Theme:"",
+    dates: ["2025-04-05"],
+    Theme: "",
     rules: [
       "Eligibility: The event is open to photographers of all levels, ages, and nationalities.",
       "Registration: Participants must register online or offline by [insert date] to participate in the event.",
@@ -278,6 +285,7 @@ export const eventsData = [
     longDescription: "Challenge yourself with debugging and coding problems in this epic Code Avengers showdown featuring two rounds.",
     time: "Round 1: 30 mins, Round 2: 2 hrs",
     venue: "9:30 AM",
+    dates: ["2025-04-05"],
     rules: [
       "Round 1: Debugging Challenge (Elimination Round)",
       "Round 1: Participants will be given 5 code snippets with bugs. They must identify the error and suggest corrections without executing the code.",
@@ -310,8 +318,8 @@ export const eventsData = [
     longDescription: "A competitive volleyball tournament where teams showcase their skills on the court.",
     time: "TBD",
     venue: "10:00 AM",
+    dates: ["2025-04-04", "2025-04-05"],
     rules: [
-      // Note: Volleyball rules were not fully provided; using placeholder rules from original data
       "Each team shall consist of 6 players (plus up to 2 substitutes).",
       "Matches will follow standard volleyball rules with 3 sets to 25 points.",
       "A coin toss determines the first serve.",
@@ -321,18 +329,20 @@ export const eventsData = [
     prize: "TBD",
     contact: ["Ravi: 9876543210", "Neha: 8765432109"],
     requiresPayment: true,
-    registrationFee: 600, // Note: Update this if specific fee provided later
+    registrationFee: 600,
     qrCode: volleyballQR,
   },
   {
-    id:11,
+    id: 11,
     name: "Cine Blitz",
     image: cinema,
     shortDescription: "Showcase Your Vision, Craft Stories, Compete & Conquer!",
     longDescription: "Showcase your filmmaking skills by creating original, high-quality short films or documentaries that captivate audiences and impress judges with creativity and storytelling.",
     time: "TBD",
     venue: "9:30 AM",
-    rules:[
+    dates: ["2025-04-05"],
+    rules: [
+      "Submit your entry via Google Drive.",
       "Open to college students (must carry a valid College ID).",
       "Multiple teams from the same institution allowed (one submission per team and registration should be made separately).",
       "No theme restriction – only short films or documentaries accepted.",
@@ -343,7 +353,6 @@ export const eventsData = [
       "Proper credits for cast & crew required.",
       "Non-English/Hindi films must include English subtitles.",
       "4 to 5 members should be present during the Prize Distribution Ceremony (On-Campus) to claim prizes.",
-      "Submit your entry via Google Drive.",
       "Films can be recorded via Mobile/Camera.",
       "File Size: Minimum 8 GB, Maximum 10 GB.",
       "Format: MP4.",
@@ -358,7 +367,7 @@ export const eventsData = [
       "Creativity: Evaluated on uniqueness, clarity, and confident delivery.",
       "Preparation Time: 15 minutes before the debate.",
       "Our esteemed judges' decisions will be final."
-    ],    
+    ],
     prize: "TBD",
     contact: ["Navya: 78277 76854", "Tarushi: 92117 90589"],
   },
@@ -366,50 +375,103 @@ export const eventsData = [
 
 
 
-
-  export const events = [
-      { name: "Code Avengers", time: "9:30 AM ", heads: [
-          { name: "Deepanshu", mobile: "+91 8800621391" },
-          { name: "Pranav", mobile: "+91 9582349597" },
-        ] },
-      { name: "Battle Bytes", time: "9:00 AM ", heads: [
-          { name: "Tushar", mobile: "+91 63872 99487" },
-          { name: "Prashant", mobile: "+91 9311314126" },
-        ] },
-      { name: "Shark Tank", time: "9:30 AM ", heads: [
-          { name: "Hiya", mobile: "+91 9650733212" },
-          { name: "Darshita", mobile: "+91 9810748780" },
-        ] },
-      { name: "Volley Ball",time: "10:00 AM ", heads: [
-          { name: "Ujjwal", mobile: "+91 7303782547" },
-        ] },
-      { name: "BasketBall", time: "9:00 AM ", heads: [
-          { name: "Vijay", mobile: "+91 7217352469" },
-          { name: "Harsh", mobile: "+91 7906427749" },
-        ] },
-      { name: "Rangmanch", time: "10:00 AM ", heads: [
-          { name: "Tashmeen", mobile: "+91 9354379839" },
-          { name: "Ira", mobile: "+91 8595807792" },
-        ] },
-      { name: "Candid Moments", time: "9:00 AM ", heads: [
-          { name: "Revant", mobile: "+91 8447751703" },
-          { name: "Somil", mobile: "+91 9205337823" },
-        ] },
-      { name: "Creative Canvas", time: "10:00 AM ", heads: [
-          { name: "Lakshita", mobile: "+91 8744047511" },
-          { name: "Kanishka", mobile: "+91 9810041645" },
-        ] },
-      { name: "War Of Words", time: "9:30 AM ", heads: [
-          { name: "Navya", mobile: "+91 7827776854" },
-          { name: "Tarushi", mobile: "+91 9211790589" },
-        ] },
-      { name: "Fandango", time: "9:20 AM ", heads: [
-          { name: "Gunshita", mobile: "+91 9873760414"},
-          { name: "Sourav", mobile: "+91 9871169532" },
-        ] },
-      { name: "Cine Blitz", time: "9:00 AM ", heads: [
-          { name: "Vanshika", mobile: "+91 9990354522"},
-          // { name: "Sourav", mobile: "+91 9871169532" },
-        ] },
-    ];
+export const events = [
+  { 
+    name: "Code Avengers", 
+    time: "9:30 AM ", 
+    dates: ["2025-04-05"],
+    heads: [
+      { name: "Deepanshu", mobile: "+91 8800621391" },
+      { name: "Pranav", mobile: "+91 9582349597" },
+    ] 
+  },
+  { 
+    name: "Battle Bytes", 
+    time: "9:00 AM ", 
+    dates: ["2025-04-05"],
+    heads: [
+      { name: "Tushar", mobile: "+91 63872 99487" },
+      { name: "Prashant", mobile: "+91 9311314126" },
+    ] 
+  },
+  { 
+    name: "Shark Tank", 
+    time: "9:30 AM ", 
+    dates: ["2025-04-05"],
+    heads: [
+      { name: "Hiya", mobile: "+91 9650733212" },
+      { name: "Darshita", mobile: "+91 9810748780" },
+    ] 
+  },
+  { 
+    name: "Volley Ball",
+    time: "10:00 AM ", 
+    dates: ["2025-04-04", "2025-04-05"],
+    heads: [
+      { name: "Ujjwal", mobile: "+91 7303782547" },
+    ] 
+  },
+  { 
+    name: "BasketBall", 
+    time: "9:00 AM ", 
+    dates: ["2025-04-04", "2025-04-05"],
+    heads: [
+      { name: "Vijay", mobile: "+91 7217352469" },
+      { name: "Harsh", mobile: "+91 7906427749" },
+    ] 
+  },
+  { 
+    name: "Rangmanch", 
+    time: "10:00 AM ", 
+    dates: ["2025-04-05"],
+    heads: [
+      { name: "Tashmeen", mobile: "+91 9354379839" },
+      { name: "Ira", mobile: "+91 8595807792" },
+    ] 
+  },
+  { 
+    name: "Candid Moments", 
+    time: "9:00 AM ", 
+    dates: ["2025-04-05"],
+    heads: [
+      { name: "Revant", mobile: "+91 8447751703" },
+      { name: "Somil", mobile: "+91 9205337823" },
+    ] 
+  },
+  { 
+    name: "Creative Canvas", 
+    time: "10:00 AM ", 
+    dates: ["2025-04-05"],
+    heads: [
+      { name: "Lakshita", mobile: "+91 8744047511" },
+      { name: "Kanishka", mobile: "+91 9810041645" },
+    ] 
+  },
+  { 
+    name: "War Of Words", 
+    time: "9:30 AM ", 
+    dates: ["2025-04-05"],
+    heads: [
+      { name: "Navya", mobile: "+91 7827776854" },
+      { name: "Tarushi", mobile: "+91 9211790589" },
+    ] 
+  },
+  { 
+    name: "Fandango", 
+    time: "9:20 AM ", 
+    dates: ["2025-04-04"],
+    heads: [
+      { name: "Gunshita", mobile: "+91 9873760414"},
+      { name: "Sourav", mobile: "+91 9871169532" },
+    ] 
+  },
+  { 
+    name: "Cine Blitz", 
+    time: "9:00 AM ", 
+    dates: ["2025-04-05"],
+    heads: [
+      { name: "Vanshika", mobile: "+91 9990354522"},
+    ] 
+  },
+];
 
