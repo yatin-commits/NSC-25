@@ -184,7 +184,7 @@ const Cards = () => {
         {   
             img: tushar,
             name: "Tushar Sohal",
-            education: "MCA 2nf Year",
+            education: "MCA 2nd Year",
             url: "hhttps://www.linkedin.com/in/tushar-sohal-b70b661a2?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
         },
         {   

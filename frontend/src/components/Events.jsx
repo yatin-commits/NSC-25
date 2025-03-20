@@ -183,9 +183,9 @@ const Events = forwardRef((props, ref) => {
       formPayload.append("paymentReceipt", paymentReceiptFile); // New file for POST
     }
 
-    console.log('Sending request with payload:');
+    // console.log('Sending request with payload:');
     for (let [key, value] of formPayload.entries()) {
-      console.log(`${key}: ${value}`);
+      // console.log(`${key}: ${value}`);
     }
 
     const registerToast = toast.loading("Registering...");
