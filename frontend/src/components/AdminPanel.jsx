@@ -32,7 +32,7 @@ const AdminPanel = () => {
         `https://nsc-25-backend.vercel.app/api/registrations/all?userId=${adminUserId}`
       );
       const data = Array.isArray(registrationsResponse.data) ? registrationsResponse.data : [];
-      console.log("Fetched registrations:", data);
+      // console.log("Fetched registrations:", data);
       setRegistrations(data);
       if (data.length === 0) {
         setError("No registrations found in the database.");

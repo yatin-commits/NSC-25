@@ -21,7 +21,7 @@ const Members = () => {
     try {
       const response = await axios.get("https://nsc-25-backend.vercel.app/api/members");
       const memberList = Array.isArray(response.data) ? response.data : response.data.data || [];
-      console.log("Fetched members:", memberList);
+      // console.log("Fetched members:", memberList);
 
       setMembers(memberList);
 
