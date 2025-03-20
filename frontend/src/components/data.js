@@ -9,10 +9,10 @@ import volleyball from "../assets/volleyball.png";
 import script from "../assets/script.png";
 import dancing from "../assets/dancing.png";
 import debate from "../assets/debate.png";
-import bkball from "../assets/bkball.jpg"
-import volleyballQR from "../assets/volleyballQR.jpg"
-import rang from "../assets/rang.jpg"
-import movie from "../assets/movie.jpg"
+import bkball from "../assets/bkball.jpg";
+import volleyballQR from "../assets/volleyballQR.jpg";
+import rang from "../assets/rang.jpg";
+import movie from "../assets/movie.jpg";
 import guitar from "../assets/guitar.png";
 import painting from "../assets/painting.png";
 import basketballQR from '../assets/basketballQR.jpg'
@@ -372,8 +372,6 @@ export const eventsData = [
     contact: ["Navya: 78277 76854", "Tarushi: 92117 90589"],
   },
 ];
-
-
 
 export const events = [
   { 
