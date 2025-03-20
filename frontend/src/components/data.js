@@ -390,7 +390,7 @@ export const events = [
     time: "9:00 AM ", 
     dates: ["2025-04-05"],
     heads: [
-      { name: "Tushar", mobile: "+91 63872 99487" },
+      { name: "Tushar", mobile: "+91 7827115042" },
       { name: "Prashant", mobile: "+91 9311314126" },
     ] 
   },
