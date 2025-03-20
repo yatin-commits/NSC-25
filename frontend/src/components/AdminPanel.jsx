@@ -241,7 +241,7 @@ const AdminPanel = () => {
           <select
             value={sortField}
             onChange={(e) => setSortField(e.target.value)}
-            className="w-full sm:w-48 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-48  p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="registeredAt">Sort by Date</option>
             <option value="name">Sort by Name</option>
@@ -285,10 +285,10 @@ const AdminPanel = () => {
               </p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-lg">
+                <table className="min-w-full  bg-white  border-gray-200 shadow-md rounded-lg">
                   <thead>
                     <tr className="bg-gray-100 border-b">
-                      <th className="p-4 text-left text-gray-600 font-medium">S.No</th>
+                      <th className="p-4 text-left  text-gray-600 font-medium">S.No</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Event</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Name</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Email</th>

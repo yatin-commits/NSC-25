@@ -18,6 +18,7 @@ import vanshika from "../assets/vanshika.jpg"
 import karam from "../assets/karam.jpg"
 import tashmeen from "../assets/tashmeen.jpg"
 import revant from "../assets/revant.jpg"
+import sakshi from "../assets/sakshi.jpg"
 
 import pratham from "../assets/pratham.jpg"
 import vijay from "../assets/vijay.jpg"
@@ -192,6 +193,12 @@ const Cards = () => {
             name: "Tashmeen Kaur",
             education: "BAJMC 3rd year",
             url: "https://www.linkedin.com/in/tashmeen-kaur-21b36a271?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {   
+            img: sakshi,
+            name: "Sakshi",
+            education: "MCA 1st Year",
+            url: "https://www.linkedin.com/in/sakshi-88b09a22a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
         },
         {   
             img: ira,
