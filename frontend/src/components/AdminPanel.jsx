@@ -10,6 +10,7 @@ import { Search, ChevronDown, ChevronUp } from "lucide-react";
 const AdminPanel = () => {
   const [selectedEvent, setSelectedEvent] = useState("");
   const [registrations, setRegistrations] = useState([]);
+  const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState("registeredAt");
@@ -28,69 +29,86 @@ const AdminPanel = () => {
     setLoading(true);
     setError(null);
     try {
-      const registrationsResponse = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/registrations/all?userId=${adminUserId}`
-      );
-      const data = Array.isArray(registrationsResponse.data) ? registrationsResponse.data : [];
-      // console.log("Fetched registrations:", data);
-      setRegistrations(data);
-      if (data.length === 0) {
+      const [registrationsResponse, membersResponse] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/registrations/all?userId=${adminUserId}`),
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/all-members`)
+      ]);
+
+      const regData = Array.isArray(registrationsResponse.data) ? registrationsResponse.data : [];
+      const memberData = Array.isArray(membersResponse.data.data) ? membersResponse.data.data : membersResponse.data || [];
+
+      console.log("Fetched registrations:", regData);
+      console.log("Fetched members:", memberData);
+
+      setRegistrations(regData);
+      setMembers(memberData);
+
+      if (regData.length === 0) {
         setError("No registrations found in the database.");
       }
     } catch (error) {
       console.error("Error fetching data:", error);
       setError(`Failed to load data: ${error.message}`);
       setRegistrations([]);
+      setMembers([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Flatten registrations to include team members with their own name and email
+  // Flatten registrations and merge with member data
   const flattenRegistrations = () => {
+    const memberMap = new Map(
+      members.map((m) => [m.memberId, { name: m.name, email: m.email, college: m.college }])
+    );
     const flattened = [];
     registrations.forEach((reg) => {
       const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields;
       const eventId = reg.eventId;
       const isTeamBased = eventFields[eventId]?.some((f) =>
-        ["teamSize", "groupSize", "castSize"].includes(f)
+        ["teamSize", "groupSize", "castSize"].includes(f.name)
       );
       const sizeField = eventFields[eventId]?.find((f) =>
-        ["teamSize", "groupSize", "castSize"].includes(f)
+        ["teamSize", "groupSize", "castSize"].includes(f.name)
       );
-      const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
+      const teamSize = sizeField ? parseInt(fields[sizeField.name]) || 0 : 0;
 
-      // Add team leader
+      // Team Leader: Use reg.name/email if available, fallback to Members data
+      const leaderId = fields.memberId;
+      const leaderInfo = memberMap.get(leaderId) || {};
       flattened.push({
         ...reg,
-        memberId: fields.memberId,
-        name: reg.name,
-        email: reg.email,
+        memberId: leaderId,
+        name: reg.name || leaderInfo.name || "Unknown",
+        email: reg.email || leaderInfo.email || "N/A",
+        college: leaderInfo.college || "N/A",
         isTeamLeader: true,
-        teamLeaderId: fields.memberId,
+        teamLeaderId: leaderId,
       });
 
-      // Add team members with their own name and email
+      // Team Members: Use fields data if available, fallback to Members data
       if (isTeamBased && teamSize > 1) {
         for (let i = 1; i <= teamSize - 1; i++) {
           const teamMemberId = fields[`teamMemberId${i}`];
           const teamMemberName = fields[`teamMemberName${i}`];
           const teamMemberEmail = fields[`teamMemberEmail${i}`];
           if (teamMemberId) {
+            const memberInfo = memberMap.get(teamMemberId) || {};
             flattened.push({
               ...reg,
               memberId: teamMemberId,
-              name: teamMemberName || "Unknown Member",
-              email: teamMemberEmail || "N/A",
+              name: teamMemberName || memberInfo.name || "Unknown Member",
+              email: teamMemberEmail || memberInfo.email || "N/A",
+              college: memberInfo.college || "N/A",
               isTeamLeader: false,
-              teamLeaderId: fields.memberId,
-              fields: { ...fields, memberId: teamMemberId }, // Keep fields for consistency
+              teamLeaderId: leaderId,
+              fields: { ...fields, memberId: teamMemberId },
             });
           }
         }
       }
     });
-    console.log("Flattened registrations:", flattened);
+    console.log("Flattened registrations with college:", flattened);
     return flattened;
   };
 
@@ -109,6 +127,7 @@ const AdminPanel = () => {
         Event: eventName,
         Name: reg.name,
         Email: reg.email,
+        College: reg.college,
         "Registration Date": reg.registeredAt
           ? new Date(reg.registeredAt).toLocaleString("default", { day: "numeric", month: "short" })
           : "Not Recorded",
@@ -135,6 +154,7 @@ const AdminPanel = () => {
       const matchesSearch =
         (reg.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
          reg.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         reg.college?.toLowerCase().includes(searchTerm.toLowerCase()) ||
          Object.values(reg.fields).some((val) =>
            val?.toString().toLowerCase().includes(searchTerm.toLowerCase())
          ));
@@ -152,11 +172,15 @@ const AdminPanel = () => {
       } else if (sortField === "email") {
         return sortOrder === "asc"
           ? (a.email || "").localeCompare(b.email || "")
-          : (b.email || "").localeCompare(a.name || "");
+          : (b.email || "").localeCompare(a.email || "");
       } else if (sortField === "memberId") {
         return sortOrder === "asc"
           ? (a.memberId || "").localeCompare(b.memberId || "")
           : (b.memberId || "").localeCompare(a.memberId || "");
+      } else if (sortField === "college") {
+        return sortOrder === "asc"
+          ? (a.college || "").localeCompare(b.college || "")
+          : (b.college || "").localeCompare(a.college || "");
       }
       return 0;
     });
@@ -217,7 +241,7 @@ const AdminPanel = () => {
           </div>
 
           <div className="relative">
-            <label className="block text-lg font-medium text-gray-600 mb-2">Search by Name/Email/Field:</label>
+            <label className="block text-lg font-medium text-gray-600 mb-2">Search by Name/Email/Field/College:</label>
             <input
               type="text"
               placeholder="Search..."
@@ -241,12 +265,13 @@ const AdminPanel = () => {
           <select
             value={sortField}
             onChange={(e) => setSortField(e.target.value)}
-            className="w-full sm:w-48  p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-48 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="registeredAt">Sort by Date</option>
             <option value="name">Sort by Name</option>
             <option value="email">Sort by Email</option>
             <option value="memberId">Sort by Member ID</option>
+            <option value="college">Sort by College</option>
           </select>
           <select
             value={sortOrder}
@@ -277,7 +302,7 @@ const AdminPanel = () => {
         ) : (
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-3">
-              Total (Teams+Individual)   : {filteredRegistrations.length}
+              Total (Teams+Individual): {filteredRegistrations.length}
             </h3>
             {filteredRegistrations.length === 0 ? (
               <p className="text-center text-gray-500">
@@ -285,13 +310,14 @@ const AdminPanel = () => {
               </p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full  bg-white  border-gray-200 shadow-md rounded-lg">
+                <table className="min-w-full bg-white border-gray-200 shadow-md rounded-lg">
                   <thead>
                     <tr className="bg-gray-100 border-b">
-                      <th className="p-4 text-left  text-gray-600 font-medium">S.No</th>
+                      <th className="p-4 text-left text-gray-600 font-medium">S.No</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Event</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Name</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Email</th>
+                      <th className="p-4 text-left text-gray-600 font-medium">College</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Member ID</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Role</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Team Leader ID</th>
@@ -308,8 +334,9 @@ const AdminPanel = () => {
                           <td className="p-4">
                             {eventsData.find((e) => e.id === reg.eventId)?.name || "Unknown"}
                           </td>
-                          <td className="p-4">{reg.name || "N/A"}</td>
-                          <td className="p-4">{reg.email || "N/A"}</td>
+                          <td className="p-4">{reg.name}</td>
+                          <td className="p-4">{reg.email}</td>
+                          <td className="p-4">{reg.college || "N/A"}</td>
                           <td className="p-4">{reg.memberId || "N/A"}</td>
                           <td className="p-4">{reg.isTeamLeader ? "Team Leader" : "Team Member"}</td>
                           <td className="p-4">{reg.teamLeaderId || "N/A"}</td>
@@ -356,7 +383,7 @@ const AdminPanel = () => {
                         </tr>
                         {expandedRows.has(index) && (
                           <tr className="bg-gray-50">
-                            <td colSpan="10" className="p-4">
+                            <td colSpan="11" className="p-4">
                               <div className="grid grid-cols-2 gap-2">
                                 {Object.entries(reg.fields).map(([key, value]) => (
                                   <div key={key}>
