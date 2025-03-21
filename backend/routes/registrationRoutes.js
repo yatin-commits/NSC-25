@@ -383,6 +383,53 @@ router.put('/register', upload.none(), async (req, res) => {
   }
 });
 
+router.get('/all-members', async (req, res) => {
+  try {
+    const members = await Member.find().sort({ memberId: 1 });
+    const registrations = await Registration.find();
+    const events = await Event.find();
+    const eventMap = new Map(events.map(e => [e.eventId, e.name]));
+
+    const memberEvents = new Map();
+    registrations.forEach((reg) => {
+      const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields || {};
+      const eventName = eventMap.get(reg.eventId) || `Event ${reg.eventId}`;
+
+      if (fields.memberId) {
+        if (!memberEvents.has(fields.memberId)) memberEvents.set(fields.memberId, new Set());
+        memberEvents.get(fields.memberId).add(eventName);
+      }
+
+      const sizeField = Object.keys(fields).find((key) =>
+        ['teamSize', 'groupSize', 'castSize'].includes(key)
+      );
+      const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
+      if (teamSize > 1) {
+        for (let i = 1; i <= teamSize - 1; i++) {
+          const teamMemberId = fields[`teamMemberId${i}`];
+          if (teamMemberId) {
+            if (!memberEvents.has(teamMemberId)) memberEvents.set(teamMemberId, new Set());
+            memberEvents.get(teamMemberId).add(eventName);
+          }
+        }
+      }
+    });
+
+    const allMembers = members.map((member) => ({
+      memberId: member.memberId,
+      name: member.name,
+      email: member.email,
+      phone: member.phone || "N/A",
+      college: member.college || "N/A",
+      events: memberEvents.has(member.memberId) ? Array.from(memberEvents.get(member.memberId)) : [],
+    }));
+
+    res.status(200).json({ data: allMembers });
+  } catch (error) {
+    console.error('Error fetching all members:', error);
+    res.status(500).json({ error: 'Failed to fetch members' });
+  }
+});
 // Get user's registrations
 router.get('/registrations', async (req, res) => {
   const { userId } = req.query;
@@ -404,10 +451,85 @@ router.get('/registrations', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch registrations' });
   }
 });
+router.get('/incomplete-registrations', async (req, res) => {
+  const { userId } = req.query;
 
+  if (!userId) {
+    return res.status(401).json({ error: 'User ID required' });
+  }
+
+  try {
+    console.log('Fetching all members...');
+    const members = await Member.find();
+    console.log(`Found ${members.length} members`);
+    console.log('Sample members:', members.slice(0, 5).map(m => m.memberId)); // Log first 5 memberIds
+
+    console.log('Fetching all registrations...');
+    const registrations = await Registration.find();
+    console.log(`Found ${registrations.length} registrations`);
+
+    const registeredMemberIds = new Set();
+    registrations.forEach((reg) => {
+      const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields || {};
+      if (fields.memberId) {
+        registeredMemberIds.add(fields.memberId);
+      }
+
+      const sizeField = Object.keys(fields).find((key) =>
+        ['teamSize', 'groupSize', 'castSize'].includes(key)
+      );
+      const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
+      if (teamSize > 1) {
+        for (let i = 1; i <= teamSize - 1; i++) {
+          const teamMemberId = fields[`teamMemberId${i}`];
+          if (teamMemberId) {
+            registeredMemberIds.add(teamMemberId);
+          }
+        }
+      }
+    });
+    console.log(`Collected ${registeredMemberIds.size} unique registered member IDs`);
+    console.log('Sample registered memberIds:', Array.from(registeredMemberIds).slice(0, 5));
+
+    const incompleteMembers = members.filter(
+      (member) => !registeredMemberIds.has(member.memberId)
+    ).map((member) => ({
+      memberId: member.memberId,
+      name: member.name,
+      phone: member.phone || "N/A",
+      college: member.college || "N/A",
+      email: member.email || "N/A",
+    })).sort((a, b) => a.memberId.localeCompare(b.memberId));
+
+    console.log(`Found ${incompleteMembers.length} members with incomplete registrations`);
+    console.log('Response data:', incompleteMembers);
+
+    res.status(200).json({ data: incompleteMembers });
+  } catch (error) {
+    console.error('Fetch incomplete registrations error:', error);
+    res.status(500).json({ error: 'Failed to fetch incomplete registrations', details: error.message });
+  }
+});
+router.get('/all-registrations', async (req, res) => {
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'User ID required' });
+  }
+
+  try {
+    const registrations = await Registration.find();
+    console.log(`Fetched ${registrations.length} registrations`);
+    res.status(200).json({ data: registrations });
+  } catch (error) {
+    console.error('Error fetching all registrations:', error);
+    res.status(500).json({ error: 'Failed to fetch registrations', details: error.message });
+  }
+});
 // Get all registrations (admin only)
 router.get('/registrations/all', async (req, res) => {
   const { userId, eventId } = req.query;
+  
 
   if (!userId) {
     return res.status(401).json({ error: 'User ID required' });

@@ -46,7 +46,7 @@ const MemberForm = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch("https://nsc-25-backend.vercel.app/api/generate-member-id", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/generate-member-id`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

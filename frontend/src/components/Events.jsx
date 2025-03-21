@@ -48,9 +48,10 @@ const Events = forwardRef((props, ref) => {
 
   const fetchRegistrations = async (uid, showWelcome = true) => {
     const loadingToast = toast.loading("Fetching data...");
+    console.log("uid", uid)
     try {
       const response = await fetch(
-        `https://nsc-25-backend.vercel.app/api/registrations?userId=${uid}`, // Local testing URL
+        `${import.meta.env.VITE_BACKEND_URL}/api/registrations?userId=${uid}`, // Local testing URL
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -150,7 +151,7 @@ const Events = forwardRef((props, ref) => {
     const loadingToast = toast.loading("Verifying member IDs...");
     try {
       const verifyResponse = await fetch(
-        "https://nsc-25-backend.vercel.app/api/verify-member-ids", // Local testing URL
+        `${import.meta.env.VITE_BACKEND_URL}/api/verify-member-ids`, // Local testing URL
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -190,7 +191,7 @@ const Events = forwardRef((props, ref) => {
 
     const registerToast = toast.loading("Registering...");
     try {
-      const response = await fetch("https://nsc-25-backend.vercel.app/api/register", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/register`, {
         method: "POST",
         body: formPayload,
       });
