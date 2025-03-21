@@ -277,7 +277,7 @@ const AdminPanel = () => {
         ) : (
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-3">
-              Total Participants: {filteredRegistrations.length}
+              Total (Teams+Individual)   : {filteredRegistrations.length}
             </h3>
             {filteredRegistrations.length === 0 ? (
               <p className="text-center text-gray-500">
