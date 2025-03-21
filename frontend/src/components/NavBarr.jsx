@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import bvicamlogo from "../assets/bvicamLogo.png";
 import { Menu, X } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 
 const MenuItem = ({ setActive, active, item, onClick }) => {

@@ -1,74 +1,71 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { auth, googleProvider } from "../../backend/firebase/firebase"; // Correct path to your firebase.js
-import { signInWithPopup, signInWithRedirect, signOut } from "firebase/auth"; // Import from firebase/auth
+import React, { createContext, useState, useEffect } from "react";
+import { auth, googleProvider } from "../../backend/firebase/firebase";
+import { signInWithPopup, signInWithRedirect, signOut } from "firebase/auth";
 import toast from "react-hot-toast";
 import { FiLoader } from "react-icons/fi";
-const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthContext = createContext();
+
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser({
-          name: user.displayName,
-          email: user.email,
-          uid: user.uid,
-        });
-      } else {
-        setUser(null);
-      }
-      setLoading(false); // Stop loading once auth state is determined
+      setUser(user);
+      setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
-  const login = async (useRedirect = false) => {
+  const signInWithGoogle = async () => {
     try {
-      if (useRedirect) {
-        await signInWithRedirect(auth, googleProvider);
-      } else {
-        const result = await signInWithPopup(auth, googleProvider);
-        setUser({
-          name: result.user.displayName,
-          email: result.user.email,
-          uid: result.user.uid,
-        });
-      }
+      setLoading(true);
+      await signInWithPopup(auth, googleProvider);
+      toast.success("Signed in successfully!");
     } catch (error) {
-      console.error("Login failed:", error);
+      toast.error(error.message);
+      setLoading(false);
+    }
+  };
+
+  const signInWithGoogleRedirect = async () => {
+    try {
+      setLoading(true);
+      await signInWithRedirect(auth, googleProvider);
+    } catch (error) {
+      toast.error(error.message);
+      setLoading(false);
     }
   };
 
   const logout = async () => {
-    const loadingToast = toast.loading("Logging out..."); // Show loading toast
-  
     try {
       await signOut(auth);
-      setUser(null);
-      toast.success("Logged out successfully!", { id: loadingToast });
+      toast.success("Logged out successfully!");
     } catch (error) {
-      console.error("Logout failed:", error);
-      toast.error("Logout failed. Please try again.", { id: loadingToast });
+      toast.error(error.message);
     }
   };
 
+  const value = {
+    user,
+    loading,
+    signInWithGoogle,
+    signInWithGoogleRedirect,
+    logout,
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={value}>
       {loading ? (
-        // Show a loading spinner while authentication state is being checked
-        <div className="flex justify-center items-center min-h-screen">
-          <FiLoader className="text-4xl animate-spin text-blue-500" />
+        <div className="flex justify-center items-center h-screen">
+          <FiLoader className="animate-spin text-4xl text-blue-600" />
         </div>
       ) : (
         children
       )}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => useContext(AuthContext);
+}

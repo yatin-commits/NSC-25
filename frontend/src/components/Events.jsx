@@ -2,7 +2,7 @@
 import React, { useState, useEffect, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, X, Award, Search } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import { eventFields as baseEventFields, eventsData } from "./data";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";

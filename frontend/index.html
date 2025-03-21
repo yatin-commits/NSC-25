@@ -28,6 +28,29 @@
     <link rel="icon" href="https://media-hosting.imagekit.io//ea7b368c07e044ee/bvicamLogo.png?Expires=1837102950&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=0tyoO~3sEDxw3U6EBhzsxdTlJFvWz4i-HnoIGSSR4duWbDaGGO2D1nr~OLzFH40ed4YLMDgzBMJJ6XN7AmdvrrYZMsLbRKfCt01pl4EkohRZupHRQhXZzsK5r6WZvvk6FMWWCC5XVVOofH~1XEmL~P30zYzz07plYOSfuxptmnIoRya2-1XHKAvO168x8ldNdmed24BhNybX4tLAkRWUqs8dktALty3o0h-KqF~WdbkvDy~mcKkk2ZBMQScvsE9wJmim89gB3D6q-kWqwqLpNdGd5JRjrUFeKOrVz7VmVZooTBe7YgPY7Oz-EhDXA126rE-vIV1A1snZrLypuCqeNw__" type="image/x-icon" />
   </head>
   <body>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+    
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyDKeAPiGZWI9jOny4bdiJ9Jn2wOq3ZIQ3A",
+        authDomain: "bvicam-nsc.firebaseapp.com",
+        projectId: "bvicam-nsc",
+        storageBucket: "bvicam-nsc.firebasestorage.app",
+        messagingSenderId: "920684654682",
+        appId: "1:920684654682:web:ddcfc9bb545669c5fb6863",
+        measurementId: "G-QL7CNYZ9GH"
+      };
+    
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
