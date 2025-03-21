@@ -38,28 +38,47 @@ const Members = () => {
       console.log("All members from /api/all-members:", memberList);
       console.log("All registrations:", registrationList);
 
-      const registeredMemberIds = new Set();
+      // Map memberId to earliest registeredAt date
+      const memberRegDates = new Map();
       registrationList.forEach((reg) => {
         const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields || {};
-        if (fields.memberId) registeredMemberIds.add(fields.memberId);
+        const regDate = reg.registeredAt ? new Date(reg.registeredAt) : null;
+
+        if (fields.memberId && regDate) {
+          if (!memberRegDates.has(fields.memberId) || regDate < memberRegDates.get(fields.memberId)) {
+            memberRegDates.set(fields.memberId, regDate);
+          }
+        }
+
         const sizeField = Object.keys(fields).find((key) =>
-          ['teamSize', 'groupSize', 'castSize'].includes(key)
+          ["teamSize", "groupSize", "castSize"].includes(key)
         );
         const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
         if (teamSize > 1) {
           for (let i = 1; i <= teamSize - 1; i++) {
             const teamMemberId = fields[`teamMemberId${i}`];
-            if (teamMemberId) registeredMemberIds.add(teamMemberId);
+            if (teamMemberId && regDate && (!memberRegDates.has(teamMemberId) || regDate < memberRegDates.get(teamMemberId))) {
+              memberRegDates.set(teamMemberId, regDate);
+            }
           }
         }
       });
-      console.log(`Collected ${registeredMemberIds.size} unique registered member IDs`);
-      console.log('Sample registered memberIds:', Array.from(registeredMemberIds).slice(0, 5));
 
-      const registeredMembers = memberList.filter(
+      // Add registeredAt and createdAt to memberList
+      const enrichedMemberList = memberList.map((member) => ({
+        ...member,
+        registeredAt: memberRegDates.get(member.memberId) || null,
+        createdAt: member.createdAt ? new Date(member.createdAt) : null, // Parse ISO string or null
+      }));
+
+      const registeredMemberIds = new Set(memberRegDates.keys());
+      console.log(`Collected ${registeredMemberIds.size} unique registered member IDs`);
+      console.log("Sample enriched memberList[0]:", enrichedMemberList[0]);
+
+      const registeredMembers = enrichedMemberList.filter(
         (member) => registeredMemberIds.has(member.memberId) && member.events && member.events.length > 0
       );
-      const incompleteList = memberList.filter(
+      const incompleteList = enrichedMemberList.filter(
         (member) => !registeredMemberIds.has(member.memberId)
       );
 
@@ -103,6 +122,11 @@ const Members = () => {
       Email: member.email,
       College: member.college || "N/A",
       "Phone No": member.phone || "N/A",
+      "Date": member.registeredAt
+        ? new Date(member.registeredAt).toLocaleString("default", { day: "numeric", month: "short" })
+        : member.createdAt
+        ? new Date(member.createdAt).toLocaleString("default", { day: "numeric", month: "short" })
+        : "N/A",
       "Registered Events": member.events ? member.events.join(", ") : "N/A",
     }));
     const worksheet = XLSX.utils.json_to_sheet(worksheetData);
@@ -251,6 +275,7 @@ const Members = () => {
                       <th className="p-4 text-left text-gray-600 font-medium">Email</th>
                       <th className="p-4 text-left text-gray-600 font-medium">College</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Phone No</th>
+                      <th className="p-4 text-left text-gray-600 font-medium">Date</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Registered Events</th>
                     </tr>
                   </thead>
@@ -263,6 +288,19 @@ const Members = () => {
                         <td className="p-4">{member.email}</td>
                         <td className="p-4">{member.college || "N/A"}</td>
                         <td className="p-4">{member.phone || "N/A"}</td>
+                        <td className="p-4">
+                          {member.registeredAt
+                            ? new Date(member.registeredAt).toLocaleString("default", {
+                                day: "numeric",
+                                month: "short",
+                              })
+                            : member.createdAt
+                            ? new Date(member.createdAt).toLocaleString("default", {
+                                day: "numeric",
+                                month: "short",
+                              })
+                            : "N/A"}
+                        </td>
                         <td className="p-4">
                           {member.events && member.events.length > 0 ? member.events.join(", ") : "N/A"}
                         </td>
@@ -295,6 +333,20 @@ const Members = () => {
                       </p>
                       <p className="text-sm text-gray-700">
                         <span className="font-semibold">Phone No:</span> {member.phone || "N/A"}
+                      </p>
+                      <p className="text-sm text-gray-700">
+                        <span className="font-semibold">Date:</span>{" "}
+                        {member.registeredAt
+                          ? new Date(member.registeredAt).toLocaleString("default", {
+                              day: "numeric",
+                              month: "short",
+                            })
+                          : member.createdAt
+                          ? new Date(member.createdAt).toLocaleString("default", {
+                              day: "numeric",
+                              month: "short",
+                            })
+                          : "N/A"}
                       </p>
                       <p className="text-sm text-gray-700">
                         <span className="font-semibold">Registered Events:</span>{" "}

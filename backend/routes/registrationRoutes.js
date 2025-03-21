@@ -421,6 +421,7 @@ router.get('/all-members', async (req, res) => {
       email: member.email,
       phone: member.phone || "N/A",
       college: member.college || "N/A",
+      createdAt: member.createdAt ? member.createdAt.toISOString() : null, // Add createdAt
       events: memberEvents.has(member.memberId) ? Array.from(memberEvents.get(member.memberId)) : [],
     }));
 
