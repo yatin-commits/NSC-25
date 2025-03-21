@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { auth, googleProvider } from "../../backend/firebase/firebase"; // Correct path to your firebase.js
+import { auth, googleProvider } from "../../backend/firebase/firebase.js"; // Correct path to your firebase.js
 import { signInWithPopup, signInWithRedirect, signOut } from "firebase/auth"; // Import from firebase/auth
 import toast from "react-hot-toast";
 import { FiLoader } from "react-icons/fi";
