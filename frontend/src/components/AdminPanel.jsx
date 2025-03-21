@@ -266,7 +266,7 @@ const AdminPanel = () => {
             to="/members"
             className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 flex items-center gap-2"
           >
-            Individual Members
+            Full Data Breakdown
           </Link>
         </div>
 
