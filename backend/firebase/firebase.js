@@ -1,6 +1,6 @@
-// firebase.js
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+// backend/firebase/firebase.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDKeAPiGZWI9jOny4bdiJ9Jn2wOq3ZIQ3A",
@@ -14,7 +14,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-console.log("just initialized the app");
+console.log("just initialized the app", app);
 
 // Initialize services
 const auth = getAuth(app);
