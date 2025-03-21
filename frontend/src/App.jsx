@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast";
 import MemberForm from "./pages/MemberForm";
 import ProtectedRouteMember from "./components/ProtectedRouteMember";
 import Members from "./pages/Members";
+import IncompleteRegistrations from "./pages/IncompleteRegistrations";
 
 const App = () => {
   const eventsRef = useRef(null);
@@ -29,11 +30,12 @@ const App = () => {
             <Members />
           </ProtectedRouteMember>
       } />
+        <Route path="/incomplete" element={<IncompleteRegistrations />} />
      
         
         <Route path="/MemberForm" element={
           <ProtectedRouteMember>
-          <MemberForm />
+          <MemberForm /> 
         </ProtectedRouteMember>
           } 
           />

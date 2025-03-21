@@ -29,7 +29,7 @@ const AdminPanel = () => {
     setError(null);
     try {
       const registrationsResponse = await axios.get(
-        `https://nsc-25-backend.vercel.app/api/registrations/all?userId=${adminUserId}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/registrations/all?userId=${adminUserId}`
       );
       const data = Array.isArray(registrationsResponse.data) ? registrationsResponse.data : [];
       // console.log("Fetched registrations:", data);
