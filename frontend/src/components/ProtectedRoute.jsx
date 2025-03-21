@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../context/useAuth";
+import { useAuth } from "../../context/AuthContext";
 
 // Define allowed admin emails
 const adminEmails =import.meta.env.VITE_ADMIN_EMAILS;

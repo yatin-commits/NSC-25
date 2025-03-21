@@ -1,8 +1,6 @@
-// firebase.js
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js'
-// import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getAuth,GoogleAuthProvider } from 'https://cdn.jsdelivr.net/npm/firebase@^11.4.0/firebase-auth.js/+esm' 
-
+import { initializeApp } from "@firebase/app";
+import { getAuth,GoogleAuthProvider } from "@firebase/auth";
+import { getAnalytics } from "@firebase/analytics";
 const firebaseConfig = {
     apiKey: "AIzaSyDKeAPiGZWI9jOny4bdiJ9Jn2wOq3ZIQ3A",
     authDomain: "bvicam-nsc.firebaseapp.com",
