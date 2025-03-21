@@ -1,31 +1,21 @@
-// firebase.js
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js'
-// import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getAuth,GoogleAuthProvider } from 'https://cdn.jsdelivr.net/npm/firebase@^11.4.0/firebase-auth.js/+esm' 
+// src/firebase.js (or wherever you initialize Firebase)
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 
+// Your Firebase configuration object
 const firebaseConfig = {
-    apiKey: "AIzaSyDKeAPiGZWI9jOny4bdiJ9Jn2wOq3ZIQ3A",
-    authDomain: "bvicam-nsc.firebaseapp.com",
-    projectId: "bvicam-nsc",
-    storageBucket: "bvicam-nsc.firebasestorage.app",
-    messagingSenderId: "920684654682",
-    appId: "1:920684654682:web:ddcfc9bb545669c5fb6863",
-    measurementId: "G-QL7CNYZ9GH"
-  };
-
+  apiKey: "AIzaSyDKeAPiGZWI9jOny4bdiJ9Jn2wOq3ZIQ3A",
+  authDomain: "bvicam-nsc.firebaseapp.com",
+  projectId: "bvicam-nsc",
+  storageBucket: "bvicam-nsc.firebasestorage.app",
+  messagingSenderId: "920684654682",
+  appId: "1:920684654682:web:ddcfc9bb545669c5fb6863",
+  measurementId: "G-QL7CNYZ9GH"
+};
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize services
-console.log("just initialized the app");
-
+// Initialize Auth
 const auth = getAuth(app);
-console.log("just initialized the auth service");
 
-const googleProvider = new GoogleAuthProvider();
-
-// Set up auth settings if needed
-auth.useDeviceLanguage();
-
-// Export the services
-export { auth, googleProvider };
+export { auth }; // Export auth for use in other files
