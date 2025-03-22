@@ -31,14 +31,11 @@ const AdminPanel = () => {
     try {
       const [registrationsResponse, membersResponse] = await Promise.all([
         axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/registrations/all?userId=${adminUserId}`),
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/all-members`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/all-members`),
       ]);
 
       const regData = Array.isArray(registrationsResponse.data) ? registrationsResponse.data : [];
       const memberData = Array.isArray(membersResponse.data.data) ? membersResponse.data.data : membersResponse.data || [];
-
-      console.log("Fetched registrations:", regData);
-      console.log("Fetched members:", memberData);
 
       setRegistrations(regData);
       setMembers(memberData);
@@ -56,12 +53,10 @@ const AdminPanel = () => {
     }
   };
 
-  // Flatten registrations and merge with member data
-  const flattenRegistrations = () => {
-    const memberMap = new Map(
-      members.map((m) => [m.memberId, { name: m.name, email: m.email, college: m.college }])
-    );
-    const flattened = [];
+  const processRegistrations = () => {
+    const memberMap = new Map(members.map((m) => [m.memberId, { name: m.name, email: m.email, phone: m.phone }]));
+
+    const processed = [];
     registrations.forEach((reg) => {
       const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields;
       const eventId = reg.eventId;
@@ -73,46 +68,38 @@ const AdminPanel = () => {
       );
       const teamSize = sizeField ? parseInt(fields[sizeField.name]) || 0 : 0;
 
-      // Team Leader: Use reg.name/email if available, fallback to Members data
-      const leaderId = fields.memberId;
-      const leaderInfo = memberMap.get(leaderId) || {};
-      flattened.push({
+      const leaderInfo = memberMap.get(fields.memberId) || {};
+      const teamLeader = {
         ...reg,
-        memberId: leaderId,
+        memberId: fields.memberId,
         name: reg.name || leaderInfo.name || "Unknown",
         email: reg.email || leaderInfo.email || "N/A",
-        college: leaderInfo.college || "N/A",
         isTeamLeader: true,
-        teamLeaderId: leaderId,
-      });
+        teamLeaderId: fields.memberId,
+        teamMembers: [],
+      };
 
-      // Team Members: Use fields data if available, fallback to Members data
       if (isTeamBased && teamSize > 1) {
         for (let i = 1; i <= teamSize - 1; i++) {
           const teamMemberId = fields[`teamMemberId${i}`];
-          const teamMemberName = fields[`teamMemberName${i}`];
-          const teamMemberEmail = fields[`teamMemberEmail${i}`];
           if (teamMemberId) {
             const memberInfo = memberMap.get(teamMemberId) || {};
-            flattened.push({
-              ...reg,
+            teamLeader.teamMembers.push({
               memberId: teamMemberId,
-              name: teamMemberName || memberInfo.name || "Unknown Member",
-              email: teamMemberEmail || memberInfo.email || "N/A",
-              college: memberInfo.college || "N/A",
-              isTeamLeader: false,
-              teamLeaderId: leaderId,
-              fields: { ...fields, memberId: teamMemberId },
+              name: memberInfo.name || fields[`teamMemberName${i}`] || "Unknown Member",
+              email: memberInfo.email || fields[`teamMemberEmail${i}`] || "N/A",
+              phone: memberInfo.phone || fields[`teamMemberPhone${i}`] || "N/A",
             });
           }
         }
       }
+
+      processed.push(teamLeader);
     });
-    console.log("Flattened registrations with college:", flattened);
-    return flattened;
+    return processed;
   };
 
-  const allParticipants = flattenRegistrations();
+  const allParticipants = processRegistrations();
 
   const exportToExcel = () => {
     if (filteredRegistrations.length === 0) {
@@ -122,21 +109,25 @@ const AdminPanel = () => {
 
     const formattedData = filteredRegistrations.map((reg, index) => {
       const eventName = eventsData.find((e) => e.id === reg.eventId)?.name || "Unknown Event";
-      return {
+      const rowData = {
         "S.No": index + 1,
         Event: eventName,
-        Name: reg.name,
-        Email: reg.email,
-        College: reg.college,
+        "Team Leader Name": reg.name,
+        "Team Leader Email": reg.email,
         "Registration Date": reg.registeredAt
           ? new Date(reg.registeredAt).toLocaleString("default", { day: "numeric", month: "short" })
           : "Not Recorded",
-        "Member ID": reg.memberId,
         "Team Leader ID": reg.teamLeaderId,
-        "Role": reg.isTeamLeader ? "Team Leader" : "Team Member",
         "Payment Receipt": reg.paymentReceipt || "N/A",
-        ...reg.fields,
+        "Society Name": reg.fields["Society Name"] || "N/A",
+        "Team Size": reg.fields.teamSize || "N/A",
       };
+
+      reg.teamMembers.forEach((tm, idx) => {
+        rowData[`Team Member ${idx + 1}`] = tm.name;
+      });
+
+      return rowData;
     });
 
     const worksheet = XLSX.utils.json_to_sheet(formattedData);
@@ -154,9 +145,13 @@ const AdminPanel = () => {
       const matchesSearch =
         (reg.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
          reg.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         reg.college?.toLowerCase().includes(searchTerm.toLowerCase()) ||
          Object.values(reg.fields).some((val) =>
            val?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+         ) ||
+         reg.teamMembers.some((tm) =>
+           [tm.name, tm.email, tm.phone].some((val) =>
+             val?.toLowerCase().includes(searchTerm.toLowerCase())
+           )
          ));
       return matchesEvent && matchesSearch;
     })
@@ -177,10 +172,6 @@ const AdminPanel = () => {
         return sortOrder === "asc"
           ? (a.memberId || "").localeCompare(b.memberId || "")
           : (b.memberId || "").localeCompare(a.memberId || "");
-      } else if (sortField === "college") {
-        return sortOrder === "asc"
-          ? (a.college || "").localeCompare(b.college || "")
-          : (b.college || "").localeCompare(a.college || "");
       }
       return 0;
     });
@@ -215,7 +206,7 @@ const AdminPanel = () => {
               className="w-4 h-4"
               fill="currentColor"
             >
-              <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+              <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5-12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
             </svg>
             Back to Home
           </Link>
@@ -241,7 +232,7 @@ const AdminPanel = () => {
           </div>
 
           <div className="relative">
-            <label className="block text-lg font-medium text-gray-600 mb-2">Search by Name/Email/Field/College:</label>
+            <label className="block text-lg font-medium text-gray-600 mb-2">Search by Name/Email/Field:</label>
             <input
               type="text"
               placeholder="Search..."
@@ -271,7 +262,6 @@ const AdminPanel = () => {
             <option value="name">Sort by Name</option>
             <option value="email">Sort by Email</option>
             <option value="memberId">Sort by Member ID</option>
-            <option value="college">Sort by College</option>
           </select>
           <select
             value={sortOrder}
@@ -302,11 +292,11 @@ const AdminPanel = () => {
         ) : (
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-3">
-              Total (Teams+Individual): {filteredRegistrations.length}
+              Total Teams: {filteredRegistrations.length}
             </h3>
             {filteredRegistrations.length === 0 ? (
               <p className="text-center text-gray-500">
-                {searchTerm ? "No participants match your filter criteria." : "No participants found."}
+                {searchTerm ? "No teams match your filter criteria." : "No teams found."}
               </p>
             ) : (
               <div className="overflow-x-auto">
@@ -317,7 +307,6 @@ const AdminPanel = () => {
                       <th className="p-4 text-left text-gray-600 font-medium">Event</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Name</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Email</th>
-                      <th className="p-4 text-left text-gray-600 font-medium">College</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Member ID</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Role</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Team Leader ID</th>
@@ -334,14 +323,13 @@ const AdminPanel = () => {
                           <td className="p-4">
                             {eventsData.find((e) => e.id === reg.eventId)?.name || "Unknown"}
                           </td>
-                          <td className="p-4">{reg.name}</td>
-                          <td className="p-4">{reg.email}</td>
-                          <td className="p-4">{reg.college || "N/A"}</td>
+                          <td className="p-4">{reg.name || "N/A"}</td>
+                          <td className="p-4">{reg.email || "N/A"}</td>
                           <td className="p-4">{reg.memberId || "N/A"}</td>
-                          <td className="p-4">{reg.isTeamLeader ? "Team Leader" : "Team Member"}</td>
+                          <td className="p-4">Team Leader</td>
                           <td className="p-4">{reg.teamLeaderId || "N/A"}</td>
                           <td className="p-4">
-                            {reg.paymentReceipt && reg.isTeamLeader ? (
+                            {reg.paymentReceipt ? (
                               <div>
                                 <img
                                   src={reg.paymentReceipt}
@@ -383,13 +371,45 @@ const AdminPanel = () => {
                         </tr>
                         {expandedRows.has(index) && (
                           <tr className="bg-gray-50">
-                            <td colSpan="11" className="p-4">
-                              <div className="grid grid-cols-2 gap-2">
-                                {Object.entries(reg.fields).map(([key, value]) => (
-                                  <div key={key}>
-                                    <strong>{key}:</strong> {value || "N/A"}
+                            <td colSpan="10" className="p-4">
+                              <div className="space-y-4">
+                                {/* Team Members Section */}
+                                {reg.teamMembers.length > 0 && (
+                                  <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                                    <h4 className="text-base font-semibold text-gray-800 mb-3">Team Members</h4>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                      {reg.teamMembers.map((tm, idx) => (
+                                        <div
+                                          key={idx}
+                                          className="p-3 bg-gray-100 rounded-md border border-gray-200"
+                                        >
+                                          <p className="text-sm font-medium text-gray-900">{tm.name}</p>
+                                          <p className="text-xs text-gray-600">
+                                            <span className="font-medium">Email:</span> {tm.email}
+                                          </p>
+                                          {tm.phone !== "N/A" && (
+                                            <p className="text-xs text-gray-600">
+                                              <span className="font-medium">Phone:</span> {tm.phone}
+                                            </p>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
                                   </div>
-                                ))}
+                                )}
+
+                                {/* Additional Details Section */}
+                                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                                  <h4 className="text-base font-semibold text-gray-800 mb-3">Additional Details</h4>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {Object.entries(reg.fields).map(([key, value]) => (
+                                      <div key={key} className="text-sm">
+                                        <span className="font-medium text-gray-700">{key}:</span>{" "}
+                                        <span className="text-gray-600">{value || "N/A"}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
                               </div>
                             </td>
                           </tr>
