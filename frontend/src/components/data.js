@@ -320,8 +320,7 @@ export const eventsData = [
     venue: "10:00 AM",
     dates: ["2025-04-04", "2025-04-05"],
     rules: [
-      "Each team shall consist of 6 players (plus up to 2 substitutes).",
-      "Matches will follow standard volleyball rules with 3 sets to 25 points.",
+      "Each team shall consist of 6 players (plus up to 4 substitutes).",
       "A coin toss determines the first serve.",
       "Teams must adhere to fair play and sportsmanship guidelines.",
       "Registration fee must be paid and receipt uploaded before registration.",
@@ -329,7 +328,7 @@ export const eventsData = [
     prize: "TBD",
     contact: ["Ravi: 9876543210", "Neha: 8765432109"],
     requiresPayment: true,
-    registrationFee: 600,
+    registrationFee: 1000,
     qrCode: volleyballQR,
   },
   {
@@ -379,7 +378,7 @@ export const events = [
     time: "9:30 AM ", 
     dates: ["2025-04-05"],
     heads: [
-      { name: "Deepanshu", mobile: "+91 8800621391" },
+      { name: "Deepanshu", mobile: "+91 8595675015" },
       { name: "Pranav", mobile: "+91 9582349597" },
     ] 
   },
