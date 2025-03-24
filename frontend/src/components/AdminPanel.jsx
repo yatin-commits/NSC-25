@@ -54,7 +54,12 @@ const AdminPanel = () => {
   };
 
   const processRegistrations = () => {
-    const memberMap = new Map(members.map((m) => [m.memberId, { name: m.name, email: m.email, phone: m.phone }]));
+    const memberMap = new Map(members.map((m) => [m.memberId, { 
+      name: m.name, 
+      email: m.email, 
+      phone: m.phone, 
+      college: m.college
+    }]));
 
     const processed = [];
     registrations.forEach((reg) => {
@@ -74,6 +79,8 @@ const AdminPanel = () => {
         memberId: fields.memberId,
         name: reg.name || leaderInfo.name || "Unknown",
         email: reg.email || leaderInfo.email || "N/A",
+        college: fields.college || fields["College"] || fields["College Name"] || leaderInfo.college || "N/A",
+        phone: leaderInfo.phone || fields.phone || "N/A", // Add phone for team leader
         isTeamLeader: true,
         teamLeaderId: fields.memberId,
         teamMembers: [],
@@ -89,6 +96,7 @@ const AdminPanel = () => {
               name: memberInfo.name || fields[`teamMemberName${i}`] || "Unknown Member",
               email: memberInfo.email || fields[`teamMemberEmail${i}`] || "N/A",
               phone: memberInfo.phone || fields[`teamMemberPhone${i}`] || "N/A",
+              college: memberInfo.college || fields[`teamMemberCollege${i}`] || "N/A",
             });
           }
         }
@@ -114,6 +122,7 @@ const AdminPanel = () => {
         Event: eventName,
         "Team Leader Name": reg.name,
         "Team Leader Email": reg.email,
+        "College": reg.college,
         "Registration Date": reg.registeredAt
           ? new Date(reg.registeredAt).toLocaleString("default", { day: "numeric", month: "short" })
           : "Not Recorded",
@@ -125,6 +134,7 @@ const AdminPanel = () => {
 
       reg.teamMembers.forEach((tm, idx) => {
         rowData[`Team Member ${idx + 1}`] = tm.name;
+        rowData[`Team Member ${idx + 1} College`] = tm.college;
       });
 
       return rowData;
@@ -145,11 +155,12 @@ const AdminPanel = () => {
       const matchesSearch =
         (reg.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
          reg.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         reg.college?.toLowerCase().includes(searchTerm.toLowerCase()) ||
          Object.values(reg.fields).some((val) =>
            val?.toString().toLowerCase().includes(searchTerm.toLowerCase())
          ) ||
          reg.teamMembers.some((tm) =>
-           [tm.name, tm.email, tm.phone].some((val) =>
+           [tm.name, tm.email, tm.phone, tm.college].some((val) =>
              val?.toLowerCase().includes(searchTerm.toLowerCase())
            )
          ));
@@ -172,6 +183,10 @@ const AdminPanel = () => {
         return sortOrder === "asc"
           ? (a.memberId || "").localeCompare(b.memberId || "")
           : (b.memberId || "").localeCompare(a.memberId || "");
+      } else if (sortField === "college") {
+        return sortOrder === "asc"
+          ? (a.college || "").localeCompare(b.college || "")
+          : (b.college || "").localeCompare(a.college || "");
       }
       return 0;
     });
@@ -262,6 +277,7 @@ const AdminPanel = () => {
             <option value="name">Sort by Name</option>
             <option value="email">Sort by Email</option>
             <option value="memberId">Sort by Member ID</option>
+            <option value="college">Sort by College</option>
           </select>
           <select
             value={sortOrder}
@@ -307,8 +323,7 @@ const AdminPanel = () => {
                       <th className="p-4 text-left text-gray-600 font-medium">Event</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Name</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Email</th>
-                      <th className="p-4 text-left text-gray-600 font-medium">Member ID</th>
-                      <th className="p-4 text-left text-gray-600 font-medium">Role</th>
+                      <th className="p-4 text-left text-gray-600 font-medium">College</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Team Leader ID</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Payment Receipt</th>
                       <th className="p-4 text-left text-gray-600 font-medium">Registration Date</th>
@@ -325,8 +340,7 @@ const AdminPanel = () => {
                           </td>
                           <td className="p-4">{reg.name || "N/A"}</td>
                           <td className="p-4">{reg.email || "N/A"}</td>
-                          <td className="p-4">{reg.memberId || "N/A"}</td>
-                          <td className="p-4">Team Leader</td>
+                          <td className="p-4">{reg.college || "N/A"}</td>
                           <td className="p-4">{reg.teamLeaderId || "N/A"}</td>
                           <td className="p-4">
                             {reg.paymentReceipt ? (
@@ -371,45 +385,43 @@ const AdminPanel = () => {
                         </tr>
                         {expandedRows.has(index) && (
                           <tr className="bg-gray-50">
-                            <td colSpan="10" className="p-4">
+                            <td colSpan="9" className="p-4 text-sm text-gray-700">
                               <div className="space-y-4">
-                                {/* Team Members Section */}
-                                {reg.teamMembers.length > 0 && (
-                                  <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                                    <h4 className="text-base font-semibold text-gray-800 mb-3">Team Members</h4>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                      {reg.teamMembers.map((tm, idx) => (
-                                        <div
-                                          key={idx}
-                                          className="p-3 bg-gray-100 rounded-md border border-gray-200"
-                                        >
-                                          <p className="text-sm font-medium text-gray-900">{tm.name}</p>
-                                          <p className="text-xs text-gray-600">
-                                            <span className="font-medium">Email:</span> {tm.email}
-                                          </p>
-                                          {tm.phone !== "N/A" && (
-                                            <p className="text-xs text-gray-600">
-                                              <span className="font-medium">Phone:</span> {tm.phone}
-                                            </p>
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
+                                {/* Team Leader Details */}
+                                <div>
+                                  <strong>{reg.name || "N/A"}</strong><br />
+                                  Email: {reg.email || "N/A"}<br />
+                                  College: {reg.college || "N/A"}<br />
+                                  Phone: {reg.phone || "N/A"}<br />
+                                  Member ID: {reg.memberId || "N/A"}
+                                </div>
 
-                                {/* Additional Details Section */}
-                                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                                  <h4 className="text-base font-semibold text-gray-800 mb-3">Additional Details</h4>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    {Object.entries(reg.fields).map(([key, value]) => (
-                                      <div key={key} className="text-sm">
-                                        <span className="font-medium text-gray-700">{key}:</span>{" "}
-                                        <span className="text-gray-600">{value || "N/A"}</span>
+                                {/* Team Members */}
+                                {reg.teamMembers.length > 0 && (
+                                  <div className="mt-4">
+                                    <strong>Team Members:</strong>
+                                    {reg.teamMembers.map((tm, idx) => (
+                                      <div key={idx} className="mt-2">
+                                        <strong>{tm.name}</strong><br />
+                                        Email: {tm.email}<br />
+                                        College: {tm.college}<br />
+                                        Phone: {tm.phone}<br />
+                                        Member ID: {tm.memberId}
                                       </div>
                                     ))}
                                   </div>
-                                </div>
+                                )}
+
+                                {/* Additional Fields Inline */}
+                                {/* {Object.keys(reg.fields).length > 0 && (
+                                  <div className="mt-4">
+                                    {Object.entries(reg.fields).map(([key, value]) => (
+                                      <div key={key}>
+                                        {key}: {value || "N/A"}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )} */}
                               </div>
                             </td>
                           </tr>
