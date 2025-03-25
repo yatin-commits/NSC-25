@@ -80,7 +80,7 @@ const AdminPanel = () => {
         name: reg.name || leaderInfo.name || "Unknown",
         email: reg.email || leaderInfo.email || "N/A",
         college: fields.college || fields["College"] || fields["College Name"] || leaderInfo.college || "N/A",
-        phone: leaderInfo.phone || fields.phone || "N/A", // Add phone for team leader
+        phone: leaderInfo.phone || fields.phone || "N/A",
         isTeamLeader: true,
         teamLeaderId: fields.memberId,
         teamMembers: [],
@@ -212,9 +212,9 @@ const AdminPanel = () => {
   return (
     <>
       <Navbarr />
-      <div className="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-20">
+      <div className="max-w-7xl mx-auto p-6 bg-gray-50 shadow-lg rounded-lg mt-20 font-sans">
         <div className="flex items-center mb-6">
-          <Link to="/" className="flex items-center gap-2 text-blue-600 hover:underline">
+          <Link to="/" className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 transition">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 448 512"
@@ -231,9 +231,9 @@ const AdminPanel = () => {
 
         <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-lg font-medium text-gray-600 mb-2">Filter by Event:</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Event:</label>
             <select
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
               onChange={(e) => setSelectedEvent(e.target.value)}
               value={selectedEvent}
             >
@@ -247,19 +247,19 @@ const AdminPanel = () => {
           </div>
 
           <div className="relative">
-            <label className="block text-lg font-medium text-gray-600 mb-2">Search by Name/Email/Field:</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Search by Name/Email/Field:</label>
             <input
               type="text"
               placeholder="Search..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
             />
-            <Search className="absolute left-3 top-10 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-9 w-5 h-5 text-gray-400" />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm("")}
-                className="absolute right-3 top-10 text-gray-400 hover:text-gray-600 text-xl"
+                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600 text-xl"
               >
                 ×
               </button>
@@ -267,11 +267,11 @@ const AdminPanel = () => {
           </div>
         </div>
 
-        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center">
+        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-center">
           <select
             value={sortField}
             onChange={(e) => setSortField(e.target.value)}
-            className="w-full sm:w-48 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-48 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
           >
             <option value="registeredAt">Sort by Date</option>
             <option value="name">Sort by Name</option>
@@ -282,32 +282,32 @@ const AdminPanel = () => {
           <select
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
-            className="w-full sm:w-48 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-48 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
           >
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
           </select>
           <button
             onClick={exportToExcel}
-            className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-600 flex items-center gap-2"
+            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition flex items-center gap-2"
           >
             <SiGooglesheets /> Export to Excel
           </button>
           <Link
             to="/members"
-            className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 flex items-center gap-2"
+            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition flex items-center gap-2"
           >
             Full Data Breakdown
           </Link>
         </div>
 
         {loading ? (
-          <div className="text-center text-blue-600 font-medium">Loading registrations...</div>
+          <div className="text-center text-indigo-600 font-medium">Loading registrations...</div>
         ) : error ? (
           <div className="text-center text-red-500 font-medium">{error}</div>
         ) : (
           <div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-3">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
               Total Teams: {filteredRegistrations.length}
             </h3>
             {filteredRegistrations.length === 0 ? (
@@ -315,40 +315,38 @@ const AdminPanel = () => {
                 {searchTerm ? "No teams match your filter criteria." : "No teams found."}
               </p>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border-gray-200 shadow-md rounded-lg">
+              <div className="overflow-x-auto rounded-lg shadow-md">
+                <table className="min-w-full bg-white border border-gray-200">
                   <thead>
-                    <tr className="bg-gray-100 border-b">
-                      <th className="p-4 text-left text-gray-600 font-medium">S.No</th>
-                      <th className="p-4 text-left text-gray-600 font-medium">Event</th>
-                      <th className="p-4 text-left text-gray-600 font-medium">Name</th>
-                      <th className="p-4 text-left text-gray-600 font-medium">Email</th>
-                      <th className="p-4 text-left text-gray-600 font-medium">College</th>
-                      <th className="p-4 text-left text-gray-600 font-medium">Team Leader ID</th>
-                      <th className="p-4 text-left text-gray-600 font-medium">Payment Receipt</th>
-                      <th className="p-4 text-left text-gray-600 font-medium">Registration Date</th>
-                      <th className="p-4 text-left text-gray-600 font-medium">Details</th>
+                    <tr className="bg-indigo-100 text-indigo-900">
+                      <th className="p-3 text-left font-semibold">S.No</th>
+                      <th className="p-3 text-left font-semibold">Event</th>
+                      <th className="p-3 text-left font-semibold">Name</th>
+                      <th className="p-3 text-left font-semibold">Email</th>
+                      <th className="p-3 text-left font-semibold">College</th>
+                      <th className="p-3 text-left font-semibold">Team Leader ID</th>
+                      <th className="p-3 text-left font-semibold">Payment Receipt</th>
+                      <th className="p-3 text-left font-semibold">Registration Date</th>
+                      <th className="p-3 text-left font-semibold">Details</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredRegistrations.map((reg, index) => (
                       <React.Fragment key={index}>
-                        <tr className="border-b hover:bg-gray-50 transition duration-200">
-                          <td className="p-4">{index + 1}</td>
-                          <td className="p-4">
-                            {eventsData.find((e) => e.id === reg.eventId)?.name || "Unknown"}
-                          </td>
-                          <td className="p-4">{reg.name || "N/A"}</td>
-                          <td className="p-4">{reg.email || "N/A"}</td>
-                          <td className="p-4">{reg.college || "N/A"}</td>
-                          <td className="p-4">{reg.teamLeaderId || "N/A"}</td>
-                          <td className="p-4">
+                        <tr className={`${index % 2 === 0 ? "bg-gray-50" : "bg-white"} border-b hover:bg-indigo-50 transition duration-200`}>
+                          <td className="p-3">{index + 1}</td>
+                          <td className="p-3">{eventsData.find((e) => e.id === reg.eventId)?.name || "Unknown"}</td>
+                          <td className="p-3 font-medium">{reg.name || "N/A"}</td>
+                          <td className="p-3">{reg.email || "N/A"}</td>
+                          <td className="p-3">{reg.college || "N/A"}</td>
+                          <td className="p-3">{reg.teamLeaderId || "N/A"}</td>
+                          <td className="p-3">
                             {reg.paymentReceipt ? (
                               <div>
                                 <img
                                   src={reg.paymentReceipt}
                                   alt="Payment Receipt"
-                                  className="w-24 h-24 object-cover cursor-pointer rounded-md"
+                                  className="w-20 h-20 object-cover cursor-pointer rounded-md hover:shadow-md transition"
                                   onClick={() => openImageModal(reg.paymentReceipt)}
                                   onError={(e) => (e.target.src = "/images/placeholder.png")}
                                 />
@@ -356,7 +354,7 @@ const AdminPanel = () => {
                                   href={reg.paymentReceipt}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-blue-600 hover:underline text-sm mt-1 block"
+                                  className="text-indigo-600 hover:underline text-sm mt-1 block"
                                 >
                                   Open in new tab
                                 </a>
@@ -365,63 +363,64 @@ const AdminPanel = () => {
                               "N/A"
                             )}
                           </td>
-                          <td className="p-4">
+                          <td className="p-3">
                             {reg.registeredAt
-                              ? new Date(reg.registeredAt).toLocaleString("default", {
-                                  day: "numeric",
-                                  month: "short",
-                                })
+                              ? new Date(reg.registeredAt).toLocaleString("default", { day: "numeric", month: "short" })
                               : "Not Recorded"}
                           </td>
-                          <td className="p-4">
-                            <button onClick={() => toggleRow(index)}>
-                              {expandedRows.has(index) ? (
-                                <ChevronUp className="w-5 h-5" />
-                              ) : (
-                                <ChevronDown className="w-5 h-5" />
-                              )}
+                          <td className="p-3">
+                            <button onClick={() => toggleRow(index)} className="text-indigo-600 hover:text-indigo-800 transition">
+                              {expandedRows.has(index) ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                             </button>
                           </td>
                         </tr>
                         {expandedRows.has(index) && (
-                          <tr className="bg-gray-50">
-                            <td colSpan="9" className="p-4 text-sm text-gray-700">
-                              <div className="space-y-4">
-                                {/* Team Leader Details */}
-                                <div>
-                                  <strong>{reg.name || "N/A"}</strong><br />
-                                  Email: {reg.email || "N/A"}<br />
-                                  College: {reg.college || "N/A"}<br />
-                                  Phone: {reg.phone || "N/A"}<br />
-                                  Member ID: {reg.memberId || "N/A"}
-                                </div>
-
-                                {/* Team Members */}
-                                {reg.teamMembers.length > 0 && (
-                                  <div className="mt-4">
-                                    <strong>Team Members:</strong>
-                                    {reg.teamMembers.map((tm, idx) => (
-                                      <div key={idx} className="mt-2">
-                                        <strong>{tm.name}</strong><br />
-                                        Email: {tm.email}<br />
-                                        College: {tm.college}<br />
-                                        Phone: {tm.phone}<br />
-                                        Member ID: {tm.memberId}
-                                      </div>
-                                    ))}
+                          <tr className="bg-gray-100">
+                            <td colSpan="9" className="p-4">
+                              <div className="border border-gray-300 rounded-lg bg-white p-4 shadow-sm">
+                                {/* Additional Details (Top) */}
+                                {Object.keys(reg.fields).length > 0 && (
+                                  <div className="mb-4">
+                                    <h4 className="text-sm font-semibold text-indigo-700 mb-1">Additional Details</h4>
+                                    <div className="text-sm text-gray-700 space-y-1">
+                                      {Object.entries(reg.fields)
+                                        .filter(([key]) => !key.toLowerCase().startsWith("teammemberid"))// Exclude memberId
+                                        .map(([key, value]) => (
+                                          <p key={key}><span className="font-medium">{key}:</span> {value || "N/A"}</p>
+                                        ))}
+                                    </div>
                                   </div>
                                 )}
 
-                                {/* Additional Fields Inline */}
-                                {/* {Object.keys(reg.fields).length > 0 && (
-                                  <div className="mt-4">
-                                    {Object.entries(reg.fields).map(([key, value]) => (
-                                      <div key={key}>
-                                        {key}: {value || "N/A"}
-                                      </div>
-                                    ))}
+                                {/* Team Leader */}
+                                <div className="mb-4">
+                                  <h4 className="text-sm font-semibold text-indigo-700 mb-1">Team Leader</h4>
+                                  <div className="text-sm text-gray-700 space-y-1">
+                                    <p><span className="font-medium">Name:</span> {reg.name || "N/A"}</p>
+                                    <p><span className="font-medium">Email:</span> {reg.email || "N/A"}</p>
+                                    <p><span className="font-medium">College:</span> {reg.college || "N/A"}</p>
+                                    <p><span className="font-medium">Phone:</span> {reg.phone || "N/A"}</p>
+                                    <p><span className="font-medium">Member ID:</span> {reg.memberId || "N/A"}</p>
                                   </div>
-                                )} */}
+                                </div>
+
+                                {/* Team Members (4-5 per line) */}
+                                {reg.teamMembers.length > 0 && (
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-indigo-700 mb-2">Team Members</h4>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                      {reg.teamMembers.map((tm, idx) => (
+                                        <div key={idx} className="bg-gray-50 p-3 rounded-md border border-gray-200 shadow-sm">
+                                          <p className="text-sm font-medium text-gray-800">{tm.name}</p>
+                                          <p className="text-xs text-gray-600"><span className="font-medium">Email:</span> {tm.email}</p>
+                                          <p className="text-xs text-gray-600"><span className="font-medium">College:</span> {tm.college}</p>
+                                          <p className="text-xs text-gray-600"><span className="font-medium">Phone:</span> {tm.phone}</p>
+                                          <p className="text-xs text-gray-600"><span className="font-medium">Member ID:</span> {tm.memberId}</p>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             </td>
                           </tr>
@@ -440,7 +439,7 @@ const AdminPanel = () => {
             <div className="relative max-w-4xl w-full p-4">
               <button
                 onClick={closeImageModal}
-                className="absolute top-2 right-2 text-white bg-red-600 rounded-full w-8 h-8 flex items-center justify-center"
+                className="absolute top-2 right-2 text-white bg-red-600 rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-700 transition"
               >
                 ×
               </button>
