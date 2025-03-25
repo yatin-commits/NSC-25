@@ -48,7 +48,7 @@ const Events = forwardRef((props, ref) => {
 
   const fetchRegistrations = async (uid, showWelcome = true) => {
     const loadingToast = toast.loading("Fetching data...");
-    console.log("uid", uid)
+    // console.log("uid", uid)
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/registrations?userId=${uid}`, // Local testing URL

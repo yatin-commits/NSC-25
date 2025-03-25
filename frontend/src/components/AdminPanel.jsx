@@ -191,6 +191,17 @@ const AdminPanel = () => {
       return 0;
     });
 
+  // Calculate team counts per event
+  // Calculate and sort team counts per event (highest first)
+const eventTeamCounts = filteredRegistrations.reduce((acc, reg) => {
+  const eventId = reg.eventId;
+  acc[eventId] = (acc[eventId] || 0) + 1;
+  return acc;
+}, {});
+
+// Convert to array and sort by count descending
+const sortedEventTeamCounts = Object.entries(eventTeamCounts).sort(([, countA], [, countB]) => countB - countA);
+
   const toggleRow = (index) => {
     const newExpandedRows = new Set(expandedRows);
     if (newExpandedRows.has(index)) {
@@ -310,6 +321,23 @@ const AdminPanel = () => {
             <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
               Total Teams: {filteredRegistrations.length}
             </h3>
+
+            {/* Event Team Count Cards */}
+            <div className="mb-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+  {sortedEventTeamCounts.map(([eventId, count]) => {
+    const eventName = eventsData.find((e) => e.id === Number(eventId))?.name || "Unknown";
+    return (
+      <div
+        key={eventId}
+        className="bg-white border flex justify-between items-center border-gray-200 rounded-md p-2 shadow-sm hover:shadow-md transition"
+      >
+        <h4 className="text-xs font-semibold text-indigo-700 truncate">{eventName}</h4>
+        <p className="text-sm font-bold text-gray-800">{count}</p>
+      </div>
+    );
+  })}
+</div>
+
             {filteredRegistrations.length === 0 ? (
               <p className="text-center text-gray-500">
                 {searchTerm ? "No teams match your filter criteria." : "No teams found."}
@@ -384,7 +412,7 @@ const AdminPanel = () => {
                                     <h4 className="text-sm font-semibold text-indigo-700 mb-1">Additional Details</h4>
                                     <div className="text-sm text-gray-700 space-y-1">
                                       {Object.entries(reg.fields)
-                                        .filter(([key]) => !key.toLowerCase().startsWith("teammemberid"))// Exclude memberId
+                                        .filter(([key]) => !key.toLowerCase().startsWith("memberid"))
                                         .map(([key, value]) => (
                                           <p key={key}><span className="font-medium">{key}:</span> {value || "N/A"}</p>
                                         ))}
