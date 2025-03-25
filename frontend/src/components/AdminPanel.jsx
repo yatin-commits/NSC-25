@@ -412,7 +412,7 @@ const sortedEventTeamCounts = Object.entries(eventTeamCounts).sort(([, countA], 
                                     <h4 className="text-sm font-semibold text-indigo-700 mb-1">Additional Details</h4>
                                     <div className="text-sm text-gray-700 space-y-1">
                                       {Object.entries(reg.fields)
-                                        .filter(([key]) => !key.toLowerCase().startsWith("memberid"))
+                                        .filter(([key]) => !key.toLowerCase().startsWith(["teammemberid"]))
                                         .map(([key, value]) => (
                                           <p key={key}><span className="font-medium">{key}:</span> {value || "N/A"}</p>
                                         ))}
