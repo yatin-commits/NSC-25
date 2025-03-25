@@ -35,8 +35,8 @@ const Members = () => {
       const memberList = membersResponse.data.data || membersResponse.data || [];
       const registrationList = registrationsResponse.data.data || [];
 
-      console.log("All members from /api/all-members:", memberList);
-      console.log("All registrations:", registrationList);
+      // console.log("All members from /api/all-members:", memberList);
+      // console.log("All registrations:", registrationList);
 
       // Map memberId to earliest registeredAt date
       const memberRegDates = new Map();
@@ -72,8 +72,8 @@ const Members = () => {
       }));
 
       const registeredMemberIds = new Set(memberRegDates.keys());
-      console.log(`Collected ${registeredMemberIds.size} unique registered member IDs`);
-      console.log("Sample enriched memberList[0]:", enrichedMemberList[0]);
+      // console.log(`Collected ${registeredMemberIds.size} unique registered member IDs`);
+      // console.log("Sample enriched memberList[0]:", enrichedMemberList[0]);
 
       const registeredMembers = enrichedMemberList.filter(
         (member) => registeredMemberIds.has(member.memberId) && member.events && member.events.length > 0
@@ -143,7 +143,7 @@ const Members = () => {
     );
   }
 
-  console.log("Displayed members:", displayedMembers);
+  // console.log("Displayed members:", displayedMembers);
 
   return (
     <>
