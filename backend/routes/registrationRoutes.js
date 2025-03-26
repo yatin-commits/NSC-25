@@ -42,7 +42,7 @@ const eventFields = {
   2: [{ name: "teamSize", type: "select", options: ["1", "2", "3", "4", "5"] }],
   3: [
     { name: "Society Name", type: "text" },
-    { name: "teamSize", type: "select", options: ["18", "19", "20"] },
+    { name: "teamSize", type: "select", options: ["14", "15", "16","17","18","19","20","21","22"] },
   ],
   4: [{ name: "teamSize", type: "select", options: ["4"] }],
   5: [{ name: "teamSize", type: "select", options: ["2"] }],

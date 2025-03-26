@@ -28,9 +28,10 @@ export const eventFields = {
     { name: "teamSize", type: "select", options: ["1", "2", "3", "4","5"] },
     // { name: "songChoice", type: "text" },
   ],
+  
   3: [
     { name: "Society Name", type: "text" },
-    { name: "teamSize", type: "select", options: ["18","19","20"] }, // Changed from radio to select for consistency
+    { name: "teamSize", type: "select", options: ["14", "15", "16","17","18","19","20","21","22"] }, // Changed from radio to select for consistency
   ],
   4: [
     { name: "teamSize", type: "select", options: ["4"] }, // Basketball: Fixed team size per standard rules
