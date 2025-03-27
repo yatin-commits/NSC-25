@@ -3,7 +3,7 @@ import { ScheduleSection } from "./src/components/ScheduleSection";
 import Events from "@/components/Events";
 import Footer from "@/components/Footer";
 import Faqs from "@/components/Faqs";
-import Coordinators from "@/components/Coordinators";
+// import Coordinators from "@/components/Coordinators";
 import Navbarr from "@/components/NavBarr";
 import { useRef, useCallback, useState } from "react";
 
@@ -41,9 +41,9 @@ const HomePage = () => {
       <div ref={eventsRef} id="events">
         <Events />
       </div>
-      <div ref={coordinatorsRef} id="coordinators">
+      {/* <div ref={coordinatorsRef} id="coordinators">
         <Coordinators />
-      </div>
+      </div> */}
       <div ref={faqRef} id="faqs">
         <Faqs />
       </div>
