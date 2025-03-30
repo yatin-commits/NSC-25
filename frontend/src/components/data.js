@@ -84,6 +84,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Ishaan: 93548 55625", "Tushar: 78271 15042"],
+    isRegistrationOver: false,
   },
   {
     id: 2,
@@ -112,6 +113,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Hiya: 965073321", "Darshita: 9810748780"],
+    isRegistrationOver: false,
   },
   {
     id: 3,
@@ -150,6 +152,7 @@ export const eventsData = [
       "Khushi Kaushik: 83758 74982",
       "Kanak Bansal: 82092 92021",
     ],
+    isRegistrationOver: true,
   },
   {
     id: 4,
@@ -182,6 +185,7 @@ export const eventsData = [
     requiresPayment: true,
     registrationFee: 700,
     qrCode: basketballQR,
+    isRegistrationOver: false,
   },
   {
     id: 5,
@@ -203,6 +207,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Navya: 78277 76854", "Tarushi: 92117 90589"],
+    isRegistrationOver: false,
   },
   {
     id: 6,
@@ -227,6 +232,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Gunshita Varun: 9873760414", "Sourav: 9871169532", "Rohit: 98976 83764"],
+    isRegistrationOver: false,
   },
   {
     id: 7,
@@ -247,6 +253,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Lakshita: 87440 47511", "Kanishka: 98100 41645"],
+    isRegistrationOver: false,
   },
   {
     id: 8,
@@ -277,6 +284,7 @@ export const eventsData = [
     ],
     prize: "Cash prizes and certificates",
     contact: ["Revant: 8557751703", "Somil: 9205337823", "Kshitiz: 9910193041"],
+    isRegistrationOver: false,
   },
   {
     id: 9,
@@ -310,6 +318,7 @@ export const eventsData = [
       "Amrendram: 96258 54106",
       "Deepanshu: 85956 75015",
     ],
+    isRegistrationOver: false,
   },
   {
     id: 10,
@@ -331,6 +340,7 @@ export const eventsData = [
     requiresPayment: true,
     registrationFee: 1000,
     qrCode: volleyballQR,
+    isRegistrationOver: false,
   },
   {
     id: 11,
@@ -370,6 +380,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Navya: 78277 76854", "Tarushi: 92117 90589"],
+    isRegistrationOver: false,
   },
 ];
 
