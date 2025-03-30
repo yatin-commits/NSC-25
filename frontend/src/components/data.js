@@ -84,7 +84,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Ishaan: 93548 55625", "Tushar: 78271 15042"],
-    isRegistrationOver: false,
+    isRegistrationOver: true,
   },
   {
     id: 2,
@@ -185,7 +185,7 @@ export const eventsData = [
     requiresPayment: true,
     registrationFee: 700,
     qrCode: basketballQR,
-    isRegistrationOver: false,
+    isRegistrationOver: true,
   },
   {
     id: 5,
@@ -340,7 +340,7 @@ export const eventsData = [
     requiresPayment: true,
     registrationFee: 1000,
     qrCode: volleyballQR,
-    isRegistrationOver: false,
+    isRegistrationOver: true,
   },
   {
     id: 11,
