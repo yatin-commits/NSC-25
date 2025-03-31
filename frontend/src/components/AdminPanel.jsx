@@ -117,23 +117,26 @@ const AdminPanel = () => {
 
     const formattedData = filteredRegistrations.map((reg, index) => {
       const eventName = eventsData.find((e) => e.id === reg.eventId)?.name || "Unknown Event";
+      console.log(reg);
       const rowData = {
         "S.No": index + 1,
-        Event: eventName,
+        // Event: eventName,
+        "Society Name": reg.fields["Society Name"] || "N/A",
+        "College": reg.college,
+        "Team Size": reg.fields.teamSize || "N/A",
         "Team Leader Name": reg.name,
         "Team Leader Email": reg.email,
-        "College": reg.college,
+        "Team Leader Phone":reg.phone,
         "Registration Date": reg.registeredAt
           ? new Date(reg.registeredAt).toLocaleString("default", { day: "numeric", month: "short" })
           : "Not Recorded",
         "Team Leader ID": reg.teamLeaderId,
         "Payment Receipt": reg.paymentReceipt || "N/A",
-        "Society Name": reg.fields["Society Name"] || "N/A",
-        "Team Size": reg.fields.teamSize || "N/A",
       };
 
       reg.teamMembers.forEach((tm, idx) => {
         rowData[`Team Member ${idx + 1}`] = tm.name;
+        rowData[`Team Member ${idx + 1} Phone`] = tm.phone;
         rowData[`Team Member ${idx + 1} College`] = tm.college;
       });
 
