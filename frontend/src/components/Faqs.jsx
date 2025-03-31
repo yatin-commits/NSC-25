@@ -23,7 +23,7 @@ const Faqs = () => {
                 },
                 {
                     question: "Where and when will the convention take place?",
-                    answer: "The convention will be held at BVICAM, Paschim Vihar, on 2nd April, 2025. Detailed venue information will be shared with registered participants."
+                    answer: "The convention will be held at BVICAM, Paschim Vihar, on 4th & 5th April, 2025. Detailed venue information will be shared with registered participants."
                 },
                 {
                     question: "Who can attend the convention?",
