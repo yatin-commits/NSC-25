@@ -232,7 +232,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Gunshita Varun: 9873760414", "Sourav: 9871169532", "Rohit: 98976 83764"],
-    isRegistrationOver: false,
+    isRegistrationOver: true,
   },
   {
     id: 7,
