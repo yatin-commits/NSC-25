@@ -113,7 +113,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Hiya: 965073321", "Darshita: 9810748780"],
-    isRegistrationOver: false,
+    isRegistrationOver: true,
   },
   {
     id: 3,
@@ -207,7 +207,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Navya: 78277 76854", "Tarushi: 92117 90589"],
-    isRegistrationOver: false,
+    isRegistrationOver: true,
   },
   {
     id: 6,
@@ -253,7 +253,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Lakshita: 87440 47511", "Kanishka: 98100 41645"],
-    isRegistrationOver: false,
+    isRegistrationOver: true,
   },
   {
     id: 8,
@@ -284,7 +284,7 @@ export const eventsData = [
     ],
     prize: "Cash prizes and certificates",
     contact: ["Revant: 8557751703", "Somil: 9205337823", "Kshitiz: 9910193041"],
-    isRegistrationOver: false,
+    isRegistrationOver: true,
   },
   {
     id: 9,
@@ -318,7 +318,7 @@ export const eventsData = [
       "Amrendram: 96258 54106",
       "Deepanshu: 85956 75015",
     ],
-    isRegistrationOver: false,
+    isRegistrationOver: true,
   },
   {
     id: 10,
@@ -342,7 +342,7 @@ export const eventsData = [
     requiresPayment: true,
     registrationFee: 1000,
     qrCode: volleyballQR,
-    isRegistrationOver: false,
+    isRegistrationOver: true,
   },
   {
     id: 11,
@@ -382,7 +382,7 @@ export const eventsData = [
     ],
     prize: "TBD",
     contact: ["Navya: 78277 76854", "Tarushi: 92117 90589"],
-    isRegistrationOver: false,
+    isRegistrationOver: true,
   },
 ];
 
