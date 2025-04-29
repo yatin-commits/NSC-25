@@ -2,15 +2,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const registrationRoutes = require('../routes/registrationRoutes');
-// require('dotenv').config();
-
+const dotenv = require('dotenv');
+dotenv.config({ path: '../.env' }); // Adjust the path to your .env file
+dotenv.config(); // Adjust the path to your .env file
 const app = express();
 app.use(express.json());
 app.use(cors());
+
 app.use(cors({
-  origin: ['https://bvicam-nsc-25.vercel.app','http://localhost:5173'], 
-  methods: ['GET', 'POST', 'PUT'], 
-  allowedHeaders: ['Content-Type'], 
+  origin: [process.env.ALLOWED_ROUTE_2, process.env.ALLOWED_ROUTE_1],
+  methods: ['GET', 'POST', 'PUT'],
+  allowedHeaders: ['Content-Type'],
 }));
 
 app.get('/', (req, res) => {
@@ -18,7 +20,7 @@ app.get('/', (req, res) => {
 });
 
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://yatin2104:yatin2104@bvicam-nsc.z71wy.mongodb.net/users", {
+mongoose.connect(process.env.MONGO_URL, {
 }).then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
