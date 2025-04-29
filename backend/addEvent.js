@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
-const Event = require('./modules/evetModules'); // Import the Event model
+const Event = require('./modules/evetModules');
+const dotenv = require('dotenv');
+dotenv.config({ path: '../.env' }); // Adjust the path to your .env file
+ // Import the Event model
 
 // MongoDB connection string (replace with your MongoDB URI)
-const mongoURI = 'mongodb+srv://yatin2104:yatin2104@bvicam-nsc.z71wy.mongodb.net/users';
+const mongoURI = process.env.MONGO_UR || 'mongodb://localhost:27017/yourDatabaseName'; // Replace with your MongoDB URI
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,

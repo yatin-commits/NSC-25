@@ -3,22 +3,24 @@ const router = express.Router();
 const Member = require("../modules/Members");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
+dotenv.config();
 
 // CORS configuration
 router.use(cors({
-  origin: ["https://bvicam-nsc-25.vercel.app", "http://localhost:5173"],
-  methods: ["GET", "POST", "PUT"],
-  allowedHeaders: ["Content-Type"],
+  origin: [process.env.ALLOWED_ROUTE_2, process.env.ALLOWED_ROUTE_1],
+  methods: ['GET', 'POST', 'PUT'],
+  allowedHeaders: ['Content-Type'],
 }));
 
 router.use(express.json());
 
 // Nodemailer transporter configuration
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  service: 'gmail',
   auth: {
-    user: "nsc.event@bvicam.in",
-    pass: "fgssbwjgqzljtnya",
+    user: process.env.HOST_GMAIL,
+    pass: process.env.HOST_PASSWORD,
   },
 });
 

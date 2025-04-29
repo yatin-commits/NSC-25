@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
+const dotenv = require('dotenv');
+dotenv.config();
 const multer = require('multer');
 const { v2: cloudinary } = require('cloudinary');
 const nodemailer = require('nodemailer');
@@ -10,7 +12,7 @@ const Member = require('../modules/Members');
 
 // Apply middleware
 router.use(cors({
-  origin: ['https://bvicam-nsc-25.vercel.app', 'http://localhost:5173'],
+  origin: [process.env.ALLOWED_ROUTE_2, process.env.ALLOWED_ROUTE_1],
   methods: ['GET', 'POST', 'PUT'],
   allowedHeaders: ['Content-Type'],
 }));
@@ -22,17 +24,17 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 
 
 // Cloudinary configuration
 cloudinary.config({
-  cloud_name: "dhhxe2l2u",
-  api_key: "461416841383678",
-  api_secret: "aS6XR3GzZNlmcfbW5bYNfCjzols",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // Nodemailer transporter configuration
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: "nsc.event@bvicam.in",
-    pass: "fgssbwjgqzljtnya",
+    user: process.env.HOST_GMAIL,
+    pass: process.env.HOST_PASSWORD,
   },
 });
 
@@ -168,7 +170,7 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
 
     const eventName = event.name || `Event ${eventId}`;
     const mailOptions = {
-      from: `"NSC 25 Team" <nsc.event@bvicam.in>`,
+      from: `"NSC 25 Team" <{process.env.HOST_GMAIL}>`,
       to: email,
       subject: `Registration Confirmation for ${eventName}`,
       text: `Dear ${name},\n\nYou have successfully registered for ${eventName}!\n\nDetails:\n- Member ID: ${parsedFields.memberId}\n${
