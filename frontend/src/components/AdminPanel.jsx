@@ -6,7 +6,6 @@ import * as XLSX from "xlsx";
 import { SiGooglesheets } from "react-icons/si";
 import { Link } from "react-router-dom";
 import { Search, ChevronDown, ChevronUp } from "lucide-react";
-
 const AdminPanel = () => {
   const [selectedEvent, setSelectedEvent] = useState("");
   const [registrations, setRegistrations] = useState([]);
