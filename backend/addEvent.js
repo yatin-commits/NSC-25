@@ -5,7 +5,7 @@ dotenv.config({ path: '../.env' }); // Adjust the path to your .env file
  // Import the Event model
 
 // MongoDB connection string (replace with your MongoDB URI)
-const mongoURI = process.env.MONGO_UR || 'mongodb://localhost:27017/yourDatabaseName'; // Replace with your MongoDB URI
+const mongoURI = process.env.MONGO_UR || ; // Replace with your MongoDB URI
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,

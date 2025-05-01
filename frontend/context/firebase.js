@@ -1,16 +1,20 @@
 import { initializeApp } from "@firebase/app";
 import { getAuth,GoogleAuthProvider } from "@firebase/auth";
 import { getAnalytics } from "@firebase/analytics";
+// import dotenv from "dotenv";
+// dotenv.config({ path: '../.env' }); // Adjust the path to your .env file
+console.log(import.meta.env.VITE_FIREBASE_API_KEY);
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDKeAPiGZWI9jOny4bdiJ9Jn2wOq3ZIQ3A",
-    authDomain: "bvicam-nsc.firebaseapp.com",
-    projectId: "bvicam-nsc",
-    storageBucket: "bvicam-nsc.firebasestorage.app",
-    messagingSenderId: "920684654682",
-    appId: "1:920684654682:web:ddcfc9bb545669c5fb6863",
-    measurementId: "G-QL7CNYZ9GH"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
   };
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
