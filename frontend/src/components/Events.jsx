@@ -27,7 +27,7 @@ const Events = forwardRef((props, ref) => {
       const registration = registrations.find((r) => r.eventId === expandedEvent);
       if (registration) {
         setFormData(registration.fields);
-        setPaymentReceipt(registration.paymentReceipt || null); // Cloudinary URL
+        setPaymentReceipt(registration.paymentReceipt || null) ; // Cloudinary URL
         setPaymentReceiptFile(null); // Reset file
       } else {
         setFormData({});
@@ -46,7 +46,7 @@ const Events = forwardRef((props, ref) => {
     }
   }, [user]);
 
-  const fetchRegistrations = async (uid, showWelcome = true) => {
+  const fetchRegistrations = async (uid, showWelcome = true) => {4
     const loadingToast = toast.loading('Fetching data...');
     try {
       const response = await fetch(
