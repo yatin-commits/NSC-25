@@ -4,7 +4,7 @@ const Member = require("../modules/Members");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
-const logger = require("./logger"); // Import the Winston logger
+const logger = require("../utils/logger"); // Import the Winston logger
 
 dotenv.config();
 
