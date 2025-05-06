@@ -4,7 +4,7 @@ const Member = require("../modules/Members");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
-const logger = require("../utils/logger"); // Import the Winston logger
+const logger = require("./logger"); // Import the Winston logger
 
 dotenv.config();
 
@@ -99,8 +99,13 @@ router.post("/generate-member-id", async (req, res) => {
     };
 
     logger.debug(`Sending email to: ${email}`);
-    await transporter.sendMail(mailOptions);
-    logger.info(`Email sent successfully to: ${email}`);
+    try {
+      await transporter.sendMail(mailOptions);
+      logger.info(`Email sent successfully to: ${email}`);
+    } catch (emailError) {
+      logger.error(`Failed to send email to ${email}: ${emailError.message}`);
+      // Optionally, still return success since member is saved
+    }
 
     // Respond to frontend
     res.status(201).json({ success: true, memberId });
