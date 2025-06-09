@@ -24,6 +24,8 @@ const App = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/interview/admin" element={<AdminPanel />} />
+        <Route path="/interview/members" element={<Members />} />
       
         <Route path="/members" element={
           <ProtectedRouteMember>
