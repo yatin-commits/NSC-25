@@ -17,6 +17,7 @@ router.use(cors({
   methods: ['GET', 'POST', 'PUT'],
   allowedHeaders: ['Content-Type'],
 }));
+
 router.use(express.json({ limit: '10mb' }));
 router.use(express.urlencoded({ limit: '10mb', extended: true }));
 
@@ -28,7 +29,7 @@ router.use((req, res, next) => {
 });
 
 // Multer setup for file uploads
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+
 
 // Cloudinary configuration
 cloudinary.config({
