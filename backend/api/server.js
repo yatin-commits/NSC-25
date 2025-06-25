@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const registrationRoutes = require('../routes/registrationRoutes');
 const dotenv = require('dotenv');
-dotenv.config({ path: '../.env' }); // Adjust the path to your .env file
-dotenv.config(); // Adjust the path to your .env file
+dotenv.config({ path: '../.env' }); 
+dotenv.config(); 
 const app = express();
 app.use(express.json());
 app.use(cors());

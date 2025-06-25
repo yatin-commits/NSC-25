@@ -1,4 +1,4 @@
-// modules/registrationModule.js
+  
 const mongoose = require('mongoose');
 
 const registrationSchema = new mongoose.Schema({
@@ -29,7 +29,7 @@ const registrationSchema = new mongoose.Schema({
       message: 'Fields must include a valid memberId and correct number of teamMemberId fields matching the specified size.',
     },
   },
-  paymentReceipt: { type: String, default: null }, // Now stores a URL
+  paymentReceipt: { type: String, default: null }, 
   registeredAt: { type: Date, default: Date.now },
 });
 

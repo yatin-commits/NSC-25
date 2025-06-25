@@ -3,7 +3,7 @@ const router = express.Router();
 const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
-const multer = require('multer');
+
 const { v2: cloudinary } = require('cloudinary');
 const nodemailer = require('nodemailer');
 const Registration = require('../modules/registrationModule');
@@ -28,7 +28,7 @@ router.use((req, res, next) => {
   next();
 });
 
-// Multer setup for file uploads
+
 
 
 // Cloudinary configuration
@@ -48,6 +48,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Event-specific fields (unchanged)
+
 const eventFields = {
   1: [{ name: "teamSize", type: "select", options: ["1", "2", "3", "4"] }],
   2: [{ name: "teamSize", type: "select", options: ["1", "2", "3", "4", "5"] }],
@@ -68,11 +69,14 @@ const eventFields = {
   11: [{ name: "Movie Title", type: "text" }],
 };
 
-const eventsRequiringPayment = [4, 10]; // Basketball and Volleyball
+const eventsRequiringPayment = [4, 10]; 
 
 const isTeamBasedEvent = (eventId) => {
   const fields = eventFields[eventId] || [];
-  return fields.some(field => ['teamSize', 'groupSize', 'castSize'].includes(field.name));
+  return fields.some(field => {
+  const targetNames = ['teamSize', 'groupSize', 'castSize'];
+  return targetNames.includes(field.name);
+});
 };
 
 // Register for an event
@@ -106,6 +110,7 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
   const missingFields = requiredFields.filter(field => 
     !parsedFields[field.name] || parsedFields[field.name].trim() === ""
   );
+  
   if (missingFields.length > 0) {
     logger.error(`Missing or empty fields: ${missingFields.map(f => f.name).join(', ')}`);
     return res.status(400).json({ 
@@ -317,9 +322,8 @@ router.get('/members', async (req, res) => {
   }
 });
 
-// ... (Apply similar logging to other routes)
 
-// Example for another route: Get all registrations (admin only)
+
 router.get('/registrations/all', async (req, res) => {
   const { userId, eventId } = req.query;
 
@@ -330,10 +334,10 @@ router.get('/registrations/all', async (req, res) => {
     return res.status(401).json({ error: 'User ID required' });
   }
 
-  if (userId !== "29BruJMxHXMB6mbdAZyvKVUixW13") {
-    logger.error(`Unauthorized access attempt: userId ${userId}`);
-    return res.status(403).json({ error: 'Unauthorized: Admin access required' });
-  }
+    if (userId !== "29BruJMxHXMB6mbdAZyvKVUixW13") {
+      logger.error(`Unauthorized access attempt: userId ${userId}`);
+      return res.status(403).json({ error: 'Unauthorized: Admin access required' });
+    }
 
   try {
     let query = {};

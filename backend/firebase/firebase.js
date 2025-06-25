@@ -22,8 +22,5 @@ console.log("just initialized the auth service");
 
 const googleProvider = new GoogleAuthProvider();
 
-// Set up auth settings if needed
-auth.useDeviceLanguage();
 
-// Export the services
 export { auth, googleProvider };
