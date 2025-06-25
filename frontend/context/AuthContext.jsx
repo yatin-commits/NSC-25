@@ -22,9 +22,8 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(null);
       }
-      setLoading(false); // Stop loading once auth state is determined
+      setLoading(false); 
     });
-
     return () => unsubscribe();
   }, []);
 
