@@ -6,6 +6,7 @@ dotenv.config();
 
 const { v2: cloudinary } = require('cloudinary');
 const nodemailer = require('nodemailer');
+const multer = require('multer');
 const Registration = require('../modules/registrationModule');
 const Event = require('../modules/evetModules'); // Fixed typo
 const Member = require('../modules/Members');
@@ -20,6 +21,8 @@ router.use(cors({
 
 router.use(express.json({ limit: '10mb' }));
 router.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Log all incoming requests
 router.use((req, res, next) => {
@@ -48,8 +51,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Event-specific fields (unchanged)
-
-const eventFields = {
+ const eventFields = {
   1: [{ name: "teamSize", type: "select", options: ["1", "2", "3", "4"] }],
   2: [{ name: "teamSize", type: "select", options: ["1", "2", "3", "4", "5"] }],
   3: [
@@ -236,79 +238,108 @@ router.post('/register', upload.single('paymentReceipt'), async (req, res) => {
 router.get('/members', async (req, res) => {
   try {
     logger.info('Fetching all registrations and members');
+
+    // 1. Fetch all registrations
     const registrations = await Registration.find();
     logger.debug(`Found ${registrations.length} registrations`);
 
+    // 2. Fetch all events and create a simple lookup object { eventId: eventName }
     const events = await Event.find();
-    const eventMap = new Map(events.map(e => [e.eventId, e.name]));
+    const eventMap = {};
+    events.forEach(e => {
+      eventMap[e.eventId] = e.name;
+    });
     logger.debug(`Found ${events.length} events`);
 
-    const memberIds = new Set();
+    // 3. Collect all unique member IDs (from individual or team members)
+    const memberIds = [];
     registrations.forEach((reg) => {
-      const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields || {};
-      if (fields.memberId) memberIds.add(fields.memberId);
+      let fields = reg.fields || {};
+      
 
+
+      // Add main memberId & Agar dubara same  aata hai, to wo dobara add nahi hoga
+      if (fields.memberId && !memberIds.includes(fields.memberId)) {
+        memberIds.push(fields.memberId);
+      }
+
+      // Check for team members
       const sizeField = Object.keys(fields).find((key) =>
         ['teamSize', 'groupSize', 'castSize'].includes(key)
       );
       const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
-      if (teamSize > 1) {
-        for (let i = 1; i <= teamSize - 1; i++) {
-          const teamMemberId = fields[`teamMemberId${i}`];
-          if (teamMemberId) memberIds.add(teamMemberId);
+
+      for (let i = 1; i <= teamSize - 1; i++) {
+        const teamMemberId = fields[`teamMemberId${i}`];
+        if (teamMemberId && !memberIds.includes(teamMemberId)) {
+          memberIds.push(teamMemberId);
         }
       }
     });
-    logger.debug(`Collected ${memberIds.size} unique member IDs`);
+    logger.debug(`Collected ${memberIds.length} unique member IDs`);
 
-    const members = await Member.find({ memberId: { $in: Array.from(memberIds) } });
-    const memberMap = new Map(members.map(m => [m.memberId, { 
-      name: m.name, 
-      email: m.email, 
-      college: m.college, 
-      phone: m.phone 
-    }]));
+    // 4. Fetch member details from DB
+    const members = await Member.find({ memberId: { $in: memberIds } });
     logger.debug(`Found ${members.length} members`);
 
-    const memberEvents = new Map();
-    for (const reg of registrations) {
+    // Convert members into an object for quick lookup
+    const memberMap = {};
+    members.forEach(m => {
+      memberMap[m.memberId] = {
+        name: m.name,
+        email: m.email,
+        college: m.college,
+        phone: m.phone,
+      };
+    });
+
+    // 5. Build a memberEvents object { memberId: [events] }
+    const memberEvents = {};
+    registrations.forEach((reg) => {
       const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields || {};
       const eventId = reg.eventId;
-      const eventName = eventMap.get(eventId) || `Event ${eventId}`;
+      const eventName = eventMap[eventId] || `Event ${eventId}`;
 
-      if (fields.memberId && memberMap.has(fields.memberId)) {
-        if (!memberEvents.has(fields.memberId)) {
-          memberEvents.set(fields.memberId, { events: new Set() });
+      // Add event for main memberId
+      if (fields.memberId && memberMap[fields.memberId]) {
+        if (!memberEvents[fields.memberId]) memberEvents[fields.memberId] = [];
+        if (!memberEvents[fields.memberId].includes(eventName)) {
+          memberEvents[fields.memberId].push(eventName);
         }
-        memberEvents.get(fields.memberId).events.add(eventName);
       }
 
+      // Add events for team members
       const sizeField = Object.keys(fields).find((key) =>
         ['teamSize', 'groupSize', 'castSize'].includes(key)
       );
       const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
-      if (teamSize > 1) {
-        for (let i = 1; i <= teamSize - 1; i++) {
-          const teamMemberId = fields[`teamMemberId${i}`];
-          if (teamMemberId && memberMap.has(teamMemberId)) {
-            if (!memberEvents.has(teamMemberId)) {
-              memberEvents.set(teamMemberId, { events: new Set() });
-            }
-            memberEvents.get(teamMemberId).events.add(eventName);
+
+      for (let i = 1; i <= teamSize - 1; i++) {
+        const teamMemberId = fields[`teamMemberId${i}`];
+        if (teamMemberId && memberMap[teamMemberId]) {
+          if (!memberEvents[teamMemberId]) memberEvents[teamMemberId] = [];
+          if (!memberEvents[teamMemberId].includes(eventName)) {
+            memberEvents[teamMemberId].push(eventName);
           }
         }
       }
-    }
+    });
 
-    const result = Array.from(memberMap.entries()).map(([memberId, { name, email, college, phone }]) => ({
-      memberId,
-      name,
-      email,
-      college: college || "N/A",
-      phone: phone || "N/A",
-      events: memberEvents.has(memberId) ? Array.from(memberEvents.get(memberId).events).sort() : [],
-    })).sort((a, b) => a.memberId.localeCompare(b.memberId));
+    // 6. Create final result array
+    const result = Object.keys(memberMap)
+      .map(memberId => {
+        return {
+          memberId,
+          name: memberMap[memberId].name,
+          email: memberMap[memberId].email,
+          college: memberMap[memberId].college || "N/A",
+          phone: memberMap[memberId].phone || "N/A",
+          events: (memberEvents[memberId] || []).sort(),
+        };
+      })
+      .sort((a, b) => a.memberId.localeCompare(b.memberId));
 
+    // 7. Send response
     if (result.length === 0) {
       logger.info('No members found with registrations');
       return res.status(200).json({ message: 'No members found with registrations', data: [] });

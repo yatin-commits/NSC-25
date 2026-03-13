@@ -76,7 +76,7 @@ export const eventsData = [
     venue: "9:00 AM",
     dates: ["2025-04-05"],
     rules: [
-      "Fair Play: No cheating, hacking, or use of third-party software.",
+      "Fair Play: No cheating, hacking, or use of third - party software.",
       "Device Restrictions: Players must use mobile devices (some tournaments may allow tablets/emulators).",
       "Game Version: All players must use the latest version of BGMI.",
       "Player Conduct: No abusive language, toxicity, or unsportsmanlike behavior.",
@@ -128,7 +128,7 @@ export const eventsData = [
       "Each team must have 18 to 20 members (including helpers).",
       "Minimum: 20 minutes, Maximum: 22 minutes (including setup time).",
       "Prelims Round: To qualify for the final competition, teams must clear the Prelims Round.",
-      "Prelims Round: Teams must submit a 10-minute, unedited, one-take video of their Nukkad Natak.",
+      "Prelims Round: Teams must submit a 10 - minute, unedited, one-take video of their Nukkad Natak.",
       "Prelims Round: No cuts, transitions, or edits are allowed in the video.",
       "Prelims Round: Last date for submission: 31st March 2025.",
       "Prelims Round: Only shortlisted teams will proceed to the final competition.",
@@ -185,7 +185,7 @@ export const eventsData = [
     requiresPayment: true,
     registrationFee: 700,
     qrCode: basketballQR,
-    isRegistrationOver: true,
+    isRegistrationOver: false,
   },
   {
     id: 5,

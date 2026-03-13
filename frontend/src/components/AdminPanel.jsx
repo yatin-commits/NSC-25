@@ -50,7 +50,6 @@ const AdminPanel = () => {
         axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/registrations/all?userId=${adminUserId}`),
         axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/all-members`),
       ]);
-
       const regData = Array.isArray(registrationsResponse.data) ? registrationsResponse.data : [];
       const memberData = Array.isArray(membersResponse.data.data)
         ? membersResponse.data.data

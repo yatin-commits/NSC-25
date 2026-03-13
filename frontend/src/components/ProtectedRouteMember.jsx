@@ -11,7 +11,7 @@ const ProtectedRouteMember = ({ children }) => {
   if (loading) return <p>Loading...</p>; 
 
   // console.log("User:", user);
-//   const isAdmin = user && adminEmails.includes(user.email);
+ //   const isAdmin = user && adminEmails.includes(user.email);
 //   console.log("Is Admin:", isAdmin);
 
   return user ? children : <Navigate to="/" replace />;
