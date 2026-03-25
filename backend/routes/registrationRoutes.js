@@ -390,6 +390,23 @@ router.get('/incomplete-registrations', async (req, res) => {
         }
       }
     });
+
+    router.get('/all-registrations', async (req, res) => {
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'User ID required' });
+  }
+
+  try {
+    const registrations = await Registration.find();
+    console.log(`Fetched ${registrations.length} registrations`);
+    res.status(200).json({ data: registrations });
+  } catch (error) {
+    console.error('Error fetching all registrations:', error);
+    res.status(500).json({ error: 'Failed to fetch registrations', details: error.message });
+  }
+});
     console.log(`Collected ${registeredMemberIds.size} unique registered member IDs`);
     console.log('Sample registered memberIds:', Array.from(registeredMemberIds).slice(0, 5));
 
