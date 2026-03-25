@@ -1,0 +1,82 @@
+// Pseudo-code version of Events.jsx
+// Focus: Main logic & flow without UI complexity
+
+function Events() {
+  // ---- STATES ----
+  state expandedEvent   // which event is expanded (detailed view)
+  state formData        // user input for registration
+  state registrations   // list of events user has registered for
+  state searchTerm      // search input for events
+  state paymentReceipt  // preview URL of uploaded receipt
+  state paymentReceiptFile // actual file
+  state showPaymentStep // flag to show payment upload section
+  state isQrExpanded    // flag to enlarge QR code
+  auth user             // logged-in user
+
+  // ---- EFFECTS ----
+  on expandedEvent change:
+    if expandedEvent != null:
+      - lock scroll
+      - if user already registered, fill form with saved data
+      - else reset form
+    else:
+      - unlock scroll
+
+  on user change:
+    if user:
+      fetchRegistrations(user.uid)
+
+  // ---- FUNCTIONS ----
+  function fetchRegistrations(userId):
+    - GET request to /api/registrations?userId=...
+    - store result in registrations
+
+  function handleInputChange(e):
+    - update formData[name] = value
+    - if field is teamSize/groupSize/castSize:
+        adjust teamMemberId fields based on size
+
+  function handlePaymentUpload(e):
+    - preview uploaded file and store it
+
+  function handleRegister(eventId):
+    - if not logged in: show error
+    - check if payment is needed, ensure receipt uploaded
+    - check all required fields (memberId, team members, etc.)
+    - verify member IDs via POST /api/verify-member-ids
+    - create FormData (eventId, user info, formData, paymentReceipt)
+    - POST to /api/register
+    - on success, refresh registrations, reset form & payment data
+
+  function handleLogin():
+    - trigger Google login
+
+  function renderField(field):
+    - return appropriate input element (text, select, radio)
+    - updates formData on change
+
+  function getFormattedDates(dates):
+    - format date array to "day month, weekday"
+
+  function eventIsTeamBased(eventId):
+    - check event data if team-based
+
+  // ---- RENDER ----
+  return (
+    // 1. Show header & login button
+    // 2. Search bar to filter events by name/description/venue
+    // 3. If no event expanded:
+    //      - Show grid of events
+    //      - Click event => setExpandedEvent(event.id)
+    // 4. If expandedEvent is set:
+    //      - Show event details (rules, description, dates)
+    //      - If user not registered:
+    //            - Show form fields + payment (if needed)
+    //            - Button "Register Now" calls handleRegister
+    //      - If registered: show success message
+    //      - Button "Close" => reset expandedEvent & payment step
+    // 5. If QR enlarged: show overlay with QR code
+  )
+}
+
+export default Events;

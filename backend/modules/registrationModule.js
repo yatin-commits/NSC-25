@@ -26,7 +26,7 @@ const registrationSchema = new mongoose.Schema({
         }
         return true;
       },
-      message: 'Fields must include a valid memberId and correct number of teamMemberId fields matching the specified size.',
+      message: ' Fields must include a valid memberId and correct number of teamMemberId fields matching the specified size. ',
     },
   },
   paymentReceipt: { type: String, default: null }, 
