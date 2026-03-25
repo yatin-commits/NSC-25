@@ -353,6 +353,66 @@ router.get('/members', async (req, res) => {
   }
 });
 
+router.get('/incomplete-registrations', async (req, res) => {
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'User ID required' });
+  }
+
+  try {
+    console.log('Fetching all members...');
+    const members = await Member.find();
+    console.log(`Found ${members.length} members`);
+    console.log('Sample members:', members.slice(0, 5).map(m => m.memberId)); // Log first 5 memberIds
+
+    console.log('Fetching all registrations...');
+    const registrations = await Registration.find();
+    console.log(`Found ${registrations.length} registrations`);
+
+    const registeredMemberIds = new Set();
+    registrations.forEach((reg) => {
+      const fields = reg.fields instanceof Map ? Object.fromEntries(reg.fields) : reg.fields || {};
+      if (fields.memberId) {
+        registeredMemberIds.add(fields.memberId);
+      }
+
+      const sizeField = Object.keys(fields).find((key) =>
+        ['teamSize', 'groupSize', 'castSize'].includes(key)
+      );
+      const teamSize = sizeField ? parseInt(fields[sizeField]) || 0 : 0;
+      if (teamSize > 1) {
+        for (let i = 1; i <= teamSize - 1; i++) {
+          const teamMemberId = fields[`teamMemberId${i}`];
+          if (teamMemberId) {
+            registeredMemberIds.add(teamMemberId);
+          }
+        }
+      }
+    });
+    console.log(`Collected ${registeredMemberIds.size} unique registered member IDs`);
+    console.log('Sample registered memberIds:', Array.from(registeredMemberIds).slice(0, 5));
+
+    const incompleteMembers = members.filter(
+      (member) => !registeredMemberIds.has(member.memberId)
+    ).map((member) => ({
+      memberId: member.memberId,
+      name: member.name,
+      phone: member.phone || "N/A",
+      college: member.college || "N/A",
+      email: member.email || "N/A",
+    })).sort((a, b) => a.memberId.localeCompare(b.memberId));
+
+    console.log(`Found ${incompleteMembers.length} members with incomplete registrations`);
+    console.log('Response data:', incompleteMembers);
+
+    res.status(200).json({ data: incompleteMembers });
+  } catch (error) {
+    console.error('Fetch incomplete registrations error:', error);
+    res.status(500).json({ error: 'Failed to fetch incomplete registrations', details: error.message });
+  }
+}); 
+
 
 router.get('/all-members', async (req, res) => {
   try {
